@@ -1,0 +1,113 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-08-14 14:15:57.976669",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_ipcj",
+  "info_column",
+  "naming_series",
+  "posting_date",
+  "outlet",
+  "column_break_nyab",
+  "note",
+  "section_break_cawa",
+  "closed_selling_date_items",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_ipcj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Closed Selling Date",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "info_column",
+   "fieldtype": "Column Break",
+   "label": "Info"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "CSD.YYYY.-.####"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Outlet",
+   "options": "Outlet",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_nyab",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "section_break_cawa",
+   "fieldtype": "Section Break",
+   "label": "Close Data"
+  },
+  {
+   "fieldname": "closed_selling_date_items",
+   "fieldtype": "Table",
+   "options": "Closed Selling Date Items"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-08-14 14:52:04.293465",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Closed Selling Date",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

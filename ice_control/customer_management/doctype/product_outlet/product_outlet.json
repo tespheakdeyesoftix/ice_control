@@ -1,0 +1,42 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-08-14 09:51:34.006914",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "outlet_lab_section",
+  "outlet"
+ ],
+ "fields": [
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Outlet",
+   "options": "Outlet"
+  },
+  {
+   "fieldname": "outlet_lab_section",
+   "fieldtype": "Section Break",
+   "label": "Outlet Lable"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-08-14 11:57:46.683667",
+ "modified_by": "Administrator",
+ "module": "Customer Management",
+ "name": "Product Outlet",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

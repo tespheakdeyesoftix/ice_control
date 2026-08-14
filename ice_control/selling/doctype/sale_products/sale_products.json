@@ -1,0 +1,290 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-08-14 09:48:45.421318",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "product_code",
+  "outlet",
+  "product_name",
+  "photo",
+  "base_unit",
+  "allow_split_bill",
+  "sale_transaction_type",
+  "column_break_mbcc",
+  "unit",
+  "multiplier",
+  "product_category",
+  "revenue_group",
+  "allow_sum_qty",
+  "is_inventory_product",
+  "section_break_zouf",
+  "quantity",
+  "price",
+  "product_price",
+  "free_quantity",
+  "return_quantity",
+  "split_quantity",
+  "column_break_exms",
+  "total_sale_quantity",
+  "sub_total",
+  "total_amount",
+  "inventory_section",
+  "cost",
+  "total_cost",
+  "column_break_ccgg",
+  "stock_location",
+  "product_options_section",
+  "allow_free",
+  "allow_change_price",
+  "column_break_uysr",
+  "allow_return",
+  "section_break_enbe",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Product Code",
+   "link_filters": "[[{\"fieldname\":\"product_code\",\"field_option\":\"Product\"},\"enabled\",\"=\",1]]",
+   "options": "Product",
+   "search_index": 1
+  },
+  {
+   "depends_on": "eval:frappe.session.user ===\"Administrator\"",
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "label": "Outlet",
+   "options": "Outlet",
+   "search_index": 1
+  },
+  {
+   "fetch_from": "product_code.product_name",
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Product Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.photo",
+   "fieldname": "photo",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fieldname": "base_unit",
+   "fieldtype": "Link",
+   "label": "Base Unit",
+   "options": "Unit",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_split_bill",
+   "fieldtype": "Check",
+   "label": "Allow Split Bill"
+  },
+  {
+   "fetch_from": "product_code.default_sale_transaction_type",
+   "fieldname": "sale_transaction_type",
+   "fieldtype": "Data",
+   "label": "Sale Transaction Type"
+  },
+  {
+   "fieldname": "column_break_mbcc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fetch_if_empty": 1,
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "Unit"
+  },
+  {
+   "default": "1",
+   "fieldname": "multiplier",
+   "fieldtype": "Float",
+   "label": "Multiplier",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.product_category",
+   "fetch_if_empty": 1,
+   "fieldname": "product_category",
+   "fieldtype": "Link",
+   "label": "Product Category",
+   "options": "Product Category",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.revenue_group",
+   "fetch_if_empty": 1,
+   "fieldname": "revenue_group",
+   "fieldtype": "Link",
+   "label": "Revenue Group",
+   "options": "Revenue Group"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_sum_qty",
+   "fieldtype": "Check",
+   "label": "Allow Sum QTY",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.is_inventory_product",
+   "fieldname": "is_inventory_product",
+   "fieldtype": "Check",
+   "label": "Is Inventory Product"
+  },
+  {
+   "fieldname": "section_break_zouf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Price"
+  },
+  {
+   "description": "We use this field to save product from product, to restore price when user change customer",
+   "fieldname": "product_price",
+   "fieldtype": "Currency",
+   "label": "Product Price"
+  },
+  {
+   "default": "1",
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity",
+   "precision": "2"
+  },
+  {
+   "fieldname": "free_quantity",
+   "fieldtype": "Float",
+   "label": "Free Quantity"
+  },
+  {
+   "fieldname": "return_quantity",
+   "fieldtype": "Float",
+   "label": "Return Quantity"
+  },
+  {
+   "fieldname": "split_quantity",
+   "fieldtype": "Float",
+   "label": "Split Quantity"
+  },
+  {
+   "fieldname": "column_break_exms",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_sale_quantity",
+   "fieldtype": "Float",
+   "label": "Total Sale Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sub_total",
+   "fieldtype": "Currency",
+   "label": "Sub Total"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "inventory_section",
+   "fieldtype": "Section Break",
+   "label": "Inventory"
+  },
+  {
+   "fieldname": "cost",
+   "fieldtype": "Currency",
+   "label": "Cost"
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "label": "Total Cost"
+  },
+  {
+   "fieldname": "column_break_ccgg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "product_code.default_sale_stock_location",
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "label": "Stock Location",
+   "options": "Stock Location"
+  },
+  {
+   "fieldname": "product_options_section",
+   "fieldtype": "Section Break",
+   "label": "Product Options"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_free",
+   "fieldtype": "Check",
+   "label": "Allow Free"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_change_price",
+   "fieldtype": "Check",
+   "label": "Allow Change Price"
+  },
+  {
+   "fieldname": "column_break_uysr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_return",
+   "fieldtype": "Check",
+   "label": "Allow Return"
+  },
+  {
+   "fieldname": "section_break_enbe",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-08-14 15:09:19.320040",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Sale Products",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

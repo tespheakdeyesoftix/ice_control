@@ -1,0 +1,325 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "field:product_code",
+ "creation": "2026-08-14 09:19:45.702670",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "info_section",
+  "product_category",
+  "product_code",
+  "product_name",
+  "revenue_group",
+  "color",
+  "column_break_hyac",
+  "photo",
+  "unit",
+  "multiplier",
+  "price",
+  "default_sale_transaction_type",
+  "column_break_wphk",
+  "allow_sum_qty",
+  "allow_split_bill",
+  "show_in_customer_product_price",
+  "sort_order",
+  "section_break_tgsv",
+  "product_outlet",
+  "product_outlets",
+  "product_units_tab",
+  "product_units",
+  "inventory_tab",
+  "is_inventory_product",
+  "stock_location",
+  "opening_quantity",
+  "costing_method",
+  "cost",
+  "column_break_wqjy",
+  "default_sale_stock_location",
+  "purchase_tab",
+  "purchasing_section",
+  "allow_purchase",
+  "purchase_price",
+  "column_break_jzau",
+  "allow_purchase_in_purchase_ice_feature",
+  "tab_5_tab"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "info_section",
+   "fieldtype": "Section Break",
+   "label": "Info"
+  },
+  {
+   "fieldname": "product_category",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Product Category",
+   "link_filters": "[[\"Product Category\",\"enabled\",\"=\",1]]",
+   "options": "Product Category",
+   "reqd": 1
+  },
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Data",
+   "label": "Product Code",
+   "no_copy": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Product Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "revenue_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Revenue Group",
+   "options": "Revenue Group"
+  },
+  {
+   "fieldname": "color",
+   "fieldtype": "Color",
+   "label": "Color"
+  },
+  {
+   "fieldname": "column_break_hyac",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unit",
+   "link_filters": "[[{\"fieldname\":\"unit\",\"field_option\":\"Unit\"},\"enabled\",\"=\",1]]",
+   "options": "Unit",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "unit.multiplier",
+   "fetch_if_empty": 1,
+   "fieldname": "multiplier",
+   "fieldtype": "Float",
+   "label": "Multiplier",
+   "read_only": 1
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price",
+   "non_negative": 1,
+   "precision": "0"
+  },
+  {
+   "default": "Sale",
+   "fieldname": "default_sale_transaction_type",
+   "fieldtype": "Select",
+   "label": "Default Sale Transaction Type",
+   "options": "\nSale\nBorrow\nSale\nBorrow"
+  },
+  {
+   "fieldname": "column_break_wphk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_sum_qty",
+   "fieldtype": "Check",
+   "label": "Allow Sum QTY"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_split_bill",
+   "fieldtype": "Check",
+   "label": "Allow Split Bill",
+   "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_customer_product_price",
+   "fieldtype": "Check",
+   "label": "Show in Customer Product Price",
+   "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order",
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_tgsv",
+   "fieldtype": "Section Break",
+   "label": "Outlets"
+  },
+  {
+   "fieldname": "product_outlets",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Product Outlets",
+   "read_only": 1
+  },
+  {
+   "fieldname": "product_units_tab",
+   "fieldtype": "Tab Break",
+   "label": "Product Units"
+  },
+  {
+   "fieldname": "product_units",
+   "fieldtype": "Table",
+   "label": "Product Units",
+   "options": "Product Units"
+  },
+  {
+   "fieldname": "inventory_tab",
+   "fieldtype": "Tab Break",
+   "label": "Inventory"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_inventory_product",
+   "fieldtype": "Check",
+   "label": "Is Inventory Product"
+  },
+  {
+   "depends_on": "eval:doc.is_inventory_product == 1",
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "set_only_once": 1
+  },
+  {
+   "depends_on": "eval:doc.is_inventory_product == 1",
+   "fieldname": "opening_quantity",
+   "fieldtype": "Float",
+   "label": "Opening Quantity",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "costing_method",
+   "fieldtype": "Select",
+   "label": "Costing Method",
+   "options": "Average Cost\nFixed Cost",
+   "translatable": 1
+  },
+  {
+   "fieldname": "cost",
+   "fieldtype": "Currency",
+   "label": "Cost",
+   "read_only_depends_on": "eval:doc.costing_method != \"Fixed Cost\""
+  },
+  {
+   "fieldname": "column_break_wqjy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.is_inventory_product == 1",
+   "fieldname": "default_sale_stock_location",
+   "fieldtype": "Link",
+   "label": "Default Sale Stock Location",
+   "options": "Stock Location"
+  },
+  {
+   "fieldname": "purchase_tab",
+   "fieldtype": "Tab Break",
+   "label": "Purchase"
+  },
+  {
+   "fieldname": "purchasing_section",
+   "fieldtype": "Section Break",
+   "label": "Purchasing"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_purchase",
+   "fieldtype": "Check",
+   "label": "Allow Purchase"
+  },
+  {
+   "fieldname": "purchase_price",
+   "fieldtype": "Currency",
+   "label": "Purchase Price"
+  },
+  {
+   "fieldname": "column_break_jzau",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "This is option to allow ICE product to Purchase Ice for other Ice Factory.",
+   "fieldname": "allow_purchase_in_purchase_ice_feature",
+   "fieldtype": "Check",
+   "label": "Allow Purchase in Purchase Ice Feature"
+  },
+  {
+   "fieldname": "tab_5_tab",
+   "fieldtype": "Tab Break",
+   "label": "Tab 5"
+  },
+  {
+   "fieldname": "product_outlet",
+   "fieldtype": "Table",
+   "options": "Product Outlet"
+  }
+ ],
+ "grid_page_length": 50,
+ "image_field": "photo",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-14 14:03:10.666123",
+ "modified_by": "Administrator",
+ "module": "Stock Management",
+ "name": "Product",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "product_name",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "product_name"
+}

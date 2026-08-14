@@ -1,0 +1,279 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-08-13 17:38:49.385214",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "info_section",
+  "naming_series",
+  "customer_name",
+  "customer_group",
+  "phone_number_1",
+  "phone_number_2",
+  "gender",
+  "keyword",
+  "address",
+  "column_break_qems",
+  "photo",
+  "is_customer",
+  "is_driver",
+  "is_company",
+  "can_split_bill",
+  "can_edit_bill",
+  "can_show_price",
+  "enabled",
+  "information_detail_section",
+  "company_name",
+  "column_break_eezd",
+  "plate_number",
+  "customer_product_price_section",
+  "product_prices",
+  "free_products_section",
+  "table_bvxf",
+  "summary_tab",
+  "html_customer_sumary_tab",
+  "recent_sale_tab",
+  "html_customer_recent_sale",
+  "recent_payment_tab",
+  "html_customer_recent_payment",
+  "borrow_product_tab",
+  "html_customer_borrow_return_product",
+  "calender_tab",
+  "html_calendar"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "CU.####"
+  },
+  {
+   "fieldname": "info_section",
+   "fieldtype": "Section Break",
+   "label": "Info"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_qems",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer Group",
+   "options": "Customer Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone_number_1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone Number 1"
+  },
+  {
+   "fieldname": "phone_number_2",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone Number 2"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Gender",
+   "options": "Male\nFemale"
+  },
+  {
+   "fieldname": "keyword",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Keyword",
+   "reqd": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_customer",
+   "fieldtype": "Check",
+   "label": "Is Customer"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_driver",
+   "fieldtype": "Check",
+   "label": "Is Driver"
+  },
+  {
+   "default": "0",
+   "fieldname": "can_split_bill",
+   "fieldtype": "Check",
+   "label": "Can Split Bill"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_company",
+   "fieldtype": "Check",
+   "label": "Is Company"
+  },
+  {
+   "default": "0",
+   "fieldname": "can_edit_bill",
+   "fieldtype": "Check",
+   "label": "Can Edit Bill"
+  },
+  {
+   "default": "0",
+   "fieldname": "can_show_price",
+   "fieldtype": "Check",
+   "label": "Can Show Price"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "information_detail_section",
+   "fieldtype": "Section Break",
+   "label": "Information Detail"
+  },
+  {
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Company Name"
+  },
+  {
+   "fieldname": "column_break_eezd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "plate_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Plate Number"
+  },
+  {
+   "fieldname": "customer_product_price_section",
+   "fieldtype": "Section Break",
+   "label": "Customer Product Price"
+  },
+  {
+   "fieldname": "product_prices",
+   "fieldtype": "Table",
+   "label": "Product Prices",
+   "options": "Customer Product Price"
+  },
+  {
+   "fieldname": "free_products_section",
+   "fieldtype": "Section Break",
+   "label": "Free Products"
+  },
+  {
+   "fieldname": "table_bvxf",
+   "fieldtype": "Table",
+   "options": "Customer Free Products"
+  },
+  {
+   "fieldname": "summary_tab",
+   "fieldtype": "Tab Break",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "html_customer_sumary_tab",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "recent_sale_tab",
+   "fieldtype": "Tab Break",
+   "label": "Recent Sale"
+  },
+  {
+   "fieldname": "html_customer_recent_sale",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "recent_payment_tab",
+   "fieldtype": "Tab Break",
+   "label": "Recent Payment"
+  },
+  {
+   "fieldname": "html_customer_recent_payment",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "borrow_product_tab",
+   "fieldtype": "Tab Break",
+   "label": "Borrow Product"
+  },
+  {
+   "fieldname": "html_customer_borrow_return_product",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "calender_tab",
+   "fieldtype": "Tab Break",
+   "label": "Calender"
+  },
+  {
+   "fieldname": "html_calendar",
+   "fieldtype": "HTML"
+  }
+ ],
+ "grid_page_length": 50,
+ "image_field": "photo",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-14 15:56:53.272181",
+ "modified_by": "Administrator",
+ "module": "Customer Management",
+ "name": "Customer",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "customer_name",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "customer_name"
+}

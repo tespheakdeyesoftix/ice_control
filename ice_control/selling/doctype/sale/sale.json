@@ -1,0 +1,495 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-08-13 17:24:47.490200",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "posting_date",
+  "reference_number",
+  "outlet",
+  "stock_location",
+  "seller",
+  "column_break_avnw",
+  "customer",
+  "customer_name",
+  "phone_number",
+  "customer_group",
+  "customer_photo",
+  "column_break_uekx",
+  "driver",
+  "driver_name",
+  "driver_phone_number",
+  "plate_number",
+  "driver_photo",
+  "sale_status",
+  "parent_bill_number",
+  "products_section",
+  "sale_products",
+  "section_break_iqzx",
+  "note",
+  "column_break_pqhl",
+  "sale_summary",
+  "total_quantity",
+  "total_free",
+  "total_quantity_return",
+  "total_split_quantity",
+  "total_sale_quantity",
+  "total_payment",
+  "total_amount",
+  "total_write_off",
+  "balance",
+  "payments_tab",
+  "html_payment_history",
+  "section_break_nkgl",
+  "payments_column",
+  "table_erlc",
+  "split_bill_list_tab",
+  "html_sale_split_bill_list",
+  "hidden_tab_tab",
+  "hidden_section_section",
+  "delete_note",
+  "deleted__by",
+  "deleted_date",
+  "column_break_fdmd",
+  "total_split_bill",
+  "update_from",
+  "column_break_ixdu",
+  "station",
+  "last_update_station",
+  "column_break_jdxc",
+  "status",
+  "id",
+  "enable_edit_mode",
+  "can_edit_bill",
+  "can_split_bill",
+  "can_show_price",
+  "section_break_ajey",
+  "product_qty",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SO.YYYY.-.####"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "reference_number",
+   "fieldtype": "Data",
+   "label": "Reference Number"
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "label": "Outlet",
+   "options": "Outlet"
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "label": "Stock Location",
+   "options": "Stock Location"
+  },
+  {
+   "fieldname": "seller",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Seller",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_avnw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "link_filters": "[[\"Customer\",\"is_customer\",\"=\",1]]",
+   "options": "Customer",
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_uekx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.phone_number_1",
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fetch_from": "customer.customer_group",
+   "fieldname": "customer_group",
+   "fieldtype": "Link",
+   "label": "Customer Group",
+   "options": "Customer Group"
+  },
+  {
+   "fetch_from": "customer.photo",
+   "fieldname": "customer_photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Customer Photo"
+  },
+  {
+   "default": "0",
+   "fieldname": "can_show_price",
+   "fieldtype": "Check",
+   "label": "Can Show Price"
+  },
+  {
+   "default": "0",
+   "fieldname": "can_split_bill",
+   "fieldtype": "Check",
+   "label": "Can Split Bill"
+  },
+  {
+   "default": "0",
+   "fieldname": "can_edit_bill",
+   "fieldtype": "Check",
+   "label": "Can Edit Bill"
+  },
+  {
+   "bold": 1,
+   "fieldname": "driver",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Driver",
+   "link_filters": "[[\"Customer\",\"is_driver\",\"=\",1]]",
+   "options": "Customer",
+   "search_index": 1
+  },
+  {
+   "fetch_from": "driver.customer_name",
+   "fieldname": "driver_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Driver Name"
+  },
+  {
+   "fetch_from": "driver.phone_number_1",
+   "fieldname": "driver_phone_number",
+   "fieldtype": "Data",
+   "label": "Driver Phone Number"
+  },
+  {
+   "bold": 1,
+   "fetch_from": "driver.plate_number",
+   "fetch_if_empty": 1,
+   "fieldname": "plate_number",
+   "fieldtype": "Data",
+   "label": "Plate Number"
+  },
+  {
+   "fetch_from": "driver.photo",
+   "fieldname": "driver_photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Driver Photo"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "sale_status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Sale Status",
+   "options": "Draft\nClosed\nDeleted",
+   "search_index": 1
+  },
+  {
+   "fieldname": "parent_bill_number",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Parent Bill Number",
+   "search_index": 1
+  },
+  {
+   "fieldname": "products_section",
+   "fieldtype": "Section Break",
+   "label": "Products"
+  },
+  {
+   "fieldname": "sale_products",
+   "fieldtype": "Table",
+   "label": "Sale Products",
+   "options": "Sale Products",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_iqzx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "column_break_pqhl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sale_summary",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Total Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_free",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Total Free",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_quantity_return",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Total Quantity Return",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_split_quantity",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Total Split Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_sale_quantity",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Total Sale Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_payment",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Total Payment",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Total Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_write_off",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Total Write Off",
+   "read_only": 1
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Balance"
+  },
+  {
+   "fieldname": "hidden_section_section",
+   "fieldtype": "Section Break",
+   "label": "Hidden Section"
+  },
+  {
+   "fieldname": "delete_note",
+   "fieldtype": "Data",
+   "label": "Delete Note"
+  },
+  {
+   "fieldname": "deleted__by",
+   "fieldtype": "Data",
+   "label": "Deleted  By"
+  },
+  {
+   "fieldname": "deleted_date",
+   "fieldtype": "Datetime",
+   "label": "Deleted Date"
+  },
+  {
+   "fieldname": "column_break_fdmd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_split_bill",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Total Split Bill"
+  },
+  {
+   "fieldname": "update_from",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Update From",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ixdu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jdxc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Status",
+   "options": "Unpaid\nPaid\nPartially Paid\nDeleted"
+  },
+  {
+   "fieldname": "id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "ID",
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_edit_mode",
+   "fieldtype": "Check",
+   "label": "Enable Edit Mode"
+  },
+  {
+   "fieldname": "station",
+   "fieldtype": "Link",
+   "label": "Station",
+   "options": "Station"
+  },
+  {
+   "fieldname": "last_update_station",
+   "fieldtype": "Link",
+   "label": "Last Update Station",
+   "options": "Station"
+  },
+  {
+   "fieldname": "payments_tab",
+   "fieldtype": "Tab Break",
+   "label": "Payments"
+  },
+  {
+   "fieldname": "html_payment_history",
+   "fieldtype": "HTML",
+   "options": "<div id=\"payment_history\"></div>"
+  },
+  {
+   "fieldname": "split_bill_list_tab",
+   "fieldtype": "Tab Break",
+   "label": "Split Bill List"
+  },
+  {
+   "depends_on": "eval:frappe.session.user === \"Administrator\"",
+   "fieldname": "hidden_tab_tab",
+   "fieldtype": "Tab Break",
+   "label": "Hidden Tab"
+  },
+  {
+   "fieldname": "html_sale_split_bill_list",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "product_qty",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Product QTY",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Sale",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_nkgl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payments_column",
+   "fieldtype": "Column Break",
+   "label": "Payments"
+  },
+  {
+   "fieldname": "table_erlc",
+   "fieldtype": "Table",
+   "options": "POS Sale Payment"
+  },
+  {
+   "fieldname": "section_break_ajey",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "image_field": "customer_photo",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-14 15:06:08.491603",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Sale",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,163 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-08-14 08:52:30.268521",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "employee_code",
+  "employee_name",
+  "phone_number",
+  "address",
+  "photo",
+  "column_break_ndwj",
+  "default_frontend_home_page",
+  "default_outlet",
+  "outlets",
+  "section_break_ayka",
+  "login_information_column",
+  "allow_login",
+  "username",
+  "password",
+  "role_profile",
+  "user_id",
+  "language"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series"
+  },
+  {
+   "fieldname": "employee_code",
+   "fieldtype": "Data",
+   "label": "Employee Code",
+   "unique": 1
+  },
+  {
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Photo"
+  },
+  {
+   "fieldname": "column_break_ndwj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_frontend_home_page",
+   "fieldtype": "Select",
+   "label": "Default Frontend Home Page",
+   "options": "/selling"
+  },
+  {
+   "fieldname": "default_outlet",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Default Outlet",
+   "options": "Outlet",
+   "reqd": 1
+  },
+  {
+   "fieldname": "outlets",
+   "fieldtype": "Table",
+   "label": "Outlets",
+   "options": "Outlet Child"
+  },
+  {
+   "fieldname": "section_break_ayka",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "login_information_column",
+   "fieldtype": "Column Break",
+   "label": "Login Information"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_login",
+   "fieldtype": "Check",
+   "label": "Allow Login"
+  },
+  {
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "label": "Username"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Data",
+   "label": "Password"
+  },
+  {
+   "fieldname": "role_profile",
+   "fieldtype": "Link",
+   "label": "Role Profile",
+   "options": "Role Profile"
+  },
+  {
+   "depends_on": "eval:frappe.session.user==\"Administrator\"",
+   "fieldname": "user_id",
+   "fieldtype": "Data",
+   "label": "User ID"
+  },
+  {
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "label": "Language",
+   "options": "Language"
+  }
+ ],
+ "grid_page_length": 50,
+ "image_field": "photo",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "make_attachments_public": 1,
+ "modified": "2026-08-14 09:27:09.491309",
+ "modified_by": "Administrator",
+ "module": "HR",
+ "name": "Employee",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "employee_name",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "employee_name"
+}

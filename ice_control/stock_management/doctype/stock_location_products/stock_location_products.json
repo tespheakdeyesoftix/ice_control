@@ -1,0 +1,96 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-08-14 14:40:20.865500",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "product_code",
+  "product_name",
+  "stock_location",
+  "vendor",
+  "unit",
+  "quantity",
+  "cost"
+ ],
+ "fields": [
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Product Code",
+   "options": "Product",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "product_code.product_name",
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Product Name"
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Stock Location",
+   "options": "Stock Location"
+  },
+  {
+   "fieldname": "vendor",
+   "fieldtype": "Link",
+   "label": "Vendor",
+   "options": "Vendor"
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unit",
+   "options": "Unit"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity"
+  },
+  {
+   "fieldname": "cost",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Cost"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-14 14:45:37.411473",
+ "modified_by": "Administrator",
+ "module": "Stock Management",
+ "name": "Stock Location Products",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

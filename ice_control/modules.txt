@@ -1,1 +1,7 @@
 Ice Factory Management System
+Selling
+Setting
+Stock Management
+Customer Management
+HR
+Purchase Order

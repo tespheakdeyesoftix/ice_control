@@ -1,0 +1,169 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-08-14 13:52:35.752979",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "posting_date",
+  "stock_location",
+  "product_code",
+  "product_name",
+  "base_unit",
+  "unit",
+  "multiplier",
+  "quantity",
+  "ref_doctype",
+  "ref_docname",
+  "opening_quantity",
+  "in_quantity",
+  "out_quantity",
+  "balance",
+  "current_cost",
+  "new_cost",
+  "note",
+  "is_calculate_cost"
+ ],
+ "fields": [
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Posting Date",
+   "search_index": 1
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "search_index": 1
+  },
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Link",
+   "label": "Product Code",
+   "options": "Product",
+   "search_index": 1
+  },
+  {
+   "fetch_from": "product_code.product_name",
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "label": "Product Name"
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fieldname": "base_unit",
+   "fieldtype": "Link",
+   "label": "Base Unit",
+   "options": "Unit"
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unit",
+   "options": "Unit"
+  },
+  {
+   "fieldname": "multiplier",
+   "fieldtype": "Float",
+   "label": "Multiplier"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "label": "Quantity"
+  },
+  {
+   "fieldname": "ref_doctype",
+   "fieldtype": "Link",
+   "label": "Ref Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "ref_docname",
+   "fieldtype": "Dynamic Link",
+   "label": "Ref Docname",
+   "options": "ref_doctype"
+  },
+  {
+   "fieldname": "opening_quantity",
+   "fieldtype": "Float",
+   "label": "Opening Quantity"
+  },
+  {
+   "fieldname": "in_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "In Quantity"
+  },
+  {
+   "fieldname": "out_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Out Quantity"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Balance"
+  },
+  {
+   "fieldname": "current_cost",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Current Cost"
+  },
+  {
+   "fieldname": "new_cost",
+   "fieldtype": "Currency",
+   "label": "New Cost"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Data",
+   "label": "Note"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_calculate_cost",
+   "fieldtype": "Check",
+   "label": "Is Calculate Cost"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-14 14:00:49.268914",
+ "modified_by": "Administrator",
+ "module": "Stock Management",
+ "name": "Inventory Transactions",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
