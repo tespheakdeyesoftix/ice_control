@@ -2,28 +2,37 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "hash",
  "creation": "2026-08-14 13:52:35.752979",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "posting_date",
   "stock_location",
+  "base_unit",
+  "is_calculate_cost",
+  "column_break_mwvd",
   "product_code",
   "product_name",
-  "base_unit",
   "unit",
-  "multiplier",
+  "section_break_kxcl",
   "quantity",
-  "ref_doctype",
-  "ref_docname",
+  "multiplier",
+  "column_break_riyz",
   "opening_quantity",
+  "balance",
+  "section_break_zayz",
+  "ref_doctype",
+  "column_break_yoky",
+  "ref_docname",
+  "section_break_emni",
+  "current_cost",
+  "cost",
+  "column_break_ypty",
   "in_quantity",
   "out_quantity",
-  "balance",
-  "current_cost",
-  "new_cost",
-  "note",
-  "is_calculate_cost"
+  "section_break_jcwm",
+  "note"
  ],
  "fields": [
   {
@@ -46,6 +55,8 @@
   {
    "fieldname": "product_code",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Product Code",
    "options": "Product",
    "search_index": 1
@@ -84,12 +95,15 @@
   {
    "fieldname": "ref_doctype",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Ref Doctype",
    "options": "DocType"
   },
   {
    "fieldname": "ref_docname",
    "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Ref Docname",
    "options": "ref_doctype"
   },
@@ -123,13 +137,8 @@
    "label": "Current Cost"
   },
   {
-   "fieldname": "new_cost",
-   "fieldtype": "Currency",
-   "label": "New Cost"
-  },
-  {
    "fieldname": "note",
-   "fieldtype": "Data",
+   "fieldtype": "Long Text",
    "label": "Note"
   },
   {
@@ -137,15 +146,53 @@
    "fieldname": "is_calculate_cost",
    "fieldtype": "Check",
    "label": "Is Calculate Cost"
+  },
+  {
+   "fieldname": "cost",
+   "fieldtype": "Currency",
+   "label": "New Cost"
+  },
+  {
+   "fieldname": "column_break_mwvd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_kxcl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_riyz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_zayz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_yoky",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_emni",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ypty",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_jcwm",
+   "fieldtype": "Section Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-14 14:00:49.268914",
+ "modified": "2026-08-21 15:10:49.588210",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Inventory Transactions",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {

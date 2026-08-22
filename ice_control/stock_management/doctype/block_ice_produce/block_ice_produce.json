@@ -1,0 +1,228 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-08-17 09:16:54.036834",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "block_ice_produce_information_tab",
+  "section_break_fs8l",
+  "naming_series",
+  "posting_date",
+  "photo",
+  "stock_location",
+  "column_break_fxbb",
+  "outlet",
+  "section_break_emlx",
+  "produce_quantity",
+  "section_break_rpza",
+  "note",
+  "amended_from",
+  "column_break_rkyz",
+  "html_block_ice_produce_summary",
+  "max_produce_quantity",
+  "total_produce_quantity",
+  "total_defected_quantity",
+  "total_remaining_quantity",
+  "produce_grid_1_to_4_tab",
+  "html_wvzz",
+  "column_break_azpj",
+  "html_vrgm",
+  "section_break_efvu",
+  "html_zqyt",
+  "column_break_upie",
+  "html_lxyx"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_fs8l",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Block Ice Produce",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "BIP.YYYY.-.####"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Stock Location",
+   "options": "Stock Location"
+  },
+  {
+   "fieldname": "column_break_fxbb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "label": "Outlet",
+   "options": "Outlet",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_emlx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "produce_quantity",
+   "fieldtype": "Table",
+   "options": "Block Ice Produce Grid Child"
+  },
+  {
+   "fieldname": "section_break_rpza",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "column_break_rkyz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "html_block_ice_produce_summary",
+   "fieldtype": "HTML"
+  },
+  {
+   "default": "0",
+   "fieldname": "max_produce_quantity",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Max Produce Quantity",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_produce_quantity",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Total Produce Quantity",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_defected_quantity",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Total Defected Quantity",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_remaining_quantity",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Total Remaining Quantity",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "block_ice_produce_information_tab",
+   "fieldtype": "Tab Break",
+   "label": "Block Ice Produce Information"
+  },
+  {
+   "fieldname": "produce_grid_1_to_4_tab",
+   "fieldtype": "Tab Break",
+   "label": "Produce Grid 1 to 4"
+  },
+  {
+   "fieldname": "html_wvzz",
+   "fieldtype": "HTML",
+   "options": "<div id=\"GRD-0001\"></div>"
+  },
+  {
+   "fieldname": "column_break_azpj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "html_vrgm",
+   "fieldtype": "HTML",
+   "options": "<div id=\"GRD-0002\"></div>"
+  },
+  {
+   "fieldname": "section_break_efvu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "html_zqyt",
+   "fieldtype": "HTML",
+   "options": "<div id=\"GRD-0003\"></div>"
+  },
+  {
+   "fieldname": "column_break_upie",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "html_lxyx",
+   "fieldtype": "HTML",
+   "options": "<div id=\"GRD-0004\"></div>"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-08-17 16:31:20.324778",
+ "modified_by": "Administrator",
+ "module": "Stock Management",
+ "name": "Block Ice Produce",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

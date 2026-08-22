@@ -1,6 +1,6 @@
 import frappe
 
-def add_inventory_transaction(data):
+def add_inventory_transaction(data=list[dict]):
     # here is sample data
     # {
 	# 		"ref_doctype":self.doctype,
@@ -34,8 +34,8 @@ def add_inventory_transaction(data):
             doc.in_quantity = abs(doc.quantity) if doc.quantity > 0 else 0 
             doc.out_quantity = abs(doc.quantity) if doc.quantity < 0 else 0 
         else:
-            doc.in_quantity = abs(doc.quantity) * doc.multiplier if doc.quantity > 0 else 0 
-            doc.out_quantity = abs(doc.quantity) * doc.multiplier if doc.quantity < 0 else 0 
+            doc.in_quantity = abs(doc.quantity or 0) * (doc.multiplier or 1) if (doc.quantity or o) > 0 else 0 
+            doc.out_quantity = abs(doc.quantity or 0) * (doc.multiplier or 1) if (doc.quantity or 0) < 0 else 0 
         doc.balance = (doc.opening_quantity or 0) + (doc.in_quantity or 0) - (doc.out_quantity or 0)
         
         product_cost = stock_location_product.get("cost") if stock_location_product else (doc.cost or 0)
@@ -58,12 +58,12 @@ def add_inventory_transaction(data):
                 "unit": doc.base_unit,
                 "stock_location":doc.stock_location,
                 "quantity": doc.balance,
-                "cost":doc.cost
+                "cost":doc.cost or 0
             }).insert(ignore_permissions=True)
         else:
             frappe.db.set_value("Stock Location Products", stock_location_product.get("name"), {
                 "quantity": doc.balance,
-                "cost": product_cost
+                "cost": product_cost or 0
             })
 
         

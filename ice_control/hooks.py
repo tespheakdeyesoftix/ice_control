@@ -4,6 +4,10 @@ app_publisher = "Tes Pheakdey"
 app_description = "Ice produce management"
 app_email = "pheakdey.micronet@gmail.com"
 app_license = "mit"
+app_logo_url = "/assets/ice_control/logo.png"
+develop_version = "1.0.0-develop"
+app_home = "/desk/selling"
+
 
 # Send non-GET requests for this app's endpoints as native `application/json`
 # bodies instead of form-encoded, per-key JSON-stringified values.
@@ -17,11 +21,11 @@ use_json_request_body = True
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
 # 	{
-# 		"name": "ice_control",
+# 		"name": "ICE Management",
 # 		"logo": "/assets/ice_control/logo.png",
-# 		"title": "Ice Factory Management System",
-# 		"route": "/ice_control",
-# 		"has_permission": "ice_control.api.permission.has_app_permission",
+# 		"title": "Ice Managment",
+# 		"route": "/app/selling",
+
 # 	}
 # ]
 
@@ -29,12 +33,16 @@ use_json_request_body = True
 # their workspaces into the host app's workspace dock (rail) with this hook. Declaring it keeps
 # the app off the apps screen, so it takes precedence over any add_to_apps_screen above. Who can
 # see a pinned workspace is controlled by that workspace's own Roles table.
-# add_to_workspace_dock = [
-# 	{
-# 		"app": "erpnext",
-# 		"workspace": "My Workspace",
-# 	}
-# ]
+add_to_workspace_dock = [
+	{
+		"app": "ice_control",
+		"workspace": "Selling",
+	},
+	{
+		"app": "ice_control",
+		"workspace": "Stock Management",
+	}
+]
 
 # Includes in <head>
 # ------------------
@@ -42,6 +50,17 @@ use_json_request_body = True
 # include js, css files in header of desk.html
 # app_include_css = "/assets/ice_control/css/ice_control.css"
 # app_include_js = "/assets/ice_control/js/ice_control.js"
+
+app_include_css = [
+		"/assets/ice_control/css/ice_control.css",
+]
+app_include_js = [
+	"/assets/ice_control/js/ice_control.js",
+	"/assets/ice_control/js/return_product.js",
+    "/assets/ice_control/js/workspace_outlet_filter.js"
+]
+
+
 
 # include js, css files in header of web template
 # web_include_css = "/assets/ice_control/css/ice_control.css"
@@ -137,13 +156,18 @@ use_json_request_body = True
 
 # notification_config = "ice_control.notifications.get_notification_config"
 
+boot_session = "ice_control.boot.boot_session"
+
 # Permissions
 # -----------
 # Permissions evaluated in scripted ways
 
-# permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
+permission_query_conditions = {
+	"Employee":  "ice_control.hr.doctype.employee.employee.get_permission_query_conditions",
+	"Role": "ice_control.api.permission.role_has_permission",
+	"Module Def": "ice_control.api.permission.module_def_has_permission"
+}
+
 #
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
@@ -197,7 +221,9 @@ use_json_request_body = True
 
 # Overriding Methods
 # ------------------------------
-#
+
+from ice_control import overrides
+
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "ice_control.event.get_events"
 # }
@@ -276,3 +302,7 @@ require_type_annotated_api_methods = True
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+
+fixtures = [
+	{"dt": "HTML Template"}
+]

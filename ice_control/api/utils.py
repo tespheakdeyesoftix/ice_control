@@ -12,10 +12,11 @@ from frappe.utils import get_files_path
 from frappe.utils.file_manager import save_file
 
 from frappe.utils.caching import redis_cache
-  
+from datetime import date, datetime
 
 
-def replace_format(string):    
+
+def replace_format(string):
     from datetime import datetime
     short_year = datetime.now().strftime("%y")
     year = datetime.now().strftime("%Y")
@@ -25,7 +26,7 @@ def replace_format(string):
 @frappe.whitelist()
 def reset_sale_transaction(password):
     if password == "eposadmin@855855" and frappe.session.user == "Administrator":
-        frappe.db.sql("delete from `tabGL Entry`")
+
         frappe.db.sql("delete from `tabSale`")
         frappe.db.sql("delete from `tabSale Products`")
         frappe.db.sql("delete from `tabSale Payment`")
@@ -39,8 +40,8 @@ def reset_sale_transaction(password):
         frappe.db.sql("delete from `tabJournal Entry`")
 
         doctypes = ["GL Entry","Sale","Sale Payment","Bulk Sale Payment","Closed Selling Date","Closed Selling Date Data","Stock In","Journal Entry"]
-        for d in doctypes:   
-            formats = ""        
+        for d in doctypes:
+            formats = ""
             if d == "GL Entry":
                 formats = "GLE.YYYY.-.#####"
             elif d == "Closed Selling Date Data":
@@ -55,7 +56,7 @@ def reset_sale_transaction(password):
         return "reset"
     else:
         return "wrong password"
- 
+
 def ensure_date(posting_date,creation):
     from datetime import datetime,date,time
     a = datetime.strptime(creation, "%Y-%m-%d %H:%M:%S.%f")
@@ -71,7 +72,7 @@ def ensure_date(posting_date,creation):
 
 # we call this from hook
 @frappe.whitelist()
-def validate_close_date(doc,method):   
+def validate_close_date(doc,method):
     if doc.doctype in get_validate_close_date_doctype():
         frappe.msgprint("validate close date from hook")
         get_previous_closed_date(doc.posting_date, doc.creation, doc.outlet)
@@ -80,12 +81,12 @@ def validate_close_date(doc,method):
 def get_validate_close_date_doctype():
     data = frappe.db.sql("select closed_doctype from `tabClosed Selling Date Doctype`",as_dict = 1)
     return [d.get("closed_doctype") for d in data]
- 
-@frappe.whitelist() 
-def get_previous_closed_date(posting_date:str,creation:str,outlet:str):
- 
+
+@frappe.whitelist()
+def get_previous_closed_date(posting_date:str|date,creation:str|datetime,outlet:str|None):
+
     b = frappe.db.sql("select posting_date,creation from `tabClosed Selling Date` where docstatus=1 and outlet = '{0}' order by CONCAT(posting_date,' ',DATE_FORMAT(modified, '%H:%i:%s')) desc limit 1".format(outlet),as_dict=1)
- 
+
     if len(b or []) > 0:
         posting_date =frappe.utils.getdate(ensure_date(str(posting_date),str(creation)))
         previous_closed_date = frappe.utils.getdate(ensure_date(str(b[0]["posting_date"]),str(b[0]["creation"])))
@@ -93,61 +94,77 @@ def get_previous_closed_date(posting_date:str,creation:str,outlet:str):
 
         if previous_closed_date >= posting_date:
             frappe.throw("អ្នកមិនធ្វើប្រតិបត្តិការនេះបានទេ។ ព្រោះថ្ងៃទី {} ត្រូបានបិទបញ្ជីររួចហើយ.".format(frappe.format(previous_closed_date,{"fieldtype":"Date"})))
-    
+
 
 @frappe.whitelist()
 def get_currency_symbol(currency):
     symbol = frappe.get_cached_value("Currency", currency, "symbol")
     return symbol
- 
+
 @frappe.whitelist()
 def get_meta(doctype=None):
     data =  frappe.get_meta(doctype)
     return data
 
 @frappe.whitelist(allow_guest=True)
-def get_setting(station_name=""):
+def get_setting(station_name:str="",outlet:str=None):
     data  = frappe.get_cached_doc("Business Information",None)
     data =json.loads( frappe.as_json(data))
 
+    # system_setting = frappe.get_cached_doc("Setting",None)
+    # data["server_report_url"] = setting.server_report_url
+    # data["report_service_url"] = setting.report_service_url
+    # data["server_report_token"] = setting.server_report_token
+
+
     if station_name:
-        
+
         if frappe.db.exists("Station", station_name):
             data["can_login_multi_site"]  = frappe.get_cached_value("Station",station_name,"can_login_multi_site")
 
-            data["outlet"]  = frappe.get_cached_value("Station",station_name,"outlet")
-            
+            data["outlet"]  = outlet or  frappe.get_cached_value("Station",station_name,"outlet")
+
             data["default_unit"]  = frappe.get_cached_value("Outlet",data.get("outlet"),"default_unit")
+            data["default_stock_location"]  = frappe.get_cached_value("Outlet",data.get("outlet"),"default_stock_location")
 
 
     data["currency"] = frappe.get_cached_value("System Settings", None, "currency")
     data["currency_symbol"] = frappe.get_cached_value("Currency",data.get("currency"),"symbol")
     data["second_currency_symbol"] = frappe.get_cached_value("Currency",data.get("second_currency"),"symbol")
-    
+
     # payment type
-    payment_types = frappe.db.get_list("Payment Type",["name","currency","exchange_rate"])
-    data["payment_types"] = payment_types    
+    payment_types = frappe.db.get_list("Payment Type",["name","currency"],ignore_permissions=True)
 
-    # get exchange rate
-    exchange_rate = 1
-    exchange_rate_data =  frappe.db.sql("select currency_exchange_rate from `tabExchange Rate` where from_currency=%(from_currency)s and to_currency =  %(to_currency)s and docstatus = 1 order by creation desc  limit 1",{"from_currency":data.get("currency"),"to_currency":data.get("second_currency")},as_dict = 1)
-    if exchange_rate_data:
-        from decimal import Decimal
-        exchange_rate = Decimal( exchange_rate_data[0].get("currency_exchange_rate",1))
+    for p in payment_types:
+        p["exchange_rate"] = get_exchange_rate(from_currency=p.get("currency"), to_currency = data.get("currency"))
+    data["payment_types"] = payment_types
 
+    exchange_rate = get_exchange_rate(from_currency=data.get("currency"),to_currency=data.get("second_currency"))
     data["exchange_rate"]  = exchange_rate
     data["exchange_rate_display"]  = exchange_rate if exchange_rate>1 else 1/exchange_rate
     return data
-    
+
+
+
+def get_exchange_rate(from_currency:str=None, to_currency:str=None)->dict:
+
+    exchange_rate = 1
+    exchange_rate_data =  frappe.db.sql("select currency_exchange_rate from `tabExchange Rate` where from_currency=%(from_currency)s and to_currency =  %(to_currency)s and docstatus = 1 order by creation desc  limit 1",{"from_currency":from_currency,"to_currency":to_currency},as_dict = 1)
+    if exchange_rate_data:
+        from decimal import Decimal
+        exchange_rate = Decimal( exchange_rate_data[0].get("currency_exchange_rate",1))
+    return exchange_rate
+
+
 
 @frappe.whitelist(allow_guest=True)
 def check_api_url(property_code,station_name,old_station_name):
     if not station_name:
         frappe.throw(_("Please enter your device name"))
-        
+
     doc = frappe.get_cached_doc("Business Information",None)
     if doc.property_code ==  property_code:
-        
+
         # check station
         if station_name != old_station_name:
             if frappe.db.exists("Station", station_name):
@@ -155,26 +172,25 @@ def check_api_url(property_code,station_name,old_station_name):
                     frappe.throw(_("This station name is already in used"))
             else:
                 frappe.throw(_("This station name is not exist"))
-                
-            
-        
+
+
+
         return {
             "property_code":property_code,
-            "property_name":doc.business_name_en, 
+            "property_name":doc.business_name_en,
             "photo":doc.photo,
             "station_name":station_name,
             "outlet":frappe.get_cached_value("Station",station_name,"outlet"),
             "can_login_multi_site":frappe.get_cached_value("Station",station_name,"can_login_multi_site")
     }
-       
+
     frappe.throw(_("Property {property_code} does not exist").format(property_code=property_code))
 
- 
 
 def generate_keys(user):
 	"""
 	generate api key and api secret
- 
+
 	:param user: str
 	"""
 	# frappe.only_for("System Manager")
@@ -193,12 +209,12 @@ def generate_keys(user):
 
 @frappe.whitelist(allow_guest=True)
 def check_user_login(property):
- 
+
     if frappe.session.sid == "Guest":
         frappe.response["message"] =  frappe.session.sid
     else:
         frappe.response["message"] = get_response_user_information(property)
-        
+
 def get_response_user_information(property):
     phone_number =""
     address =""
@@ -208,20 +224,20 @@ def get_response_user_information(property):
     home_page = ""
     role_profile=""
     user = frappe.get_doc("User", frappe.session.user)
-    
+
 
     sql = """
-        select 
+        select
            *
-        from `tabEmployee` 
-        where 
-            user_id = '{}' 
+        from `tabEmployee`
+        where
+            user_id = '{}'
         limit 1
     """.format(frappe.session.user)
 
     data = frappe.db.sql(sql, as_dict=1)
     user_info={}
-    
+
     if data:
         position = data[0].get("position")
         employee_id = data[0].get("name")
@@ -233,11 +249,11 @@ def get_response_user_information(property):
         role_profile = data[0].get("role_profile")
         user_info=data[0]
 
-        
+
 
     api_generate = generate_keys(frappe.session.user)
-    # get home_page 
-    
+    # get home_page
+
 
     return {
             "username":user.username,
@@ -252,7 +268,7 @@ def get_response_user_information(property):
             "employee_id":employee_id,
             "home_page":home_page,
             "user_info":user_info
-           
+
 
     }
 
@@ -269,7 +285,7 @@ def on_login(login_manager):
     #     outlets = frappe.get_list("Outlet")
     #     if outlets:
     #         default_outlet = outlets[0].name
- 
+
     # if default_outlet:
     #     set_session_default_values(
     #         {"outlet":default_outlet}
@@ -278,7 +294,7 @@ def on_login(login_manager):
 
 @frappe.whitelist()
 def getCurrentUser():
-    return   frappe.get_cached_doc("User", frappe.session.user)   
+    return   frappe.get_cached_doc("User", frappe.session.user)
 
 def get_default_outlet():
     sql="select default_outlet from `tabEmployee` where user_id = %(user_id)s"
@@ -298,9 +314,9 @@ def money_to_word(amount=7569556,currency="KHR"):
         return number_to_word(int(first_number)) + "លាន" + number_to_word(int(amount[-6:] )) + " " + ("រៀល" if currency=="KHR" else "ដុល្លា")
     else:
         return number_to_word(int(amount)) + " " + ("រៀល" if currency=="KHR" else "ដុល្លា")
-    
+
 def number_to_word(amount=7569556):
-    
+
     khmer_digit = ["","មួយ","ពីរ","បី","បួន","ប្រាំ","ប្រាំមួយ","ប្រាំពីរ","ប្រាំបី","ប្រាំបួន"]
     khmer_unit = ["","ដប់","រយ","ពាន់","ម៉ឺន","សែន","លាន"]
     tens_words = ['', 'ដប់', 'ម្ភៃ', 'សាមសិប', 'សែសិប', 'ហាសិប', 'ហុកសិប', 'ចិតសិប', 'ប៉ែតសិប', 'កៅសិប']
@@ -309,15 +325,15 @@ def number_to_word(amount=7569556):
     for index, w in enumerate(str(amount)):
         n= n -1
         if n == 1: # we are at 10 word
-            khmer_number +=tens_words[int(w)] 
+            khmer_number +=tens_words[int(w)]
         else:
-            khmer_number = khmer_number + khmer_digit[int(w)] 
-            
+            khmer_number = khmer_number + khmer_digit[int(w)]
+
         if w !="0" and n>1:
             khmer_number = khmer_number + khmer_unit[n]
 
     return khmer_number
- 
+
 
 def clear_cache(doc, method):
     frappe.clear_document_cache(doc.doctype,doc.name)
@@ -388,7 +404,7 @@ def get_sale_product_changed(old_list, new_list,compare_field="product_code"):
                 "price": old_item.get("price"),
                 "unit":old_item.get("unit"),
                 "stock_location":old_item.get("stock_location"),
-            
+
             })
 
     # 3. Check for added products
@@ -431,7 +447,7 @@ def get_count(doctype, filters=None, or_filters=None):
             key = f"or_param_{idx}"
             or_parts.append(f"{field} {op} %({key})s")
             params[key] = value
-        
+
         # join OR conditions
         where_clauses.append("(" + " OR ".join(or_parts) + ")")
 
@@ -450,3 +466,36 @@ def get_count(doctype, filters=None, or_filters=None):
     # Execute SQL + return integer
     result = frappe.db.sql(sql, params, as_dict=True)
     return result[0].total if result else 0
+
+
+
+ 
+
+def update_doc(
+    doctype: str,
+    name: str,
+    data: dict | str,
+    doc_flags: dict | str | None = None,
+):
+    if isinstance(data, str):
+        data = json.loads(data)
+
+    if isinstance(doc_flags, str):
+        doc_flags = json.loads(doc_flags)
+
+    print("DATA:", data)
+    print("DOC FLAGS:", doc_flags)
+
+    doc = frappe.get_doc(doctype, name)
+
+    # Set document fields
+    for field, value in data.items():
+        doc.set(field, value)
+
+    # Set Frappe document flags
+    if doc_flags:
+        doc.flags.update(doc_flags)
+
+    doc.save()
+
+    return doc

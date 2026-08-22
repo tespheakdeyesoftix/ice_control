@@ -14,6 +14,7 @@
   "base_unit",
   "allow_split_bill",
   "sale_transaction_type",
+  "allow_change_sale_type",
   "column_break_mbcc",
   "unit",
   "multiplier",
@@ -69,7 +70,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Product Name",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "product_code.photo",
@@ -108,7 +110,8 @@
    "fieldname": "unit",
    "fieldtype": "Link",
    "label": "Unit",
-   "options": "Unit"
+   "options": "Unit",
+   "search_index": 1
   },
   {
    "default": "1",
@@ -132,7 +135,8 @@
    "fieldname": "revenue_group",
    "fieldtype": "Link",
    "label": "Revenue Group",
-   "options": "Revenue Group"
+   "options": "Revenue Group",
+   "reqd": 1
   },
   {
    "default": "0",
@@ -270,13 +274,20 @@
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.allow_change_sale_type",
+   "fieldname": "allow_change_sale_type",
+   "fieldtype": "Check",
+   "label": "Allow Change Sale Type"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-08-14 15:09:19.320040",
+ "modified": "2026-08-19 10:37:09.744546",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Products",

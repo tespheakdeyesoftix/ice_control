@@ -7,7 +7,12 @@
  "engine": "InnoDB",
  "field_order": [
   "app_name",
-  "logo"
+  "logo",
+  "report_server_config_tab",
+  "server_report_url",
+  "report_service_url",
+  "column_break_xnrd",
+  "server_report_token"
  ],
  "fields": [
   {
@@ -19,6 +24,30 @@
    "fieldname": "logo",
    "fieldtype": "Attach Image",
    "label": "Logo"
+  },
+  {
+   "fieldname": "report_server_config_tab",
+   "fieldtype": "Tab Break",
+   "label": "Report Server Config"
+  },
+  {
+   "fieldname": "server_report_url",
+   "fieldtype": "Data",
+   "label": "Server Report URL"
+  },
+  {
+   "fieldname": "report_service_url",
+   "fieldtype": "Data",
+   "label": "Report Service URL"
+  },
+  {
+   "fieldname": "column_break_xnrd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "server_report_token",
+   "fieldtype": "Small Text",
+   "label": "Server Report Token"
   }
  ],
  "grid_page_length": 50,
@@ -26,7 +55,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-08-14 10:55:31.140297",
+ "modified": "2026-08-20 09:29:44.585857",
  "modified_by": "Administrator",
  "module": "Setting",
  "name": "Setting",

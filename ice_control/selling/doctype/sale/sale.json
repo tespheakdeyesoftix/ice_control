@@ -11,6 +11,7 @@
   "posting_date",
   "reference_number",
   "outlet",
+  "outlet_unit",
   "stock_location",
   "seller",
   "column_break_avnw",
@@ -38,21 +39,22 @@
   "total_quantity_return",
   "total_split_quantity",
   "total_sale_quantity",
-  "total_payment",
   "total_amount",
+  "total_payment",
   "total_write_off",
   "balance",
   "payments_tab",
   "html_payment_history",
   "section_break_nkgl",
   "payments_column",
-  "table_erlc",
+  "payments",
   "split_bill_list_tab",
   "html_sale_split_bill_list",
   "hidden_tab_tab",
   "hidden_section_section",
-  "delete_note",
-  "deleted__by",
+  "created_by",
+  "deleted_note",
+  "deleted_by",
   "deleted_date",
   "column_break_fdmd",
   "total_split_bill",
@@ -81,7 +83,8 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "search_index": 1
   },
   {
    "fieldname": "reference_number",
@@ -92,7 +95,8 @@
    "fieldname": "outlet",
    "fieldtype": "Link",
    "label": "Outlet",
-   "options": "Outlet"
+   "options": "Outlet",
+   "search_index": 1
   },
   {
    "fieldname": "stock_location",
@@ -115,7 +119,6 @@
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_global_search": 1,
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Customer",
    "link_filters": "[[\"Customer\",\"is_customer\",\"=\",1]]",
@@ -177,7 +180,6 @@
    "bold": 1,
    "fieldname": "driver",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Driver",
    "link_filters": "[[\"Customer\",\"is_driver\",\"=\",1]]",
@@ -216,16 +218,15 @@
    "default": "Draft",
    "fieldname": "sale_status",
    "fieldtype": "Select",
-   "hidden": 1,
    "label": "Sale Status",
    "options": "Draft\nClosed\nDeleted",
    "search_index": 1
   },
   {
    "fieldname": "parent_bill_number",
-   "fieldtype": "Data",
-   "hidden": 1,
+   "fieldtype": "Link",
    "label": "Parent Bill Number",
+   "options": "Sale",
    "search_index": 1
   },
   {
@@ -331,16 +332,6 @@
    "label": "Hidden Section"
   },
   {
-   "fieldname": "delete_note",
-   "fieldtype": "Data",
-   "label": "Delete Note"
-  },
-  {
-   "fieldname": "deleted__by",
-   "fieldtype": "Data",
-   "label": "Deleted  By"
-  },
-  {
    "fieldname": "deleted_date",
    "fieldtype": "Datetime",
    "label": "Deleted Date"
@@ -352,7 +343,6 @@
   {
    "fieldname": "total_split_bill",
    "fieldtype": "Int",
-   "hidden": 1,
    "label": "Total Split Bill"
   },
   {
@@ -408,11 +398,6 @@
    "label": "Payments"
   },
   {
-   "fieldname": "html_payment_history",
-   "fieldtype": "HTML",
-   "options": "<div id=\"payment_history\"></div>"
-  },
-  {
    "fieldname": "split_bill_list_tab",
    "fieldtype": "Tab Break",
    "label": "Split Bill List"
@@ -454,20 +439,47 @@
    "label": "Payments"
   },
   {
-   "fieldname": "table_erlc",
+   "fieldname": "section_break_ajey",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payments",
    "fieldtype": "Table",
    "options": "POS Sale Payment"
   },
   {
-   "fieldname": "section_break_ajey",
-   "fieldtype": "Section Break"
+   "fieldname": "deleted_note",
+   "fieldtype": "Data",
+   "label": "Delete Note"
+  },
+  {
+   "fieldname": "deleted_by",
+   "fieldtype": "Data",
+   "label": "Deleted  By"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By"
+  },
+  {
+   "fetch_from": "outlet.default_unit",
+   "fieldname": "outlet_unit",
+   "fieldtype": "Link",
+   "label": "Outlet Unit",
+   "options": "Unit"
+  },
+  {
+   "fieldname": "html_payment_history",
+   "fieldtype": "HTML",
+   "options": "<div id=\"payment_history\"></div>"
   }
  ],
  "grid_page_length": 50,
  "image_field": "customer_photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-14 15:06:08.491603",
+ "modified": "2026-08-21 15:41:04.757640",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
@@ -491,5 +503,6 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

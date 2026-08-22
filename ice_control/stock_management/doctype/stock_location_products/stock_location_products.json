@@ -2,6 +2,7 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "field:product_name",
  "creation": "2026-08-14 14:40:20.865500",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -29,7 +30,8 @@
    "fieldname": "product_name",
    "fieldtype": "Data",
    "in_standard_filter": 1,
-   "label": "Product Name"
+   "label": "Product Name",
+   "unique": 1
   },
   {
    "fieldname": "stock_location",
@@ -69,10 +71,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-14 14:45:37.411473",
+ "modified": "2026-08-15 15:04:57.041470",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Stock Location Products",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

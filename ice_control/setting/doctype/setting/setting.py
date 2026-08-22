@@ -16,6 +16,9 @@ class Setting(Document):
 
 		app_name: DF.Data | None
 		logo: DF.AttachImage | None
+		report_service_url: DF.Data | None
+		server_report_token: DF.SmallText | None
+		server_report_url: DF.Data | None
 	# end: auto-generated types
 
 	_DOCTYPE_NAME = "Setting"

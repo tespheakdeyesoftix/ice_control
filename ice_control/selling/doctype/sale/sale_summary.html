@@ -1,0 +1,46 @@
+
+<div class="container" style="background: #f5f3f5; border-radius: 6px;padding:10px; margin-right: 0px;">
+{% for item in product_qty %}
+<div class="row" style="margin-top: 10px; font-size: 14px;font-weight: bold;">
+  <div class="col">
+    {{item.revenue_group}}
+  </div>
+  <div class="col text-right">
+    <div>{{frappe.format(item.total_sale_quantity ,{"fieldtype":"Data"})}}</div>
+  </div>
+</div>
+{% endfor %}
+<div class="row" style="margin-top: 10px; font-size: 14px;font-weight: bold;">
+  <div class="col">
+    {{__("Total Amount")}}
+  </div>
+  <div class="col text-right">
+    <div>{{frappe.format(sale.total_amount ,{"fieldtype":"Currency"})}}</div>
+  </div>
+</div>
+<div class="row" style="margin-top: 10px; font-size: 14px;font-weight: bold;">
+  <div class="col">
+    {{__("Total Payment")}}
+  </div>
+  <div class="col text-right">
+    <div>{{frappe.format(sale.total_payment ,{"fieldtype":"Currency"})}}</div>
+  </div>
+</div>
+<div class="row" style="margin-top: 10px; font-size: 14px;font-weight: bold;">
+  <div class="col">
+    {{__("Total Write Off")}}
+  </div>
+  <div class="col text-right">
+    <div>{{frappe.format(sale.total_write_off ,{"fieldtype":"Currency"})}}</div>
+  </div>
+</div>
+<div class="row" style="margin-top: 10px; font-size: 14px;font-weight: bold;">
+  <div class="col">
+    {{__("Balance")}}
+  </div>
+  <div class="col text-right">
+    <div>{{frappe.format(sale.balance ,{"fieldtype":"Currency"})}}</div>
+  </div>
+</div>
+
+</div>

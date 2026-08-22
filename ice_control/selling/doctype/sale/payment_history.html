@@ -1,0 +1,39 @@
+
+<table class="table table-striped" style="margin:0px">
+    <thead>
+		 <th class="text-left">{{__("Receipt #")}}</th>
+            <th class="text-left">{{__("Payment Date")}}</th>
+
+            <th class="text-right">{{__("Payment Amount")}}</th>
+            <th class="text-right">{{__("Write off Amount")}}</th>
+            <th>{{__("Created By")}}</th>
+            <th>{{__("Created Date")}}</th>
+
+
+    </thead>
+    <tbody>
+           {%for d in data%}
+           <tr>
+
+            <td><a href="/app/sale-payment/{{d.receipt_number}}">{{d.receipt_number}}</a></td>
+			<td>{{ frappe.format(d.payment_date,{"fieldtype":"Date"})}}</td>
+            <td>{{frappe.format(d.payment_amount,{"fieldtype":"Currency"})}}</td>
+            <td>{{frappe.format(d.write_off_amount,{"fieldtype":"Currency"})}}</td>
+            <td>{{d.created_by}}</td>
+        <td>{{frappe.format(d.created_date,{"fieldtype":"Datetime"})}}</td>
+
+       </tr>
+           {%endfor%}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="2">{{__("Total")}}</th>
+             <th> {{ frappe.format(data.map(x=>x.payment_amount).reduce((sum, n) => sum + n, 0),{"fieldtype":"Currency"}) }} </th>
+             <th> {{ frappe.format(data.map(x=>x.write_off_amount).reduce((sum, n) => sum + n, 0),{"fieldtype":"Currency"}) }} </th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </tfoot>
+
+</table>

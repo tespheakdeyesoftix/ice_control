@@ -1,0 +1,119 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-08-17 09:27:17.737321",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "block_grid_name",
+  "location",
+  "product_code",
+  "row",
+  "column",
+  "total_produce_per_day",
+  "max_produce_quantity",
+  "column_break_bowe",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "GRD.-.####"
+  },
+  {
+   "fieldname": "block_grid_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Block Grid Name"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Block Ice Produce Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_bowe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Product Code",
+   "options": "Product",
+   "reqd": 1
+  },
+  {
+   "fieldname": "row",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Row Number",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column",
+   "fieldtype": "Int",
+   "label": "Column Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_produce_per_day",
+   "fieldtype": "Int",
+   "label": "Total Produce Per Day",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "max_produce_quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Max Produce Quantity",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-17 14:04:10.894099",
+ "modified_by": "Administrator",
+ "module": "Stock Management",
+ "name": "Block Ice Produce Grid",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "block_grid_name",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "block_grid_name"
+}

@@ -5,3 +5,4 @@ Stock Management
 Customer Management
 HR
 Purchase Order
+ice_control

@@ -1,0 +1,199 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-08-15 08:18:48.130341",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "photo",
+  "business_name_en",
+  "business_name_kh",
+  "phone_number_1",
+  "phone_number_2",
+  "column_break_jvhl",
+  "property_code",
+  "receipt_logo",
+  "address",
+  "outlet_setting_section",
+  "block_ice_outlet",
+  "tube_ice_outlet",
+  "currency_setting_tab",
+  "currency_symbol",
+  "default_currency",
+  "currency_format",
+  "column_break_iycm",
+  "second_currency",
+  "base_exchange_currency",
+  "tab_3_tab",
+  "closed_doctypes",
+  "server_report_setting_tab",
+  "server_report_url",
+  "report_service_url",
+  "column_break_azyt",
+  "report_server_token"
+ ],
+ "fields": [
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "fieldname": "business_name_en",
+   "fieldtype": "Data",
+   "label": "Business Name EN"
+  },
+  {
+   "fieldname": "business_name_kh",
+   "fieldtype": "Data",
+   "label": "Business Name KH"
+  },
+  {
+   "fieldname": "phone_number_1",
+   "fieldtype": "Data",
+   "label": "Phone Number 1",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "phone_number_2",
+   "fieldtype": "Data",
+   "label": "Phone Number 2"
+  },
+  {
+   "fieldname": "column_break_jvhl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "property_code",
+   "fieldtype": "Data",
+   "label": "Property Code"
+  },
+  {
+   "fieldname": "receipt_logo",
+   "fieldtype": "Attach Image",
+   "label": "Receipt Logo"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "outlet_setting_section",
+   "fieldtype": "Section Break",
+   "label": "Outlet Setting"
+  },
+  {
+   "fieldname": "block_ice_outlet",
+   "fieldtype": "Link",
+   "label": "Block Ice Outlet",
+   "options": "Outlet"
+  },
+  {
+   "fieldname": "tube_ice_outlet",
+   "fieldtype": "Link",
+   "label": "Tube Ice Outlet",
+   "options": "Outlet"
+  },
+  {
+   "fieldname": "currency_setting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Currency Setting"
+  },
+  {
+   "fieldname": "currency_symbol",
+   "fieldtype": "Data",
+   "label": "Currency Symbol"
+  },
+  {
+   "fieldname": "default_currency",
+   "fieldtype": "Link",
+   "label": "Default Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "currency_format",
+   "fieldtype": "Data",
+   "label": "Currency Format"
+  },
+  {
+   "fieldname": "column_break_iycm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "second_currency",
+   "fieldtype": "Link",
+   "label": "Second Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "base_exchange_currency",
+   "fieldtype": "Link",
+   "label": "Base Exchange Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "tab_3_tab",
+   "fieldtype": "Tab Break",
+   "label": "Close Selling Setting"
+  },
+  {
+   "fieldname": "closed_doctypes",
+   "fieldtype": "Table",
+   "options": "Closed Selling Date Doctype"
+  },
+  {
+   "fieldname": "server_report_setting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Server Report Setting"
+  },
+  {
+   "fieldname": "server_report_url",
+   "fieldtype": "Data",
+   "label": "Server Report URL"
+  },
+  {
+   "fieldname": "report_service_url",
+   "fieldtype": "Data",
+   "label": "Report Service URL"
+  },
+  {
+   "fieldname": "column_break_azyt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "report_server_token",
+   "fieldtype": "Small Text",
+   "label": "Report Server Token"
+  }
+ ],
+ "grid_page_length": 50,
+ "image_field": "photo",
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-15 08:30:22.318561",
+ "modified_by": "Administrator",
+ "module": "Setting",
+ "name": "Business Information",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

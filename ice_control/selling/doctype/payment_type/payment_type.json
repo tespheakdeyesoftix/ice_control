@@ -2,6 +2,7 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "field:payment_type",
  "creation": "2026-08-14 10:59:26.557125",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -63,17 +64,17 @@
   {
    "fieldname": "exchange_rate",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Exchange Rate"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-14 15:48:13.248385",
+ "modified": "2026-08-15 11:41:25.704663",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Payment Type",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

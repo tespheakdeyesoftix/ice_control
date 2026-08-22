@@ -1,0 +1,135 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-08-17 09:24:25.798895",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "block_grid_number",
+  "block_grid_name",
+  "product",
+  "max_produce_quantity",
+  "total_produce_quantity",
+  "total_remaining_quantity",
+  "defected_quantity",
+  "row",
+  "column",
+  "total_produce_per_day",
+  "column_break_eyau",
+  "cost",
+  "note",
+  "section_break_jmuq",
+  "produce_data"
+ ],
+ "fields": [
+  {
+   "fetch_from": "block_grid_number.block_grid_name",
+   "fieldname": "block_grid_name",
+   "fieldtype": "Data",
+   "label": "Block Grid Name"
+  },
+  {
+   "fieldname": "column_break_eyau",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "block_grid_number",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Block Grid Number",
+   "options": "Block Ice Produce Grid",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "block_grid_number.product_code",
+   "fieldname": "product",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Product",
+   "options": "Product"
+  },
+  {
+   "fetch_from": "product.cost",
+   "fieldname": "cost",
+   "fieldtype": "Currency",
+   "label": "Cost"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Note"
+  },
+  {
+   "fieldname": "total_produce_quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Produce Quantity"
+  },
+  {
+   "fetch_from": "block_grid_number.max_produce_quantity",
+   "fieldname": "max_produce_quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Max Produce Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_remaining_quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Remaining Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "defected_quantity",
+   "fieldtype": "Int",
+   "label": "Defected Quantity"
+  },
+  {
+   "fetch_from": "block_grid_number.row",
+   "fieldname": "row",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Row"
+  },
+  {
+   "fetch_from": "block_grid_number.column",
+   "fieldname": "column",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Column"
+  },
+  {
+   "fetch_from": "block_grid_number.total_produce_per_day",
+   "fieldname": "total_produce_per_day",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Total Produce Per Day"
+  },
+  {
+   "fieldname": "section_break_jmuq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "produce_data",
+   "fieldtype": "JSON",
+   "label": "Produce Data"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-08-17 16:27:32.746162",
+ "modified_by": "Administrator",
+ "module": "Stock Management",
+ "name": "Block Ice Produce Grid Child",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

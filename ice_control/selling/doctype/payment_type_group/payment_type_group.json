@@ -2,6 +2,7 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "field:payment_type_group_en",
  "creation": "2026-08-14 11:00:31.353748",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -17,7 +18,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Payment Type Group EN"
+   "label": "Payment Type Group EN",
+   "unique": 1
   },
   {
    "fieldname": "payment_type_group_kh",
@@ -30,6 +32,7 @@
    "default": "0",
    "fieldname": "is_bank",
    "fieldtype": "Check",
+   "in_list_view": 1,
    "label": "Is Bank"
   },
   {
@@ -42,10 +45,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-14 15:49:41.510660",
+ "modified": "2026-08-21 15:30:56.104370",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Payment Type Group",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

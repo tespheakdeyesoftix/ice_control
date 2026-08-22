@@ -1,0 +1,175 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "field:report_title",
+ "creation": "2026-08-20 11:36:09.868621",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_nw2t",
+  "lft",
+  "rgt",
+  "is_group",
+  "report_title",
+  "parent_system_report",
+  "report_url",
+  "old_parent",
+  "column_break_atfb",
+  "is_seller_report",
+  "show_in_report_list",
+  "is_backend_report",
+  "is_doctype_report",
+  "doctype_name",
+  "sort_order",
+  "default_filter_options",
+  "roles_tab",
+  "roles"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_nw2t",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "lft",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Left",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "rgt",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Right",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
+  },
+  {
+   "fieldname": "old_parent",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Old Parent",
+   "options": "System Report"
+  },
+  {
+   "fieldname": "parent_system_report",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Parent System Report",
+   "options": "System Report"
+  },
+  {
+   "fieldname": "report_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Report Title",
+   "unique": 1
+  },
+  {
+   "fieldname": "report_url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Report Url"
+  },
+  {
+   "fieldname": "column_break_atfb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_seller_report",
+   "fieldtype": "Check",
+   "label": "Is Seller Report"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_report_list",
+   "fieldtype": "Check",
+   "label": "Show in Report List"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_backend_report",
+   "fieldtype": "Check",
+   "label": "Is Backend Report"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_doctype_report",
+   "fieldtype": "Check",
+   "label": "Is Doctype Report"
+  },
+  {
+   "fieldname": "doctype_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Doctype Name",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order"
+  },
+  {
+   "fieldname": "default_filter_options",
+   "fieldtype": "JSON",
+   "label": "Default Filter Options"
+  },
+  {
+   "fieldname": "roles_tab",
+   "fieldtype": "Tab Break",
+   "label": "Roles"
+  },
+  {
+   "fieldname": "roles",
+   "fieldtype": "Table",
+   "label": "Roles",
+   "options": "Has Role"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_tree": 1,
+ "links": [],
+ "modified": "2026-08-22 15:26:58.812829",
+ "modified_by": "Administrator",
+ "module": "Setting",
+ "name": "System Report",
+ "naming_rule": "By fieldname",
+ "nsm_parent_field": "parent_system_report",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

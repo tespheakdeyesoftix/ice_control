@@ -15,6 +15,7 @@ class SaleProducts(Document):
 		from frappe.types import DF
 
 		allow_change_price: DF.Check
+		allow_change_sale_type: DF.Check
 		allow_free: DF.Check
 		allow_return: DF.Check
 		allow_split_bill: DF.Check
@@ -37,7 +38,7 @@ class SaleProducts(Document):
 		product_price: DF.Currency
 		quantity: DF.Float
 		return_quantity: DF.Float
-		revenue_group: DF.Link | None
+		revenue_group: DF.Link
 		sale_transaction_type: DF.Data | None
 		split_quantity: DF.Float
 		stock_location: DF.Link | None

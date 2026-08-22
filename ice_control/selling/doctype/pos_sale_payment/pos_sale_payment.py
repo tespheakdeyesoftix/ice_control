@@ -25,3 +25,8 @@ class POSSalePayment(Document):
 	# end: auto-generated types
 
 	_DOCTYPE_NAME = "POS Sale Payment"
+
+
+	def validate(self):
+		if not self.created_by:
+			self.created_by = frappe.get_cached_value("User",frappe.session.user,"full_name")

@@ -7,6 +7,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "enabled",
   "info_section",
   "naming_series",
   "customer_name",
@@ -24,7 +25,6 @@
   "can_split_bill",
   "can_edit_bill",
   "can_show_price",
-  "enabled",
   "information_detail_section",
   "company_name",
   "column_break_eezd",
@@ -41,7 +41,7 @@
   "html_customer_recent_payment",
   "borrow_product_tab",
   "html_customer_borrow_return_product",
-  "calender_tab",
+  "tab_customer_calendar",
   "html_calendar"
  ],
  "fields": [
@@ -98,6 +98,7 @@
   {
    "fieldname": "keyword",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Keyword",
    "reqd": 1
@@ -138,13 +139,13 @@
    "label": "Is Company"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "can_edit_bill",
    "fieldtype": "Check",
    "label": "Can Edit Bill"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "can_show_price",
    "fieldtype": "Check",
    "label": "Can Show Price"
@@ -235,20 +236,21 @@
    "fieldtype": "HTML"
   },
   {
-   "fieldname": "calender_tab",
-   "fieldtype": "Tab Break",
-   "label": "Calender"
+   "fieldname": "html_calendar",
+   "fieldtype": "HTML",
+   "options": "<div id=\"customer_calendar\">cal</div>"
   },
   {
-   "fieldname": "html_calendar",
-   "fieldtype": "HTML"
+   "fieldname": "tab_customer_calendar",
+   "fieldtype": "Tab Break",
+   "label": "Calender"
   }
  ],
  "grid_page_length": 50,
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-14 15:56:53.272181",
+ "modified": "2026-08-21 15:11:57.141368",
  "modified_by": "Administrator",
  "module": "Customer Management",
  "name": "Customer",
@@ -270,7 +272,7 @@
  ],
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
- "search_fields": "customer_name",
+ "search_fields": "customer_name,keyword,phone_number_1,phone_number_2",
  "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",

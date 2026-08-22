@@ -1,0 +1,23 @@
+{
+ "content": null,
+ "creation": "2026-08-16 21:33:19.603890",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-08-16 21:34:08.067961",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "block-ice-summary",
+ "owner": "Administrator",
+ "page_name": "block-ice-summary",
+ "roles": [
+  {
+   "role": "Block Ice"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "\u1791\u17b9\u1780\u1780\u1780\u178a\u17be\u1798"
+}

@@ -1,0 +1,69 @@
+import frappe
+
+
+@frappe.whitelist()
+def get_default_payment_type():
+    payment_type = ""
+    currency = ""
+    business_info = frappe.get_cached_doc("Business Information")
+    data = frappe.db.sql("select name,currency from `tabPayment Type` where is_default = 1 limit 1",as_dict=1)
+    if data:
+        payment_type = data[0].get("name")
+        currency = data[0].get("currency")
+    else:
+        data = frappe.db.sql("select name,currency from `tabPayment Type` where currency = %(currency)s order by creation desc limit 1",{"outlet":business_info.default_currency},as_dict=1)
+        payment_type = data[0].get("name")
+        currency = data[0].get("currency")
+    exchange_rate = frappe.db.sql("""
+                                    select 
+                                        currency_exchange_rate 
+                                    from `tabExchange Rate` 
+                                    where from_currency = %(from_currency)s and to_currency = %(to_currency)s 
+                                    order by creation desc limit 1""",
+    {"from_currency":currency,"to_currency":business_info.default_currency},as_dict=1)
+    return {
+        "payment_type": payment_type,
+        "exchange_rate": exchange_rate[0].get("currency_exchange_rate") or 1,
+        "currency": currency
+    }
+
+@frappe.whitelist()
+def get_exchange_rate(currency:str):
+    business_info = frappe.get_cached_doc("Business Information")
+    exchange_rate = frappe.db.sql("""
+                                    select 
+                                        currency_exchange_rate 
+                                    from `tabExchange Rate` 
+                                    where from_currency = %(from_currency)s and to_currency = %(to_currency)s 
+                                    order by creation desc limit 1""",
+    {"from_currency":business_info.default_currency,"to_currency":currency},as_dict=1)
+    return exchange_rate[0].get("currency_exchange_rate") or 1
+
+@frappe.whitelist()
+def money_to_word(amount :float=7569556,currency :str="KHR"):
+    amount = str(amount)
+    if len(amount)>6:
+        first_number = int(amount[:len(amount) - 6])
+        return number_to_word(int(first_number)) + "លាន" + number_to_word(int(amount[-6:] )) + " " + ("រៀល" if currency=="KHR" else "ដុល្លា")
+    else:
+        return number_to_word(int(amount)) + " " + ("រៀល" if currency=="KHR" else "ដុល្លា")
+    
+@frappe.whitelist()
+def number_to_word(amount :float=7569556):
+    
+    khmer_digit = ["","មួយ","ពីរ","បី","បួន","ប្រាំ","ប្រាំមួយ","ប្រាំពីរ","ប្រាំបី","ប្រាំបួន"]
+    khmer_unit = ["","ដប់","រយ","ពាន់","ម៉ឺន","សែន","លាន"]
+    tens_words = ['', 'ដប់', 'ម្ភៃ', 'សាមសិប', 'សែសិប', 'ហាសិប', 'ហុកសិប', 'ចិតសិប', 'ប៉ែតសិប', 'កៅសិប']
+    khmer_number = ""
+    n = len(str(amount))
+    for index, w in enumerate(str(amount)):
+        n= n -1
+        if n == 1: # we are at 10 word
+            khmer_number +=tens_words[int(w)] 
+        else:
+            khmer_number = khmer_number + khmer_digit[int(w)] 
+            
+        if w !="0" and n>1:
+            khmer_number = khmer_number + khmer_unit[n]
+
+    return khmer_number

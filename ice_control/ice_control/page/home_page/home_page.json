@@ -1,0 +1,22 @@
+{
+ "content": null,
+ "creation": "2026-08-16 21:21:19.921416",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-08-16 21:21:25.775509",
+ "modified_by": "Administrator",
+ "module": "ice_control",
+ "name": "home-page",
+ "owner": "Administrator",
+ "page_name": "home-page",
+ "roles": [
+  {
+   "role": "All"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1
+}

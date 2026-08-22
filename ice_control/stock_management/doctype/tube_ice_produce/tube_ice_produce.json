@@ -1,0 +1,162 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-08-17 15:41:13.808772",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_eijt",
+  "naming_series",
+  "posting_date",
+  "outlet",
+  "total_produce_quantity",
+  "total_produce_drop",
+  "total_infected_quantity",
+  "amended_from",
+  "column_break_wuhy",
+  "total_start_meter_number",
+  "total_end_meter_number",
+  "tube_ice_produce_quantity_section",
+  "tube_ice_produce_quantity",
+  "section_break_vjzh",
+  "note",
+  "column_break_nqsy",
+  "html_summry_tube_ice_produce"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_eijt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Tube Ice Produce",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "TIP.YYYY.-.####"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "options": "Today",
+   "reqd": 1
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Outlet",
+   "options": "Outlet",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_produce_quantity",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Total Produce Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_produce_drop",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Total Produce Drop",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_infected_quantity",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Total Infected Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_wuhy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_start_meter_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Start Meter Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_end_meter_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total End Meter Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tube_ice_produce_quantity_section",
+   "fieldtype": "Section Break",
+   "label": "Tube Ice Produce Quantity"
+  },
+  {
+   "fieldname": "section_break_vjzh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "column_break_nqsy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "html_summry_tube_ice_produce",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "tube_ice_produce_quantity",
+   "fieldtype": "Table",
+   "options": "Tube Ice Produce Machine"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-08-19 15:13:41.053526",
+ "modified_by": "Administrator",
+ "module": "Stock Management",
+ "name": "Tube Ice Produce",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

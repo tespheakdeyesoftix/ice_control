@@ -2,6 +2,7 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "field:vendor_group",
  "creation": "2026-08-14 14:27:53.886971",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -32,10 +33,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-14 14:47:07.379547",
+ "modified": "2026-08-15 15:22:02.403553",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Vendor Group",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

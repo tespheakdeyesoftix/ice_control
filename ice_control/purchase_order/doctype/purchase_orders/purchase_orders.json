@@ -1,0 +1,291 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-08-21 11:57:08.181655",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "posting_date",
+  "outlet",
+  "reference_number",
+  "stock_location",
+  "photo",
+  "status",
+  "column_break_sitk",
+  "party_type",
+  "party",
+  "party_name",
+  "phone_number",
+  "employee",
+  "employee_name",
+  "section_break_miox",
+  "purchase_products",
+  "section_break_xkae",
+  "payments",
+  "section_break_pign",
+  "column_break_ttvg",
+  "total_quantity",
+  "total_cost",
+  "amended_from",
+  "column_break_xniw",
+  "write_off",
+  "total_payment",
+  "balance",
+  "section_break_qlnh",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "PO.YYYY.-.####"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "label": "Outlet",
+   "options": "Outlet"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "reference_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Reference Number"
+  },
+  {
+   "fetch_from": "outlet.default_stock_location",
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "fieldname": "column_break_sitk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Vendor",
+   "fieldname": "party_type",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Party Type",
+   "options": "Vendor\nEmployee\nCustomer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party",
+   "fieldtype": "Dynamic Link",
+   "in_standard_filter": 1,
+   "label": "Party",
+   "options": "party_type",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Party Name",
+   "print_hide": 1,
+   "report_hide": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Request By",
+   "options": "Employee"
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Request By Name",
+   "print_hide": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "section_break_miox",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "purchase_products",
+   "fieldtype": "Table",
+   "label": "Purchase Products",
+   "options": "Purchase Order Products",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Purchase Orders",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_pign",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "column_break_ttvg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "label": "Total Quantity",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Cost",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "balance",
+   "fieldtype": "Currency",
+   "label": "Balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payments",
+   "fieldtype": "Table",
+   "label": "Payments",
+   "options": "Purchase Order Payment Child"
+  },
+  {
+   "fieldname": "section_break_xkae",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_xniw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_qlnh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_payment",
+   "fieldtype": "Currency",
+   "label": "Total Payment",
+   "read_only": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Status",
+   "options": "Draft\nSubmitted\nUnpaid\nPaid\nPartially Paid\nCancelled"
+  },
+  {
+   "fieldname": "write_off",
+   "fieldtype": "Currency",
+   "label": "Write Off",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "image_field": "photo",
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-08-22 10:08:46.718619",
+ "modified_by": "Administrator",
+ "module": "Purchase Order",
+ "name": "Purchase Orders",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "party,party_name,posting_date",
+ "show_name_in_global_search": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

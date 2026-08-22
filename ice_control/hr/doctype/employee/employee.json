@@ -10,6 +10,7 @@
   "naming_series",
   "employee_code",
   "employee_name",
+  "position",
   "phone_number",
   "address",
   "photo",
@@ -24,29 +25,44 @@
   "password",
   "role_profile",
   "user_id",
-  "language"
+  "language",
+  "tab_2_tab",
+  "edit_bill",
+  "remove_sale_product",
+  "change_product_price",
+  "change_sale_date",
+  "change_customer",
+  "split_bill",
+  "pos_payment",
+  "column_break_wbeg",
+  "delete_bill"
  ],
  "fields": [
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hidden": 1,
-   "label": "Naming Series"
+   "label": "Naming Series",
+   "options": "EMP.####"
   },
   {
    "fieldname": "employee_code",
    "fieldtype": "Data",
+   "in_standard_filter": 1,
    "label": "Employee Code",
    "unique": 1
   },
   {
    "fieldname": "employee_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee Name"
   },
   {
    "fieldname": "phone_number",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Phone Number"
   },
   {
@@ -57,6 +73,7 @@
   {
    "fieldname": "photo",
    "fieldtype": "Attach Image",
+   "hidden": 1,
    "label": "Photo"
   },
   {
@@ -73,6 +90,7 @@
    "fieldname": "default_outlet",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Default Outlet",
    "options": "Outlet",
    "reqd": 1
@@ -125,6 +143,71 @@
    "fieldtype": "Link",
    "label": "Language",
    "options": "Language"
+  },
+  {
+   "fieldname": "position",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Position",
+   "options": "Employee Position"
+  },
+  {
+   "fieldname": "tab_2_tab",
+   "fieldtype": "Tab Break",
+   "label": "Permission"
+  },
+  {
+   "default": "0",
+   "fieldname": "edit_bill",
+   "fieldtype": "Check",
+   "label": "Edit Bill"
+  },
+  {
+   "default": "0",
+   "fieldname": "change_product_price",
+   "fieldtype": "Check",
+   "label": "Change Product Price"
+  },
+  {
+   "default": "0",
+   "fieldname": "change_sale_date",
+   "fieldtype": "Check",
+   "label": "Change Sale Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "split_bill",
+   "fieldtype": "Check",
+   "label": "Split Bill"
+  },
+  {
+   "default": "0",
+   "fieldname": "pos_payment",
+   "fieldtype": "Check",
+   "label": "POS Payment"
+  },
+  {
+   "fieldname": "column_break_wbeg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "delete_bill",
+   "fieldtype": "Check",
+   "label": "Delete Bill"
+  },
+  {
+   "default": "0",
+   "fieldname": "remove_sale_product",
+   "fieldtype": "Check",
+   "label": "Remove Sale Product"
+  },
+  {
+   "default": "0",
+   "fieldname": "change_customer",
+   "fieldtype": "Check",
+   "label": "Change Customer"
   }
  ],
  "grid_page_length": 50,
@@ -132,7 +215,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-08-14 09:27:09.491309",
+ "modified": "2026-08-18 13:59:38.251424",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",

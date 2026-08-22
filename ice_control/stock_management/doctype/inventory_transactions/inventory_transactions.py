@@ -16,12 +16,12 @@ class InventoryTransactions(Document):
 
 		balance: DF.Float
 		base_unit: DF.Link | None
+		cost: DF.Currency
 		current_cost: DF.Currency
 		in_quantity: DF.Float
 		is_calculate_cost: DF.Check
 		multiplier: DF.Float
-		new_cost: DF.Currency
-		note: DF.Data | None
+		note: DF.LongText | None
 		opening_quantity: DF.Float
 		out_quantity: DF.Float
 		posting_date: DF.Date | None

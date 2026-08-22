@@ -1,0 +1,126 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "field:template_name",
+ "creation": "2026-08-19 10:12:19.261482",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "section_break_mjut",
+  "template_name",
+  "paper_size",
+  "orientation",
+  "description",
+  "column_break_swty",
+  "number_of_copies",
+  "template_logo",
+  "schema_version",
+  "section_break_sist",
+  "layout_json"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "label": "Template Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_swty",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "number_of_copies",
+   "fieldtype": "Int",
+   "label": "Number of Copies"
+  },
+  {
+   "fieldname": "paper_size",
+   "fieldtype": "Select",
+   "label": "Paper Size",
+   "options": "A6\nA5\nA4"
+  },
+  {
+   "fieldname": "orientation",
+   "fieldtype": "Select",
+   "label": "Orientation",
+   "options": "Portrait\nLandscape"
+  },
+  {
+   "fieldname": "template_logo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Template Logo"
+  },
+  {
+   "fieldname": "section_break_sist",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "layout_json",
+   "fieldtype": "JSON",
+   "label": "Layout JSON"
+  },
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "section_break_mjut",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "schema_version",
+   "fieldtype": "Int",
+   "label": "Schema Version"
+  }
+ ],
+ "grid_page_length": 50,
+ "image_field": "template_logo",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-19 10:25:46.690911",
+ "modified_by": "Administrator",
+ "module": "Setting",
+ "name": "POS Print Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

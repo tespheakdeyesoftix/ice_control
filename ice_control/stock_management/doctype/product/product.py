@@ -3,12 +3,12 @@
 
 import frappe
 from frappe.model.document import Document
- 
+
 from frappe.model.document import Document
 from frappe.utils.data import strip
 import json
- 
-from frappe import _ 
+
+from frappe import _
 from frappe.utils.caching import redis_cache
 from ice_control.api.inventory import add_inventory_transaction
 
@@ -24,24 +24,31 @@ class Product(Document):
 		from frappe.types import DF
 		from ice_control.customer_management.doctype.product_outlet.product_outlet import ProductOutlet
 		from ice_control.customer_management.doctype.product_units.product_units import ProductUnits
+		from ice_control.stock_management.doctype.product_materials.product_materials import ProductMaterials
 
+		allow_change_price: DF.Check
+		allow_change_sale_type: DF.Check
+		allow_free: DF.Check
 		allow_purchase: DF.Check
 		allow_purchase_in_purchase_ice_feature: DF.Check
+		allow_return: DF.Check
 		allow_split_bill: DF.Check
 		allow_sum_qty: DF.Check
 		color: DF.Color | None
 		cost: DF.Currency
 		costing_method: DF.Literal["Average Cost", "Fixed Cost"]
 		default_sale_stock_location: DF.Link | None
-		default_sale_transaction_type: DF.Literal["", "Sale", "Borrow", "Sale", "Borrow"]
+		default_sale_transaction_type: DF.Literal["", "Sale", "Borrow"]
 		enabled: DF.Check
 		is_inventory_product: DF.Check
 		multiplier: DF.Float
+		naming_series: DF.Data | None
 		opening_quantity: DF.Float
 		photo: DF.AttachImage | None
 		price: DF.Currency
 		product_category: DF.Link
 		product_code: DF.Data | None
+		product_materials: DF.Table[ProductMaterials]
 		product_name: DF.Data
 		product_outlet: DF.Table[ProductOutlet]
 		product_outlets: DF.LongText | None
@@ -62,16 +69,34 @@ class Product(Document):
 			self.purchase_price =  self.cost
 		if not self.cost and  self.purchase_price:
 			self.cost = self.purchase_price
-		
+
+		seen_units = {}
+
+		for row in self.product_units or []:
+			if not row.unit:
+				continue
+
+			if row.unit in seen_units:
+				frappe.throw(
+				_("Can not duplicate Unit: {0}. It is already used in row {1}.").format(
+						row.unit,
+						seen_units[row.unit]
+					)
+				)
+			seen_units[row.unit] = row.idx
+
+		for row in self.product_units:
+			row.base_product_unit = 1 if row.unit == self.unit else 0
+
 
 	def autoname(self):
 		from frappe.model.naming import set_name_by_naming_series
 		if strip(self.naming_series) !="" and strip(self.product_code) =="":
 			set_name_by_naming_series(self)
-			self.product_code = self.name		
+			self.product_code = self.name
 		self.product_code = strip(self.product_code)
 		self.name = self.product_code
-	
+
 	def on_update(self):
 		product_outlets = []
 		for a in self.product_outlet:
@@ -82,7 +107,7 @@ class Product(Document):
 		# update inventory transaction
 		if self.has_value_changed("is_inventory_product"):
 			self.validate_product_use_in_inventory_transaction()
-			
+
 
 		# self.update_stock()
 
@@ -92,15 +117,15 @@ class Product(Document):
 
 	@frappe.whitelist()
 	def get_stats(self):
-		
+
 		sql="select stock_location as label,quantity, quantity as value,cost  from `tabStock Location Products` where product_code=%(product_code)s"
 		data = frappe.db.sql(sql,{"product_code":self.name},as_dict = 1)
-		
+
 		if data:
 			data.append({
 				"label":_("Total"),
 				"value": sum([d.get("value") for d in data])
-				
+
 			})
 		# format number
 		for d in data:
@@ -109,18 +134,18 @@ class Product(Document):
 
 		if data:
 			stock_value = sum([(d.get("quantity") or  0)* (d.get("cost") or 0) for d in data ])
-			
+
 			data.append({
 
 				"label":_("Stock Value"),
 				"value":frappe.format(stock_value or 0,{"fieldtype":"Currency"}),
-				
+
 			})
-			
+
 		return data
-	
+
 	def update_stock(self):
-		
+
 
 		add_inventory_transaction([
 			{
@@ -138,7 +163,7 @@ class Product(Document):
 		}
 		])
 
-	
+
 
 	def validate_product_use_in_inventory_transaction(self):
 		if self.is_inventory_product == 0:
@@ -147,7 +172,7 @@ class Product(Document):
 			sql = "select name from `tabInventory Transactions` where ref_doctype<>'Product'and product_code =%(product_code)s"
 			if frappe.db.sql(sql,{"product_code":self.product_code}):
 				frappe.throw(_("This product has been use in inventory transaction. We can not change this to none inventory tracking product."))
-			
+
 			self.opening_quantity = 0
 			self.cost = 0
 			# delete opening transaction and delete product from stock lodation product
@@ -156,7 +181,7 @@ class Product(Document):
 	@frappe.whitelist()
 	def get_stock_location_product_for_adjustment(self):
 		sql = """
-			select 
+			select
 				a.name as stock_location,
 				coalesce(b.quantity,0) as current_quantity,
 				coalesce(b.quantity,0) as new_quantity,
@@ -167,16 +192,16 @@ class Product(Document):
 		"""
 		data = frappe.db.sql(sql, {"product_code":self.name},as_dict = 1)
 		return data
-	
+
 	@frappe.whitelist()
 	def update_stock_adjustment(self):
 		if [d for d in self.stock_adjustment_data if d.get("new_quantity")<0]:
 			frappe.throw(_("Quantity cannot less than 0"))
-			
+
 		if [d for d in self.stock_adjustment_data if d.get("new_cost")<0]:
 			frappe.throw(_("Cost cannot less than 0"))
 
-		# update quantity adjustment 
+		# update quantity adjustment
 		add_inventory_transaction([
 			{
 				"ref_doctype":self.doctype,
@@ -192,8 +217,8 @@ class Product(Document):
 				"note": "កែប្រែចំនួនទំនិញ"
 			}
 			for p in self.stock_adjustment_data
-			if 
-			((p.get("new_quantity") or 0) != (p.get("current_quantity") or 0))  
+			if
+			((p.get("new_quantity") or 0) != (p.get("current_quantity") or 0))
 		])
 		# cost
 		add_inventory_transaction([
@@ -211,11 +236,11 @@ class Product(Document):
 				"note": "កែប្រែថ្លៃដើម"
 			}
 			for p in self.stock_adjustment_data
-			if 
-			((p.get("new_cost") or 0) != (p.get("current_cost") or 0))  
+			if
+			((p.get("new_cost") or 0) != (p.get("current_cost") or 0))
 		])
 
-		
+
 
 		frappe.msgprint(_("Update stock adjustment successfully"))
 
@@ -230,7 +255,7 @@ def get_product_price(product_code,unit,customer=None):
 			"customer":customer
 		},as_dict = 1)
 		if len(price_data)>0:
-			
+
 			if  price_data[0].get("price")>0:
 				price = price_data[0]
 
@@ -249,9 +274,9 @@ def get_product_price(product_code,unit,customer=None):
 			"multiplier": frappe.get_cached_value("Unit",frappe.get_cached_value("Product",product_code,"unit"),"multiplier") or 1
 
 		}
-	
+
 	return price
-			
+
 
 
 def update_product_unit(self):
@@ -269,4 +294,3 @@ def update_product_unit(self):
 				"price": self.price,
 				"base_product_unit": 1
 			})
- 

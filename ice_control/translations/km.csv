@@ -1,0 +1,997 @@
+Tube Ice,ទឹកកកអនាម័យ
+Block Ice Produce Location,ទីតាំងផលិតទឹកកកដើម
+Block Ice Produce Grid, តារាងចំនួនផលិតទឹកកកដើម
+Row Number, ចំនួនជួរដេក
+Column Number, ចំនួនជួរឈរ
+Tube Ice Outlet,កន្លែងលក់ទឹកកកអនាម័យ
+Block Ice,ទឹកកកអនាម័យ
+Block Ice Outlet,កន្លែងលក់ទឹកកកអនាម័យ
+List View, ទិដ្ឋភាពបញ្ជី
+View List, មើលបញ្ជី
+Weekly,ប្រចាំសប្តាហ៍
+Daily,ប្រចាំថ្ងៃ
+Daily Expense Chart,តារាងចំណាយប្រចាំថ្ងៃ
+Daily Closing Report,របាយការណ៍បិទប្រចាំថ្ងៃ
+View Reports,មើលរបាយការណ៍
+Closed Selling Date Data,ទិន្នន័យកាលបរិច្ឆេទបិទការលក់
+Seller,អ្នកលក់
+This coupon code is being use by other transaction. Please try again later.,គូប៉ុងនេះត្រូវបានប្រើក្នុងប្រតិបត្តិការផ្សេង។ សូមព្យាយាមម្តងទៀត។"
+Submit,បញ្ជូន
+Close Data,បិទទិន្នន័យ
+Expense List,បញ្ជីចំណាយ
+New Expense,ចំណាយថ្មី
+Today Expense,ការចំណាយថ្ងៃនេះ
+MTD Expense,ចំណាយខែនេះ
+Total Income,ប្រាក់ចំណូលសរុប
+Total Expense,ការចំណាយសរុប
+Net Profit,ប្រាក់ចំណេញសុទ្ធ
+Set Level,កំណត់កម្រិត
+Yearly,ប្រចាំឆ្នាំ
+Monthly,ប្រចាំខែ
+Quarterly,ប្រចាំត្រីមាស
+Half-Yearly,ពាក់កណ្តាលឆ្នាំ
+Net Profit/Loss,ប្រាក់ចំណេញសុទ្ធ/ខាត
+Profit and Loss Statement,របាយការណ៍ប្រាក់ចំណេញ និងខាត
+Preview Report,មើលរបាយការណ៍ជាមុន
+Create Card,បង្កើតកាត
+Set Chart,កំណត់តារាងក្រាហ្វិក
+Add Chart to Dashboard,បន្ថែមតារាងក្រាហ្វិកទៅផ្ទាំងគ្រប់គ្រង
+Profit and Loss,ប្រាក់ចំណេញ និងខាត
+Party Type,Party Type
+Party,Party
+Row,ជួរ
+Value cannot be negative for,តម្លៃមិនអាចជាអវិជ្ជមានសម្រាប់
+Party Name,Party Name
+Setup Auto Email,កំណត់អ៊ីមែលស្វ័យប្រវត្តិ
+Add Column,បន្ថែមជួរឈរ
+Reload Report,ផ្ទុករបាយការណ៍ឡើងវិញ
+Show Group Accounts,បង្ហាញគណនីក្រុម
+Show zero values,បង្ហាញតម្លៃសូន្យ
+Voucher No,លេខប័ណ្ណ
+Voucher Type,ប្រភេទប័ណ្ណ
+Sort Ascending,តម្រៀបឡើង
+Sort Descending,តម្រៀបចុះ
+Reset sorting,កំណត់តម្រៀបឡើងវិញ
+Remove column,លុបជួរឈរ
+From Currency,ពីរូបិយប័ណ្ណ
+To Currency,ទៅរូបិយប័ណ្ណ
+New Sale Payment,ការបង់ប្រាក់លក់ថ្មី
+Sale Payment,ការបង់ប្រាក់លក់
+Account Paid To,គណនីដែលបានបង់ប្រាក់
+Enable Multiple Payment Type,អនុញ្ញាតប្រភេទការបង់ប្រាក់ច្រើន
+Payment From,ទទួលប្រាក់ពី
+Account Paid From,គណនីដែលបានបង់ពី
+Write off Account,គណនីកាត់ចោល
+Payment Infomation,ព័ត៌មានការបង់ប្រាក់
+Customer Balance,សមតុល្យអតិថិជន
+Amount to  Pay,ចំនួនទឹកប្រាក់ត្រូវបង់
+Get Sales Invoice by Date,ទាញយកវិក័យប័ត្រលក់តាមកាលបរិច្ឆេទ
+Sales Invoice List,បញ្ជីវិក័យប័ត្រលក់
+Sale Invoice #,វិក័យប័ត្រលក់លេខ
+Sale Invoice Date,កាលបរិច្ឆេទវិក័យប័ត្រលក់
+Sale Invoices,វិក័យប័ត្រលក់
+Notification,សារជូនដំណឹង
+Paid Amount,ចំនួនទឹកប្រាក់បានបង់
+Sale Balance,សមតុល្យការលក់
+Write off Amount,ចំនួនទឹកប្រាក់កាត់ចេញ
+Pay,បង់ប្រាក់
+Total Sales Invoice,វិក្កយបត្រលក់សរុប
+Total Amount To Pay,ចំនួនសរុបត្រូវបង់
+Total Payment Amount,ចំនួនទឹកប្រាក់សរុបដែលបានបង់
+Amended From,បានកែប្រែមកពី
+Currency Exchange Rate,អត្រាប្ដូរប្រាក់
+Get Sales Invoice,ទាញយកវិកយប័ត្រ
+Credit Amount,ចំនួនទឹកប្រាក់ឥណទាន
+Debit Amount,ចំនួនទឹកប្រាក់ឥណពន្ធ
+Total Debit,សរុបឥណពន្ធ
+Total Credit,សរុបឥណទាន
+Refresh,ផ្ទុកឡើងវិញ
+Expense Code,លេខកូដចំណាយ
+Expense Name,ឈ្មោះចំណាយ
+Currency,រូបិយប័ណ្ណ
+Stats,ស្ថិតិ
+Export,នាំចេញ
+Start Year,ឆ្នាំចាប់ផ្តើម
+End Year,ឆ្នាំបញ្ចប់
+Column Group,ក្រុមជួរឈរ
+Filter Based On,តម្រងផ្អែកលើ
+Reset Chart,កំណត់តារាងឡើងវិញ
+Set,កំណត់
+Remark,ចំណាំ
+Is Cancelled,ត្រូវបានលុបចោល
+Income,ចំណូល
+Collapse,បង្រួម
+Sale Payment List,បញ្ជីទូទាត់ថ្លៃលក់
+Total Write Off,ចំនួនកាត់ចោល
+Sale Payment Invoices,វិក្កយបត្រទូទាត់ថ្លៃលក់
+Total Sale Quantity,ចំនួនលក់សរុប
+Payment Type Group,ប្រភេទនៃការទូទាត់ជាក្រុម
+Is Bank,គឺជាធនាគារ
+Payment Type Group KH,ប្រភេទនៃការទូទាត់ជាក្រុមភាសាខ្មែរ
+Bank,ធនាគារ
+Total Split Bill,ចំនួនបំបែកវិក្កយបត្រ
+Total Amount: {0},សរុបតម្លៃ: {0}
+Total Cost: {0},ថ្លៃដើមសរុប: {0}
+Amount,ចំនួនទឹកប្រាក់
+Total Quantity: {0},ចំនួនសរុប: {0}
+Total Payment: {0},ទូទាត់ប្រាក់សរុប: {0}
+Balance: {0},នៅសល់: {0}
+Return Quantity: {0},ចំនួនសង: {0}
+Borrow Quantity: {0},ចំនួនខ្ចី: {0}
+Payments,បង់ប្រាក់
+Payable Account,គណនីជំពាក់
+New Expenses,ចំណាយថ្មី
+Expenses,ចំណាយ
+Menu,ម៉ឺនុយ
+Default Income Account,គណនីចំណូលលំនាំដើម
+Default Free Account,គណនីឥតគិតថ្លៃលំនាំដើម
+Default Receivable Account,គណនីដែលត្រូវទទួលប្រាក់លំនាំដើម
+Driver,អ្នកបើកបរ
+Driver Name,ឈ្មោះអ្នកបើកបរ
+Sale Status,ស្ថានភាពលក់
+Parent Bill Number,លេខវិកយប័ត្រមេ
+Draft,ព្រាងទុក
+Deleted,បានលុប
+Paid,បានបង់
+Unpaid,មិនទាន់បង់
+Partially Paid,បានបង់ខ្លះ
+Account Code,លេខកូដគណនី
+Account Name,ឈ្មោះគណនី
+Account Name (KH),ឈ្មោះគណនីជាភាសាខ្មែរ
+Root Type,ប្រភេទមូលដ្ឋាន
+Account Type,ប្រភេទគណនី
+Is Group,ជាក្រុម
+Create New,បង្កើតថ្មី
+Keyboard Shortcuts,ផ្លូវកាត់ក្ដារចុច
+System Health,ស្ថានភាពប្រព័ន្ធ
+Frappe Support,ការគាំទ្រ Frappe
+Home Page, ទំព័រដើម
+Chart of Accounts,តារាងគណនី
+Chart of Account,តារាងគណនី
+Assets,ទ្រព្យសម្បត្តិ
+Expand,ពង្រីក
+Current Assets,ទ្រព្យសកម្មបច្ចុប្បន្ន
+Cash on Hand,សាច់ប្រាក់នៅក្នុងដៃ
+Cash at Bank,សាច់ប្រាក់នៅធនាគារ
+Accounts Receivable,គណនីទទួលប្រាក់
+Other Receivables,ប្រាក់ត្រូវទទួលផ្សេងៗ
+Inventory,សារពើភ័ណ្ឌ
+Non-Current Assets,អរូបីរយៈពេលវែង
+Collapse All, បង្រួមទាំងអស់
+Expand All,ពង្រីកទាំងអស់
+User Settings,ការកំណត់អ្នកប្រើ
+Workspace Settings,ការកំណត់ Workspace
+Session Defaults,លំនាំដើមសម័យប្រើប្រាស់
+Reload,ផ្ទុកឡើងវិញ
+View Website,មើលគេហទំព័រ
+Apps,កម្មវិធី
+Toggle Full Width,បិទបើកទទឹងពេញ
+Toggle Theme,បិទបើកស្បែកប្រព័ន្ធ
+Log out,ចេញពីប្រព័ន្ធ
+Notifications,ការជូនដំណឹង
+Events,ព្រឹត្តិការណ៍
+What's New,អ្វីថ្មី
+Nothing New,គ្មានអ្វីថ្មី
+There is nothing new to show you right now.,បច្ចុប្បន្ននេះមិនមានអ្វីថ្មីបង្ហាញទេ។
+Load More,ផ្ទុកបន្ថែម
+Filter By,តម្រៀបតាម
+Assigned To,បញ្ជាក់ទៅកាន់
+No filters found,រកមិនឃើញតម្រងទេ
+Edit Filters,កែសម្រួលតម្រង
+Select Filters,ជ្រើសរើសតម្រង
+Tags,ស្លាក
+No Tags,គ្មានស្លាក
+Show Tags,បង្ហាញស្លាក
+Saved Filters,តម្រងដែលបានរក្សាទុក
+Filter Name,ឈ្មោះតម្រង
+Customer Group KH,ក្រុមអតិថិជនជាភាសាខ្មែរ
+Your Short,ផ្លូវកាត់របស់អ្នក
+Employee Management,គ្រប់គ្រងបុគ្គលិក
+Recent Added Product,ផលិតផលថ្មីដែលបានបន្ថែម
+Business Information,ព័ត៌មានអាជីវកម្ម
+Outlet Settings,ការកំណត់កន្លែងលក់
+No Upcoming Events,គ្មានព្រឹត្តិការណ៍ខាងមុខទេ
+There are no upcoming events for you.,មិនមានព្រឹត្តិការណ៍ខាងមុខសម្រាប់អ្នកទេ
+No New notifications,គ្មានការជូនដំណឹងថ្មីទេ
+Looks like you haven’t received any notifications.,ហាក់ដូចជាអ្នកមិនទាន់ទទួលការជូនដំណឹងណាមួយទេ
+Total Products,ផលិតផលសរុប
+Disabled,អសកម្ម,
+Customer Group En,ក្រុមអតិថិជន (En)
+Not Saved,មិនបានរក្សាទុក
+User Permission,សិទ្ធិអ្នកប្រើ
+Role Permissions Manager,កម្មវិធីគ្រប់គ្រងសិទ្ធតាមតួនាទី
+Customize,ប្ដូរតាមបំណង
+Toggle Sidebar,បិទ/បើករបារចំហៀង
+Edit DocType,កែសម្រួលប្រភេទឯកសារ
+List Settings,ការកំណត់បញ្ជី
+Report View,របាយការណ៍ទិដ្ឋភាព
+Dashboard View,ទិដ្ឋភាពផ្ទាំងគ្រប់គ្រង
+Kanban View,ទិដ្ឋភាព Kanban
+Image View,ទិដ្ឋភាពរូបភាព
+Edit Full Form,កែសម្រួលទម្រង់ពេញ
+Equals,ស្មើ
+Not Equals, មិនស្មើរ
+Like,ដូច
+Not Like,មិនដូច
+In,នៅក្នុង
+Not In,មិននៅក្នុង
+Is,គឺ
+Add a Filter,បន្ថែម
+Clear Filters,លុបតម្រង
+Apply Filters,អនុវត្តតម្រង
+Attachments,ឯកសារភ្ជាប់
+Share,ចែករំលែក
+Add to ToDo,បន្ថែមទៅកាន់កិច្ចការត្រូវធ្វើ
+Assign to me,បញ្ជាក់ឲ្យខ្ញុំ
+Assign To,បញ្ជាក់ឲ្យ
+Assign To User Group,បញ្ជាក់ឲ្យក្រុមអ្នកប្រើ
+Complete By,បញ្ចប់ដោយ
+Priority,អាទិភាព
+Comment,មតិយោបល់
+Upload,ផ្ទុកឡើង
+Drag and drop files here or upload from,អូសនិងទម្លាក់ឯកសារនៅទីនេះ ឬផ្ទុកឡើងពី
+My Device,ឧបករណ៍របស់ខ្ញុំ
+Library,បណ្ណាល័យ
+Link,តំណភ្ជាប់
+Set all private,កំណត់ទាំងអស់ឲ្យឯកជន
+Set all public,កំណត់ទាំងអស់ឲ្យសាធារណៈ
+Can Read,អាចអានបាន
+Can Write,អាចសរសេរបាន
+Can Submit,អាចដាក់ស្នើបាន
+Submitted,បានបញ្ជូន
+Max Produce Quantity,ចំនួនផលិតអតិបរិមា
+Total Produce Quantity,ចំនួនបានដក
+Total Remaining Quantity,ចំនួននៅសល់
+Block Ice Produce Information,ព័ត៌មានការផលិត
+Can Share,អាចចែករំលែកបាន
+Share this document with,ចែករំលែកឯកសារនេះជាមួយ
+Insert Below,បញ្ចូលខាងក្រោម
+Insert Above,បញ្ចូលខាងលើ
+Duplicate,ចម្លង
+Move,ផ្លាស់ទី
+Configure Columns,កំណត់រចនាសម្ព័ន្ធជួរឈរ
+Fieldname,ឈ្មោះ
+Column Width,ទទឹងជួរឈរ
+Sticky,ថេរ
+Add / Remove Columns,បន្ថែម / ដកជួរឈរ
+Reset to default,កំណត់ទៅលំនាំដើម
+Update,ធ្វើបច្ចុប្បន្នភាព
+Type a reply / comment,វាយបញ្ចូលការឆ្លើយតប / មតិយោបល់
+Outlets,កន្លែងលក់
+Product Name KH,ឈ្មោះផលិតផលជាភាសាខ្មែរ
+Allow Sum QTY,អនុញ្ញាតបូកបរិមាណ
+Show In Sale Report,បង្ហាញក្នុងរបាយការណ៍លក់
+Allow Split Bill,អនុញ្ញាតបំបែកវិក្កយបត្រ
+Income Account,គណនីចំណូល
+Free Account,គណនីឥតគិតថ្លៃ
+Details,ព័ត៌មានលម្អិត
+Base Product Unit,ឯកតាមូលដ្ឋានផលិតផល
+Email,អ៊ីមែល
+Rename,ប្តូរឈ្មោះ
+Show Links,បង្ហាញតំណភ្ជាប់
+Copy to Clipboard,ចម្លង Clipboard
+Remind Me,រំលឹកខ្ញុំ
+Undo,ថយក្រោយ
+Redo,ទៅមុខ
+To,ទៅកាន់
+Subject,ប្រធានបទ
+Message,សារ
+Send me a copy,ផ្ញើចម្លងមកខ្ញុំ
+Send Read Receipt,ផ្ញើបញ្ជាក់ Receipt
+Select Attachments,ជ្រើសឯកសារភ្ជាប់
+Add Attachment,បន្ថែមឯកសារភ្ជាប់
+Attach Document Print,ភ្ជាប់ឯកសារបោះពុម្ព
+Select Print Format,ជ្រើសទម្រង់បោះពុម្ព
+Print Language,ភាសាបោះពុម្ព
+Print Format,ទម្រង់បោះពុម្ព
+Language,ភាសា
+Letter Head,ក្បាលលិខិត
+Product Outlets,ផលិតផល
+Try the new Print Designer,សាកល្បងអ្នករចនាបោះពុម្ពថ្មី
+Full Page,ទំព័រពេញ
+Print Settings,ការកំណត់បោះពុម្ព
+New Name,ឈ្មោះថ្មី
+Merge with existing (This cannot be undone),បញ្ចូលជាមួយដែលមាន (មិនអាចមិនធ្វើវិញបាន)
+Linked With,ភ្ជាប់ជាមួយ
+Create a Reminder,បង្កើតការរំលឹក
+Remind Me In,រំលឹកខ្ញុំក្នុង
+Remind At,រំលឹកនៅពេល
+Create,បង្កើត
+Form,ទម្រង់
+Accounts,គណនី
+Permissions,សិទ្ធិ
+Naming,ការដាក់ឈ្មោះ
+Actions,សកម្មភាព
+Links,តំណភ្ជាប់
+States,ស្ថានភាព
+Web View,ទិដ្ឋភាពវែប
+Connections,ការតភ្ជាប់
+Views,ទិដ្ឋភាព
+Workflow,លំហូរការងារ
+Customization,ការប្ដូរតាមបំណង
+Role,តួនាទី
+Product Prefix,បុព្វបទផលិតផល
+Business Name KH,ឈ្មោះអាជីវកម្មជាភាសាខ្មែរ
+Closed Selling Date Doctype,ប្រភេទឯកសារថ្ងៃបិទលក់
+Server Report Setting,ការកំណត់របាយការណ៍ម៉ាស៊ីនមេ
+Receipt Logo,Logo វិក្កយបត្រ
+Default Currency,រូបិយប័ណ្ណលំនាំដើម
+Currency Symbol,និមិត្តសញ្ញារូបិយប័ណ្ណ
+Currency Format,ទម្រង់រូបិយប័ណ្ណ
+Attach,ភ្ជាប់
+Reset Transaction,កំណត់ប្រតិបត្តិការឡើងវិញ
+Cash Account,គណនីសាច់ប្រាក់
+Bank Account,គណនីធនាគារ
+Cash Transfer Account,គណនីផ្ទេរសាច់ប្រាក់
+Receivable Account,គណនីទទួលប្រាក់
+Credit Account,គណនីឥណទាន
+Write Off Account,គណនីលុបចោល
+Inventory Account,គណនីសារពើភ័ណ្ឌ
+Server Report URL,អាសយដ្ឋានរបាយការណ៍ម៉ាស៊ីនមេ (URL)
+Report Service URL,អាសយដ្ឋានសេវារបាយការណ៍ (URL)
+Report Server Token,Token ម៉ាស៊ីនមេរបាយការណ៍
+Outlet Name KH,ឈ្មោះទីតាំងជាភាសាខ្មែរ
+Default Unit,ឯកតាលំនាំដើម
+Stock Location Name EN,ឈ្មោះទីតាំងស្តុកជាអង់គ្លេស
+Employee,បុគ្គលិក
+Employee Name,ឈ្មោះបុគ្គលិក
+Position,មុខតំណែង
+Default Outlet,ទីតាំងលំនាំដើម
+Employee Code,លេខកូដបុគ្គលិក
+Default Frontend Home Page,ទំព័រដើមផ្នែកមុខ
+Login Information,ព័ត៌មានចូលប្រព័ន្ធ
+Allow Login,អនុញ្ញាតឲ្យចូល
+Role Profile,ព័ត៌មានតួនាទី
+Edit Bill,កែប្រែវិក្កយបត្រ
+Remove Product from Sale Product before Save,លុបផលិតផលចេញពីការលក់ មុនពេលរក្សាទុក
+Remove Product from Sale Product after Save,លុបផលិតផលចេញពីការលក់ បន្ទាប់ពីរក្សាទុក
+Change Product Price,ផ្លាស់ប្តូរតម្លៃផលិតផល
+Change Sale Date,ផ្លាស់ប្តូរថ្ងៃលក់
+Change Customer after Close Sale,ផ្លាស់ប្តូរអតិថិជន បន្ទាប់ពីបិទការលក់
+Split Bill,បំបែកវិក្កយបត្រ
+New Employee,បុគ្គលិកថ្មី
+Change,ប្តូរ
+Employee Position,មុខតំណែងបុគ្គលិក
+Photo,រូបភាព
+Index,សន្ទស្សន៍
+Journal Entry,ប្រតិទិនគណនេយ្យ
+Purchase,បញ្ជាទិញ
+Purchase Order,បញ្ជាទិញ
+Products Quantity,បរិមាណផលិតផល
+Units,ឯកតា
+Stock Location Products,ផលិតផលទីតាំងស្តុក
+Selling,ការលក់
+Sale Invoice List,បញ្ជីវិក្ក័យបត្រលក់
+Customer & Driver,អតិថិជន/អ្នកបើកបរ
+Block Ice Invoice,វិក្ក័យបត្រទឹកកកដុំ
+Expenses List,បញ្ជីចំណាយ
+Currency Exchange,ការប្ដូរប្រាក់
+Expense,ចំណាយ
+Expense Payment,ការទូទាត់ចំណាយ
+Expense Category,ប្រភេទចំណាយ
+Expense Items,មុខទំនិញចំណាយ
+Stock Management,គ្រប់គ្រងឃ្លាំង
+Create a new {0},បង្កើត{0}ថ្មី
+Accounting,គណនី
+Add Row,បញ្ជូលថ្មី
+Filter,តម្រង
+Last Updated On,ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ
+Created On,បង្កើតនៅ
+Most Used,ប្រើប្រាស់ច្រើនបំផុត
+Male,ប្រុស
+Female,ស្រី
+Activity,សកម្មភាព
+New Email,អ៊ីមែលថ្មី
+Duplicate Row,ចម្លងជួរដេក
+Advanced Search,ការស្វែងរកកម្រិតខ្ពស់
+Gender,ភេទ
+Is Customer,ជាអតិថិជន
+Is Driver,ជាអ្នកបើកបរ
+Driver List,អ្នកបើកបរ
+Is Company,ជាក្រុមហ៊ុន
+Product Code,លេខកូដផលិតផល
+Product Management,គ្រប់គ្រងផលិតផល
+Product Name,ឈ្មោះផលិតផល
+Multiplier,មេគុណ
+Information Detail,ព័ត៌មានលម្អិត
+Info,ព័ត៌មាន
+Free Products,ផលិតផលឥតគិតថ្លៃ
+Comments,មតិយោបល់
+Product Prices,តម្លៃផលិតផល
+Can Split Bill,អាចបំបែកវិក្កយបត្រ
+Can Edit Bill,អាចកែវិក្កយបត្រ
+Enabled,បើកដំណើរការ
+Can Show Price,អាចបង្ហាញតម្លៃ
+Plate Number,ស្លាកលេខឡាន
+Keyword,ពាក្យគន្លឹះ
+Account,គណនី
+Accounts,គណនី
+No rows,គ្មានទិន្នន័យ
+ID,លេខអត្តសញ្ញាណ
+Product Units,ឯកតាទំនិញ
+Add,បញ្ជូល
+Add {0},បញ្ជូល {0}
+Customer Group,ប្រភេទអតិថិជន
+Customer Product Price,តម្លៃផលិតផលអតិថិជន
+Product Category,ប្រភេទទំនិញ
+Product Categories,ប្រភេទទំនិញ
+Category Name,ប្រភេទទំនិញ
+Category Name EN,ប្រភេទទំនិញជាអង់គ្លេស
+Category Name KH,ប្រភេទទំនិញជាភាសាខ្មែរ
+Parent Product Category,ក្រុមទំនិញ
+welcome,សូមស្វាគមន៍មកកាន់កម្មវិធីរបស់ខ្ញុំ!
+greeting,សួស្តី {name}!
+Add Workspace,បញ្ជូល Workspace
+ePOS by ESTC,ePOS ដោយ eSTC
+Remove Property,លុប Property
+Edit Property,កែប្រែព័ត៌មាន
+Edit,កែប្រែ
+Please enter your business code, username and password,សូមបញ្ជូលព័ត៌មានពាណិជ្ជកម្ម, ឈ្មោះប្រើប្រាស់ និងលេខសម្ងាត់របស់អ្នក
+Property Code,លេខកូដពាណិជ្ជកម្ម
+Username,ឈ្មោះប្រើប្រាស់
+Password,លេខសម្ងាត់
+Save Workspace,រក្សាទុក Workspace
+Loading,កំពុងដំណើរការ
+Loading...,កំពុងដំណើរការ...
+Please enter property code,សូមបញ្ជូលលេខកូដពាណិជ្ជកម្ម
+Loging In...,កំពុងចូលប្រព័ន្ធ...
+Change Language,ប្តូរភាសារ
+Help,ជំនួយ
+My Profile,ព័ត៌មានរបស់អ្នក
+Logout,ចាក់ចេញ
+Occupy,បន្ទប់មានភ្ងៀវ
+Room Occupy,បន្ទប់មានភ្ងៀវ
+Arrival,ភ្ងៀវត្រូវចូល
+Departure,ភ្ងៀវត្រូវចេញ
+Stay Over,ភ្ងៀវស្នាក់នៅបន្ត
+Vacant Room,បន្ទប់ទំនេរ
+Total Rooms,បន្ទប់សរុប
+Summary,ព័ត៌មានសង្ខេប
+Good Morning!,អរុណសួស្ដី!
+Good Afternoon!,ទិវាសួស្តី
+Good Evening!,សាយន្តសួស្តី
+Welcome to your workspace.,សូមស្វាគមន៍មកកាន់កន្លែងធ្វើការរបស់អ្នក
+Monday,ថ្ងៃច័ន្ទ
+Tuesday,ថ្ងៃអង្គារ
+Wednesday,ថ្ងៃពុធ
+Thursday,ថ្ងៃព្រហស្បតិ៍
+Friday,ថ្ងៃសុក្រ
+Saturday,ថ្ងៃសៅរ៍
+Sunday,ថ្ងៃអាទិត្យ
+January,ខែមករា
+February,ខែកុម្ភៈ
+March,មីនា
+April,មេសា
+May,ឧសភា
+June,មិថុនា
+July,កក្កដា
+August,សីហា
+September,កញ្ញា
+October,តុលា
+November,វិច្ឆិកា
+December,ធ្នូ
+Today,ថ្ងៃនេះ
+Tomorrow,ថ្ងៃស្អែក
+on_date_time,នៅថ្ងៃទី
+Occupancy,ភាគរយនៃការកាស្នាក់នៅ
+Home,ទំព័រដើម
+Room,បន្ទប់
+Task,កិច្ចការ
+Stays,ភ្ងៀវស្នាក់នៅ
+reservation_menu,ភ្ងៀវស្នាក់នៅ
+Report,របាយការណ៌
+Reports,របាយការណ៌
+Recent List,បញ្ជីថ្មីៗ
+Room Status,ស្ថានភាពបន្ទប់
+Occupy Dirty,បន្ទប់មានភ្ងៀវមិនទាន់សម្អាត
+Occupy Cleaned,បន្ទប់មានភ្ងៀវស្អាត
+Vacant Clean,បន្ទប់ទំនេរស្អាត
+Vacant Dirty,បន្ទប់ទំនេរមិនទាន់សម្អាត
+Room Block,បន្ទប់បិទ
+Lost and Found,បាត់របស់ និងរកឃើញ
+Housekeeping SOP,នីតិវិធីស្តង់ដារផ្នែកអនាម័យ
+Settings,កំណត់
+Setting,កំណត់
+Checking property code,ត្រួតពិនិត្យលេខកូដពាណិជ្ជកម្មរបស់អ្នក
+Loging In,កំពុងចូលប្រព័ន្ធ
+property_not_exist_message,លេខកូដ {property_code} មិនមានក្នុងប្រព័ន្ធទេ
+Check Property Information,ត្រួតពិនិត្យព័ត៌មានពាណិជ្ជកម្ម
+OK,យល់ព្រម
+Ok,យល់ព្រម
+ok,យល់ព្រម
+View All,មើលទាំងអស់
+View all Tasks,មើលកិច្ចការទាំងអស់
+My Task,កិច្ចការរបស់ខ្ញុំ
+POS Station Name,ម៉ាស៊ីនគិតលុយ
+No sale note,គ្មានកំណត់ចំណាំ
+Description,បរិយាយ
+Bill #,លេខ Bill
+Business Branch,សាខា
+Sale Product List,តារាងទំនិញ
+Working Day/Cashier Shift,ថ្ងៃ និងវេណធ្វើការ
+Cash Dollar,ប្រាក់ដុល្លា
+Please enter your pin code,សូមបញ្ជូលលេខ PIN កូដរបស់អ្នក
+All Task,កិច្ចការទាំងអស់
+In Progress,កំពុងដំណើរការ
+New,ថ្មី
+Clear Selected,លុបការជ្រើសរើស
+Search,ស្វែងរក
+Jan,មករា
+Feb,កុម្ភៈ
+Mar,មីនា
+Apr,មេសា
+Jun,មិថុនា
+Jul,កក្កដា
+Aug,សីហា
+Sep,កញ្ញា
+Oct,តុលា
+Nov,វិច្ឆិកា
+Dec,ធ្នូ
+Room Cleaning,សម្អាតបន្ទប់
+Customer Management,គ្រប់គ្រងអតិថិជន
+Shift Management,គ្រប់គ្រងវេណលក់
+Sale & Refund,គ្រប់គ្រងការលក់
+Inventory,បញ្ជីសារពើភណ្ឌ
+All Coupon Codes,បញ្ជីលេខគូប៉ុងទាំងអស់
+Coupon Codes,លេខគូប៉ុង
+Sold Coupon,បញ្ជីលេខគូប៉ុងបានលក់
+Register Coupon,បញ្ជូលលេខគូប៉ុង
+Use Coupon Transaction,ប្រតិបត្តការប្រើគូប៉ុង
+Coupon Register,បញ្ជូលលេខគូប៉ុង
+Coupon Management,គ្រប់គ្រងគូប៉ុង
+Mark as Done,រួចរាល់
+Sale #,លេខវិកយប័ត្រ
+Close Date,ម៉ោងបិទលក់
+View Detail,មើលលម្អិត
+Station,កន្លែងលក់
+Check Coupon Code,ត្រួតពិនិត្យលេខគូប៉ុងកូដ
+Sale Product Dis.,សរុបបញ្ចុះតម្លៃលើទំនិញ
+Check coupon code,ត្រួតពិនិត្យលេខគូប៉ុងកូដ
+Coupon Transaction Summary,សង្ខេបប្រតិបត្តការគូប៉ុង
+Transaction Summary,ប្រតិបត្តការសង្ខេប
+Parking Area,កន្លែងចតឡាន
+Ongoing,ដំណើរការ
+Complete,បញ្ចប់
+Cancelled,បានលុបចោល
+Dashboard,ផ្ទាំងគ្រប់គ្រង
+Sale Dashboard,ផ្ទាំងគ្រប់គ្រងការលក់
+Close Working Day,បិទថ្ងៃលក់
+Start Working Day,បើកថ្ងៃលក់
+Close Cashier Shift,បិទវេណលក់
+Close Shift,បិទវេណលក់
+New Sale Coupon,លក់គូប៉ុងថ្មី
+Quick Action,ប្រតិបត្តការរហ័ស
+New Top Up,បញ្ជូល Top Up ថ្មី
+New Redeem,បញ្ជូលការដកប្រាក់ថ្មី
+Start Cashier Shift,បើកវេណលក់
+Start Shift,បើកវេណលក់
+Stock Adjustment,កែសម្រួលស្តុក
+Sale,លក់
+Cash Float,ប្រាក់បើកឲ្យដំបូង
+Opening Amount,ប្រាក់ដើមគ្រា
+System Close Amount,ប្រាក់បិទបញ្ជីរដោយប្រព័ន្ធ
+System Closed Amount,ប្រាក់បិទបញ្ជីរដោយប្រព័ន្ធ
+Total Closes Amount,សរុបប្រាក់បិទបញ្ជី
+Total Difference Amount,សរុបប្រាក់លម្អៀង
+Product List,តារាងបញ្ចីទំនិញ
+Last modified:,កែប្រែដោយ
+Modified By,កែប្រែដោយ
+Modified,កែប្រែចុងក្រោយ
+Modified Date,ថ្ងៃកែប្រែចុងក្រោយ
+Last Modified,កែប្រែចុងក្រោយ
+Sale Detail:,ព័ត៌មានលក់
+Sale Detail,ព័ត៌មានលក់
+Sale Detail Report,របាយការណ៌ព័ត៌មានលក់លម្អិត
+Customer Detail:,ព័ត៌មានអតិថិជន
+Customer Detail,ព័ត៌មានអតិថិជន
+Branch,សាខា
+Bill Number,លេខវិក័យប័ត្រ
+Posting Date,កាលបរិច្ឆេទបញ្ចូល
+Table #,លេខតុ
+Payment successfully,បង់ប្រាក់បានជោគជ័យ
+To Date,ដល់
+Price Rule,កម្រិតតម្លៃ
+Select,ជ្រើសរើស
+Today Revenue,ចំណូលថ្ងៃនេះ
+Today Bill / QTY,ចនួនវិកយប័ត្រ/ចំនួន
+Stock Location,ទីតាំងស្តុក
+Outlet,ទីតាំងលក់
+Working Day,ថ្ងៃធ្វើការ
+MTD Revenue,ចំណូលប្រចាំខែ
+Coupon Amount Summary,សង្ខេបចំនួនទឹកប្រាក់ក្នុងគូប៉ុង
+Cashier Shift,វេនអ្នកគិតលុយ
+Payment,បង់ប្រាក់
+Sale + Top Up,លក់ + បញ្ជូលទឹកប្រាក់បន្ថែម
+Use,ប្រើប្រាស់គូប៉ុង
+Total,សរុប
+USD,ដុល្លា
+KHR,រៀល
+Quick Pay,ទូទាត់រហ័ស
+Delete this Order,លុបវិកយប័ត្រនេះ
+Mores,ផ្សេងៗ
+Set Reference Number,កំណត់លេខយោង
+Reference Number,លេខយោង
+View Order Detail,មើលប៉ុងលម្អិត
+Print Bill,បោះពុម្ភវិកយប័ត្រ
+Total Quantity,ចំនួនសរុប
+Created by,បង្កើតដោយ
+Use Amount,ទឹកប្រាក់ប្រើប្រាស់
+Total/Balance,សរុប/សមតុល្យ
+Transaction Type,ប្រភេទប្រតិបត្តិការណ៌
+Are you sure you want to delete this coupon code?,តើអ្នកពិតជាចង់លុបលេខគូប៉ុងនេះមែនទេ?
+Delete Coupon,លុបគូប៉ុង
+Today Bill / Total Coupon,សរុបវិកយប័ត្រ/ចំនួនគូប៉ុង
+Show/Hide Summary,បង្ហាញ/លាក់ព័ត៌មានសង្ខេប
+Closed by,បិទដោយ
+Start Date,ថ្ងៃចាប់ផ្តើម
+Working Day #,លេខថ្ងៃធ្វើការ
+Top Up,ដាក់ប្រាក់បន្ថែម
+Cashier Shift #,លេខវេណលក់
+Coupon Value,តម្លៃគូប៉ុង
+Coupon value,តម្លៃគូប៉ុង
+Total Coupon Value,សរុបតម្លៃគូប៉ុង
+End Date,ថ្ងៃបញ្ចប់
+Redeem,ដកប្រាក់
+Redeemed,ដកប្រាក់
+Balance,សមតុល្យ
+Coupon #,លេខគូប៉ុង
+Invoice #,លេខវិកយប័ត្រ
+POS Station,ម៉ាស៊ីនលក់
+Coupon Transaction,ប្រតិបត្តិការប្រើប្រាស់គូប៉ុង
+Coupon Transactions,ប្រតិបត្តិការប្រើប្រាស់គូប៉ុង
+Actual Amount,តម្លៃជាក់ស្តែង
+Total Tax,ពន្ធសរុប
+This coupon is register by:,លេខគូប៉ុងនេះត្រូវបានបង្កើតដោយ:
+This coupon is register by,លេខគូប៉ុងនេះត្រូវបានបង្កើតដោយ:
+Payment Breakdown,បែងចែកការទូទាត់
+Daily Sale Chart,តារាងលក់ប្រចាំថ្ងៃ
+Recent Order,ការបញ្ជាទិញថ្មីៗ
+View all orders,មើលការបញ្ជាទិញទាំងអស់
+Pending Order,បញ្ជាទិញកំពុងរងចាំ
+Please enter price,សូមបញ្ជូលតម្លៃ
+Change Profile,ប្តូរប្រវត្តិរូប
+Take Photo,ផ្ទុករូបភាព
+Upload Photo,ផ្ទុករូបភាព
+Remove File,លុបឯកសារ
+Show more,បង្ហាញព័ត៌មានទាំងអស់
+Show More,បង្ហាញព័ត៌មានទាំងអស់
+Hide Info,លាក់ព័ត៌មាន
+Product Category,ប្រភេទផលិតផល
+Unit,ឯកតា
+Price,តម្លៃ
+Note,កំណត់ចំណាំ
+Created By,បង្កើតដោយ
+days ago,ថ្ងៃមុន
+minutes ago,នាទីមុន
+hours ago,ម៉ោងមុន
+a day ago,ម្សិលមិញ
+Exchange Rate,អត្រាប្ដូរប្រាក់
+Created Date,កាលបរិច្ឆេទបង្កើត
+Products,ផលិតផល
+Total Transaction,ចំនួនប្រតិបត្តិការណ៌
+Print,បោះពុម្ភ
+Stock Adjustment History,ប្រវត្តិកែស្តុក
+Quantity,បរិមាណ
+Search By Product Name,ស្វែងរកតាមឈ្មោះផលិតផល
+Pleas Select Stock Location,សូមជ្រើសរើសទីតាំងស្តុក
+Code,កូដ
+Sale Date,ថ្ងៃលក់
+Current Quantity,បរិមាណបច្ចុប្បន្ន
+Sub Total,សរុបរង
+New Quantity,បរិមាណថ្មី
+Receipt List,តារាងវិកយប័ត្រ
+New Cost,ថ្លៃដើមថ្មី
+Different,លម្អៀង
+Prices,តម្លៃ
+Product Price,តម្លៃផលិតផល
+Product,ផលិតផល
+Between Date,ចន្លោះថ្ងៃ
+Equal,ស្មើរ
+Greater than,ធំជាង
+Greater than and Equal,ធំជាងឬស្មើរ
+Less than,តូចជាង
+Less than and Equal,តូចជាងឬស្មើរ
+Delete,លុប
+Save,រក្សាទុក
+Cancel,បោះបង់
+Category,ប្រភេទ
+Cost,ថ្លៃដើម
+Grand Total,តម្លៃសរុប
+Product Name Kh,ឈ្មោះផលិតផលជាភាសាខ្មែរ
+Product Name En,ឈ្មោះផលិតផលជាអង់គ្លេស
+Revenue Group,ក្រុមចំណូល
+Product Information,ព័ត៌៌មានផលិតផល
+On Date,នៅថ្ងៃទី
+Select Date,ជ្រើសរើសកាលបរិច្ឆេទ
+Yesterday,ម្សិលមិញ
+This Week,សប្ដាហ៍នេះ
+Last Week,សប្ដាហ៍មុន
+Next Week,សប្ដាហ៍ក្រោយ
+This Month,ខែនេះ
+Last Month,ខែមុន
+Next Month,ខែក្រោយ
+This Quarter,ត្រីមាសនេះ
+Last Quarter,ត្រីមាសមុន
+This Year,ឆ្នាំនេះ
+Date Range,ចន្លោះថ្ងៃ
+Last Year,ឆ្នាំមុន
+Total Discount,បញ្ចុះតម្លៃសរុប
+Items Discount,បញ្ចុះតម្លៃលើទំនិញ
+Sale Discount,លក់បញ្ចុះតម្លៃ
+Discountable Amount,ចំនួនទឹកប្រាក់ដែលអាចបញ្ចុះតម្លៃ
+Add Price,បញ្ចូលតម្លៃ
+Delete Price,លុបតម្លៃ
+QTY,ចំនួន
+QTY:,ចំនួន:
+Discount,បញ្ចុះតម្លៃ
+Tax,ពន្ធ
+Total Orders,បញ្ជាទិញសរុប
+Total Amt,ទឹកប្រាក់សរុប
+Profit,ប្រាក់ចំណេញ
+Total Revenue,ប្រាក់ចំណូលសរុប
+Total Cost,ថ្លៃដើមសរុប
+Total Gross Profit,ប្រាក់ចំណេញសរុប
+Date,កាលបរិច្ឆេទ
+Total Commission,កម្រៃជើងសារសរុប
+Credit Card,កាតឥណទាន
+Total Payment,ទូទាត់ប្រាក់សរុប
+Other,ផ្សេងទៀត
+User,អ្នកប្រើប្រាស់
+Customer,អតិថិជន
+Revenue,ប្រាក់ចំណូល
+Sale Reports,របាយការណ៌លក់
+Sale Receipt A4,បង្កាន់ដៃលក់ A4
+Sale Receipt A6,បង្កាន់ដៃលក់ A6
+Show/Hide Chart,បង្ហាញ/លាក់ក្រាហ្វ
+Redeem List,បញ្ជីប្តូរគូប៉ុង
+Sale Coupon,លក់គូប៉ុង
+Sale Coupon List,បញ្ជីលក់គូប៉ុង
+Top Up Coupon List,បញ្ជីបញ្ចូលគូប៉ុង
+Top Up Coupon,បញ្ចូលគូប៉ុង
+Coupon Code,លេខគូប៉ុង
+Total Coupon:,សរុបគូប៉ុង
+Total Coupon,សរុបគូប៉ុង
+Total Amount:,សរុបតម្លៃ
+Total Amount,សរុបតម្លៃ
+Scan to Add,ស្កេនដើម្បីបញ្ជូល
+Scan to Remove,ស្កេនដើម្បីលុប
+Please scan coupon code,សូមបញ្ជូលលេខគូប៉ុងនៅទីនេះ
+Please enter or scan qr code,សូមបញ្ជូល ឬស្កេន QR កូដ
+Date of Birth,ថ្ងៃខែឆ្នាំកំណើត
+Customer Code,លេខកូដអតិថិជន
+Customer Name EN,ឈ្មោះអតិថិជនជាអង់គ្លេស
+Customer Name KH,ឈ្មោះអតិថិជនជាភាសាខ្មែរ
+Customer Name,ឈ្មោះអតិថិជន
+Name Kh,ឈ្មោះជាភាសាខ្មែរ
+Note on Product,កំណត់ចំណាំអំពីផលិតផល
+More,ផ្សេងទៀត
+Company Name,ឈ្មោះក្រុមហ៊ុន
+Company,ក្រុមហ៊ុន
+Jobs,ការងារ
+Contact Infromation,ព័ត៌មានទំនាក់ទំនង
+Address & Note,អាសយដ្ឋាន & កំណត់ចំណាំ
+Address,អាសយដ្ឋាន
+Phone Number 1,លេខទូរស័ព្ទ ១
+Phone Number 2,លេខទូរស័ព្ទ ២
+Email Address,អាសយដ្ឋានអ៊ីមែល
+Add Customer,បញ្ចូលអតិថិជន
+Add new customer,បញ្ចូលអតិថិជនថ្មី
+Customer List,បញ្ជីអតិថិជន
+Customer Product Prices,តារាងម្លៃតាមអតិថិជន
+Please scan member card,សូមស្កេនកាតសមាជិក
+Scan Member Card,ស្កេនកាតសមាជិក
+Phone Number,លេខទូរស័ព្ទ
+Location,ទីតាំង
+Group,ក្រុម
+coupon_code_number_does_not_exist,គូប៉ុងកូដលេខ {coupon} មិនទាន់បានជ្រើសរើសទេ។
+Discount Percent,ភាគរយបញ្ចុះតម្លៃ
+Discount Amount,ចំនួនទឹកប្រាក់បញ្ចុះតម្លៃ
+No.,ល.រ
+Daily Sale Revenue,ចំណូលលក់ប្រចាំថ្ងៃ
+Totals:,សរុប:
+Sale Revenue,ចំណូលលក់
+Closed,បិទ
+Close,បិទ
+Opened,បើក
+View Graph as Bar Chart,មើលក្រាហ្វជាប្រភេទសសរ
+Recent Transactions,ប្រតិបត្តិការថ្មីៗ
+View Graph as Line Chart,មើលក្រាហ្វជាប្រភេទខ្សែបន្ទាត់
+View Data,មើលទិន្នន័យ
+Sale Breakdown by Coupon Code,ចំណូលលក់តាមប្រភេទគូប៉ុង
+Payment Type,ប្រភេទទូទាត់
+Payment Date,ថ្ងៃបង់ប្រាក់
+Status,ស្ថានភាព
+Cashier Shift List,តារាងវេណលក់
+Shift Type,វេណលក់
+Shift,វេណលក់
+Opened By,បើកដោយ
+Opened Date,ថ្ងៃបើក
+Payment Amount,ចំនួនទឹកប្រាក់ទូទាត់
+Payment Amount{1},ចំនួនទឹកប្រាក់ទូទាត់
+Sale Payment Invoices Row #{0}: Value cannot be negative for {1},វិក័យប័ត្រទូទាត់លក់ ជួរ #{0}: តម្លៃមិនអាចជាលេខអវិជ្ជមានសម្រាប់ {1}
+Cash RIEL,ប្រាក់រៀល
+Cash Riel,ប្រាក់រៀល
+ABA RIEL,ABA រៀល
+ABA Riel,ABA រៀល
+ABA Dollar,ABA ដុល្លា
+ABA DOLLAR,ABA ដុល្លា
+Revenue vs Coupon Used by Station,ចំណូល និងការប្រើប្រាស់គូប៉ុងតាមទីតាំងលក់
+Please enter your station name.,សូមបញ្ជូលឈ្មោះទីតាំងលក់
+Please enter station name,សូមបញ្ជូលឈ្មោះទីតាំងលក់
+Enter Station Name,បញ្ជូលឈ្មោះទីតាំងលក់
+Station name,ទីតាំងលក់
+Station Name,ម៉ាស៊ីនលក់
+Parent Bill #,លេខបុងមេ
+Recent Sale Invoices,វិក័យប័ត្រលក់ថ្មីៗ
+Deleted Date,ថ្ងៃលុប
+Deleted By,លុបដោយ
+Deleted by,លុបដោយ
+This bill is split from bill number:,បុងនេះត្រូវបានបំបែកចេញពីបុងមេលេខ៖
+Split Bill List,តារាងបុងបំបែក
+Today Sale Invoice,វិក័យប័ត្រលក់ថ្ងៃនេះ
+Quick Links,តំណភ្ជាប់រហ័ស
+Last Update Station,ទីតាំងកែប្រែចុងក្រោយ
+Last Update PC,ទីតាំងកែប្រែចុងក្រោយ
+Today Sale Amount,ទឹកប្រាក់លក់ថ្ងៃនេះ
+MTD Sale Invoice,វិក័យប័ត្រលក់ខែនេះ
+MTD Sale Amount,ទឹកប្រាក់លក់ខែនេះ
+Coupon Transaction List,បញ្ជីប្រតិបត្តិការប្រើប្រាស់គូប៉ុង
+Coupon Number,លេខគូប៉ុង
+Sale Summary,សង្ខេបការលក់
+Total Select Quantity,ចំនួនដឹកចេញ
+Free Quantity,ចំនួនហ្វ្រី
+Return Quantity,ចំនួនសល់មកវិញ
+Split Quantity,ចំនួនបំបែក
+Quantity Summary,ចំនួនសង្ខេប
+Daily Sale Statistic,ស្ថិតិលក់
+Close Amount,ប្រាក់បិទបញ្ជីរ
+Difference Amount,ប្រាក់លម្អៀង
+Total Bill,សរុបវិកយប័ត្រ
+Warning,ព្រមាន
+shift_already_opened,{shift_name} ត្រូវបានបើក និងបិទរួចហើយក្នុងថ្ងៃនេះ. តើអ្នកពិតជាចង់បើកម្តងទៀតមែនទេ?
+Are you sure you want start cashier shift?,តើអ្នកពិតជាចង់បើកវេណលក់មែនទេ?
+Morning Shift,វេណព្រឹក
+Afternoon Shift,វេណរសៀល
+Night Shift,វេណយប់
+Open shift note,កំណត់ចំណាំពេលបើកវេណ
+Total Cash Float,សរុបប្រាក់បើកឲ្យដំបូង
+Go Home,ទៅទំព័រដើម
+Working Date,ថ្ងៃធ្វើការ
+There's no working day opened. Please start working day first.,អ្នកមិនទាន់បានបើកថ្ងៃលក់ទេ។ សូមបើកថ្ងៃលក់ជាមុនសិន។
+Start Working Day Now,ចាប់ផ្តើមបើកថ្ងៃធ្វើការឥឡូវនេះ
+Closed Date,ថ្ងៃបិទ
+Closed By,បិទដោយ
+Print Preview,មើលមុនបោះពុម្ព
+Download PDF,ទាញយកឯកសារ PDF
+Working Day List,បញ្ជីថ្ងៃធ្វើការ
+Coupon Amount,ចំនួនទឹកប្រាក់ក្នុងគូប៉ុង
+Select Customer,ជ្រើសរើសអតិថិជន
+View all top ups,មើលការដាក់ប្រាក់បន្ថែមទាំងអស់
+View all Coupon Transactions,មើលប្រតិបត្តិការគូប៉ុងទាំងអស់
+View all redeems,មើលការដកប្រាក់ទាំងអស់
+Coupon Status,ស្ថានភាពគូប៉ុង
+Please scan or enter your coupon code.,សូមស្កេន ឬបញ្ចូលលេខគូប៉ុងរបស់អ្នក។
+Choose Top-Up Option,ជ្រើសរើសជម្រើសបញ្ចូលទឹកប្រាក់
+Scan qr code here,ស្កេន code qr នៅទីនេះ
+Top Up Note,កំណត់ចំណាំបញ្ចូលទឹកប្រាក់
+Redeem Note,កំណត់ចំណាំដកប្រាក់
+No Record Found,មិនមានទិន្នន័យ
+empty_record_message,មិនមាន {doctype} ដែលត្រូវនិងការចម្រោះរបស់អ្នក។ សូមជម្រះចម្រោះ ដើម្បីមើល {doctype} ទាំងអស់។
+About,អំពី
+No Selected,មិនបានជ្រើសរើស
+Show Record,បង្ហាញទិន្នន័យ
+Show record,បង្ហាញទិន្នន័យ
+Showing Record,បង្ហាញទិន្នន័យ
+Showing record,បង្ហាញទិន្នន័យ
+Close shift note,កំណត់ចំណាំបិទវេណ
+Close Shift Amount,ទឹកប្រាក់បិទវេណ
+Loading more...,ទាញទិន្នន័យបន្ថែម...
+Enter Number,បញ្ជូលលេខ
+Clear,ជម្រះ
+of,នៃ
+Store Payment List,បញ្ជីទូទាត់តាមហាង
+Vendor,អ្នកផ្គត់ផ្គង់
+Vendor Name,ឈ្មោះអ្នកផ្គត់ផ្គង់
+Enter Pin Code,បញ្ជូលលេខកូដ
+Vendor Group,ក្រុមអ្នកលក់
+Total Credit Amount,ចំនួនទឹកប្រាក់ឥណទានសរុប
+Contact Name,ឈ្មោះទំនាក់ទំនង
+Province,ខេត្ត
+Credit,ឥណទាន
+Debit,ឥណពន្ធ
+Opening Balance,សមតុល្យដើមគ្រា
+Store Detail,ព័ត៌មានលម្អិតអំពីហាង
+Store #,ហាង
+Are you sure you want to print this document?,តើអ្នកពិតជាចង់បោះពុម្ភឯកសារនេះមែនទេ?
+Store Name,ឈ្មោះហាង
+Confirm,បញ្ជាក់
+Delete Sale,លុបវិកយប័ត្រ
+Are you sure you want to delete this Sale Order?,តើអ្នកពិតជាចង់លុបវិកយប័ត្រនេះមែនទេ?
+There's cashier shift still opened. Please close cashier shift first,មានវេណលក់កំពុងតែបើក។ សូមបិទវេណលក់ជាមុនសិន មុននឹងបិទថ្ងៃលក់
+Close Cashier Shift Now,បិទវេនលក់ឥឡូវនេះ
+Store Payment,ទូទាត់តាមហាង
+Please enter payment amount,សូមបញ្ជូលទឹកប្រាក់ទូទាត់
+Unused,មិនទាន់ប្រើ
+Receive By,ទទួលដោយ
+Receive By Phone Number,លេខទូរស័ព្ទអ្នកទទួល
+Payment Method,ទូទាត់តាមរយៈ
+Add Payment,បញ្ជូលការបង់ប្រាក់
+Input Amount,ចំនួនទឹកប្រាក់បញ្ចូល
+Store Payment Detail,ព័ត៌មានលម្អិតអំពីការទូទាត់តាមហាង
+Store Payment History,ប្រវត្តិនៃការបង់ប្រាក់
+Stores,ហាង
+Store List,បញ្ជីហាង
+View All Coupon Codes,មើលលេខគូប៉ូងទាំងអស់
+Coupon Code List,តារាងបញ្ចីលេខគូប៉ុង
+Expired Date,ថ្ងៃផុតកំណត់
+Used Coupon,បានប្រើប្រាស់
+Amount to Redeem,ទឹកប្រាក់ត្រូវដក
+Total Redeem Amount,សរុបទឹកប្រាក់ត្រូវដក
+Remaining Value,តម្លៃដែលនៅសល់
+Remaining Amount,ចំនួនទឹកប្រាក់ដែលនៅសល់
+Top Up Value,តម្លៃបញ្ចូលទឹកប្រាក់
+Top Up Amount,ចំនួនទឹកប្រាក់បញ្ចូលទឹកប្រាក់
+Total Value,តម្លៃសរុប
+Coupon Name,ឈ្មោះគូប៉ុង
+Cashier,អ្នកគិតលុយ
+By,ដោយ
+Tube Ice Invoice,ប៉ុងទឹកកកអនាម័យ
+Block Ice Invoice,ប៉ុងទឹកកកដើម
+Payment amount cannot greater than purchase order amount,ចំនួនទឹកប្រាក់ទូទាត់មិនធំជាងចំនួនទឹកប្រាក់បញ្ជាទិញបានទេ។
+Add new Store Payment,បញ្ចូលទូទាត់តាមហាងថ្មី
+This product has been use in inventory transaction. We can not change this to none inventory tracking product.,ផលិតផលនេះបានប្រើក្នុងប្រតិបត្តិការសារពើភ័ណ្ឌរួចហើយ។ យើងមិនអាចផ្លាស់ប្តូរវាទៅជាផលិតផលដែលមិនតាមដានសារពើភ័ណ្ឌបានទេ។
+Borrow,ខ្ចី
+Borrow Product,ខ្ចីសងទំនិញ
+Return,សង
+Please select account code for borrow account,សូមជ្រើសរើសលេខកូដគនណីសម្រាប់គនណីខ្ចីទំនិញ,
+Submit this document to confirm,សូមចុចលើបូតុង បញ្ជូន បញ្ជាក់នឹងបិទឯកសារនេះ
+Customer Code Name,អតិថិជន
+Add return successfully,បញ្ជូលការសងទំនិញបានសម្រេច
+This is a return product transaction,នេះគឺជាប្រតិបត្តិការសងទំនិញ
+Returned,បានសង
+Return Product,សងទំនិញ
+You last edited this,អ្នកបានកែប្រែចុងក្រោយ
+{0} last edited this,{0} កែប្រែចុងក្រោយ
+{0} created this,{0} បានបង្កើត
+You created this,អ្នកបានបង្កើត
+Reference Name,លេខយោង
+Reference Document Type,ប្រភេទឯកសារយោង
+Borrow Account,គណនីខ្ចី
+Saving...,កំពុងរក្សាទុក...
+Partially Return,សងបានខ្លះ
+Add new return transaction,បញ្ជូលការសងទំនិញ,
+Return quantity can not be greater than borrow quantity,ចំនូនសងមិនអាចធំជាងចំនួនខ្ចីបានទេ
+Borrow Return Product,កម្ចីនិងការសងទំនិញ
+Return date can not be smaller than borrow date,ថ្ងៃសងទំនិញមិនអាចតូចជាងថ្ងៃខ្ចីទំនិញបានទេ
+No Data,គ្មានទិន្នន័យ
+Opening,សមតុល្យដើមគ្រា
+Debit Amount: {0},ចំនួនទឹកប្រាក់ឥណពន្ធ: {0}
+Payment Amount: {0},ចំនួនទឹកប្រាក់ទូទាត់: {0}
+Write Off Amount: {0},ទឹកប្រាក់លុបចោល: {0}
+Borrow Reference Name,លេខយោងខ្ចី
+Borrow Duration: {0} Day(s),ចំនួនថ្ងៃខ្ចី {0}
+Borrow Product Balance,ចំនួនជំពាក់ទំនិញ
+Please enter return quantity,សូមបញ្ជូលចំនួនត្រូវសង,
+Business Name EN,ឈ្មោះអាជីវកម្ម
+Riel,រៀល
+Import,ដាក់ឯកសារចូល
+Reload List,ផ្ទុកបញ្ជីឡើងវិញ
+Bulk Delete,លុបជាក្រុម
+Add / Update,បន្ថែម / ធ្វើបច្ចុប្បន្នភាព
+Last Edited By,កែប្រែចុងក្រោយដោយ
+Created By,បង្កើតដោយ
+Previous Document,ឯកសារមុន
+Next Document,ឯកសារបន្ទាប់
+Templates,ទម្រង់គំរូ
+ascending,ឡើង(តាមលំដាប់)
+descending,ចុះ(តាមលំដាប់)
+Filters,តម្រង
+Filter Applied,តម្រង
+Clear all filters,លុបតម្រងទាំងអស់
+Deleted By,លុបដោយ
+Update From,ធ្វើបច្ចុប្បន្នភាពពី
+Default Layout,ទម្រង់ដើម
+Create Layout,បង្កើតទម្រង់
+Manage Layouts,គ្រប់គ្រងទម្រង់
+
+Can not duplicate Unit: {0}. It is already used in row {1}.,មិនអាចមានឯកតាស្ទួនបានទេ៖ {0}។ វាត្រូវបានប្រើរួចហើយនៅជួរទី {1}។

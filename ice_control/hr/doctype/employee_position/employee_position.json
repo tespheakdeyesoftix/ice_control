@@ -2,6 +2,7 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "field:position",
  "creation": "2026-08-14 08:57:12.236943",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -22,10 +23,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-14 08:57:46.638723",
+ "modified": "2026-08-15 15:18:11.974734",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee Position",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
