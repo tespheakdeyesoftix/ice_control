@@ -304,5 +304,11 @@ require_type_annotated_api_methods = True
 
 
 fixtures = [
-	{"dt": "HTML Template"}
+    {"dt": "HTML Template"},
+    {
+        "dt": "Custom Field",
+        "filters": [
+            ["dt", "in", ["Note"]]
+        ]
+    },
 ]

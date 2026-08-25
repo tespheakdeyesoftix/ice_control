@@ -5,7 +5,7 @@
 from frappe.model.document import Document
 
 
-class ProductMaterials(Document):
+class Banks(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -14,14 +14,10 @@ class ProductMaterials(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		multiplier: DF.Float
-		parent: DF.Data
-		parentfield: DF.Data
-		parenttype: DF.Data
-		product_code: DF.Link | None
-		product_name: DF.Data | None
-		quantity: DF.Float
-		unit: DF.Link | None
+		bank_name: DF.Data | None
+		bank_number: DF.Data | None
+		enabled: DF.Check
+		is_default: DF.Check
 	# end: auto-generated types
 
-	_DOCTYPE_NAME = "Product Materials"
+	_DOCTYPE_NAME = "Banks"

@@ -41,7 +41,6 @@
   "purchase_orders",
   "summary_section",
   "total_invoices",
-  "total_balance",
   "column_break_ymkj",
   "total_write_off_amount",
   "section_break_raos",
@@ -266,15 +265,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "total_balance",
-   "fieldtype": "Currency",
-   "label": "Total Balance",
-   "options": "doc.balance",
-   "print_hide": 1,
-   "print_hide_if_no_value": 1,
-   "report_hide": 1
-  },
-  {
    "default": "0",
    "fieldname": "total_write_off_amount",
    "fieldtype": "Currency",
@@ -288,7 +278,8 @@
    "default": "0",
    "fieldname": "from_purchase_orders",
    "fieldtype": "Check",
-   "label": "From Purchase Orders"
+   "label": "From Purchase Orders",
+   "read_only": 1
   },
   {
    "fieldname": "payment_name",
@@ -303,7 +294,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-22 09:49:43.218445",
+ "modified": "2026-08-22 17:49:41.292123",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Order Payment",

@@ -2,11 +2,11 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Purchase Orders", {
-  onload: function (frm) {
-     
+  outlet: async function (frm) {
+      await filter_product(frm)
   },
-  refresh: function (frm) { 
-     
+  onload: async function (frm) { 
+      await filter_product(frm)
   },
   party_type:function (frm) {
       frm.set_value("party", "");
@@ -25,7 +25,7 @@ frappe.ui.form.on("Purchase Orders", {
 
 frappe.ui.form.on("Purchase Order Products", {
   product_code:function (frm, cdt, cdn){    
-    let row = locals[cdt][cdn]; // get current child row
+    let row = locals[cdt][cdn];
     get_init_purchase_cost(frm,row)
   } ,
   quantity: function (frm, cdt, cdn) {
@@ -34,6 +34,12 @@ frappe.ui.form.on("Purchase Order Products", {
   cost: function (frm, cdt, cdn) {
     calculate_total_cost(frm, cdt, cdn);
   },
+  unit:function(frm,cdt,cdn){
+    let row = locals[cdt][cdn];
+    setTimeout(() => {
+        get_init_purchase_cost(frm,row);
+    }, 250);
+  }
 });
 
 frappe.ui.form.on("Purchase Order Payment Child", {
@@ -42,7 +48,7 @@ frappe.ui.form.on("Purchase Order Payment Child", {
     },
     payments_add: function (frm, cdt, cdn) {
       if(frm.doc.balance == frm.doc.total_cost){
-        let row = locals[cdt][cdn]; // get current child row
+        let row = locals[cdt][cdn];
         frappe.call({
         method: 'ice_control.api.api.get_default_payment_type',
         callback: (r) => {
@@ -88,9 +94,21 @@ frappe.ui.form.on("Purchase Order Payment Child", {
     }
 });
 
+async function filter_product(frm){
+  frm.set_query("product_code", "purchase_products", function(doc, cdt, cdn) {
+      return {
+          query: "ice_control.api.inventory.get_outlet_products",
+          filters: {
+              outlet: doc.outlet,
+              allow_purchase: 1
+          }
+      };
+  });
+}
+
 async function get_init_purchase_cost(frm, product){
     frappe.call({
-      method: 'ice_control.purchase_order.doctype.purchase_orders.purchase_orders.get_purchase_cost',
+      method: 'ice_control.api.inventory.get_purchase_cost',
       args: {
          "param":{
             "doc": frm.doc,
@@ -98,14 +116,15 @@ async function get_init_purchase_cost(frm, product){
          }
       },
       callback: (r) => {
-        frappe.model.set_value(product.doctype, product.name, "cost", (r.message));
+        frappe.model.set_value(product.doctype, product.name, "cost", (r.message.cost || 0));
+        frappe.model.set_value(product.doctype, product.name, "multiplier", (r.message.multiplier || 0));
       }
       })
     frm.refresh_field("purchase_products");
 }
 
 function calculate_total_cost(frm, cdt, cdn) {
-  let row = locals[cdt][cdn]; // get current child row
+  let row = locals[cdt][cdn];
   let total = (row.quantity || 0) * (row.cost || 0);
   frappe.model.set_value(cdt, cdn, "sub_total", total);
   frappe.model.set_value(cdt, cdn, "total_cost", total);

@@ -1,8 +1,22 @@
 // Copyright (c) 2025, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
+
+
+
 frappe.ui.form.on("Sale", {
-    onload(frm){
+    setup(frm) {
+        frm.set_query("product_code", "sale_products", function (doc, cdt, cdn) {
+            return {
+                query: "ice_control.api.api.get_products_by_outlet",
+                filters: {
+                    outlet: doc.outlet,
+                    product_codes: doc.sale_products.filter(d => d.product_code).map(x => x.product_code)
+                }
+            };
+        });
+    },
+    onload(frm) {
         if (!frm.is_new()) {
             frm.call("update_sale_information")
         }
@@ -19,19 +33,24 @@ frappe.ui.form.on("Sale", {
 
 
             // make all control read only
-            if(frm.doc.sale_status !='Draft' ){
-                if (frm.doc.enable_edit_mode==0){
-                     frm.fields.forEach(function(field) {
-                        if(field.df.bold==0){
+            if (frm.doc.sale_status != 'Draft') {
+                if (frm.doc.enable_edit_mode == 0) {
+                    frm.fields.forEach(function (field) {
+                        if (field.df.bold == 0) {
                             frm.set_df_property(field.df.fieldname, 'read_only', 1);
                         }
 
                     });
                 }
 
+                if (frm.doc.sale_status === "Closed" || frm.doc.sale_status === "Deleted") {
+                    frm.set_read_only();
+                }
+
+            }
 
 
-        }
+
 
             // Refresh the fields to apply the changes
             frm.refresh_fields();
@@ -48,64 +67,49 @@ frappe.ui.form.on("Sale", {
         addCustomButton(frm)
 
         renderPaymentHistory(frm)
-	},
+
+        renderSplitBillList(frm)
+
+
+
+    },
     outlet(frm) {
-        get_default_accounts(frm);
-        // get_products_default_account(frm)
+        if (frm.doc.sale_products?.filter(r => r.product_code).length > 0) {
+            frappe.msgprint("អ្នកបានប្តូរទីតាំងលក់ សូមពិនិត្យនឹងជ្រើសរើសទំនិញអោយបានត្រឹមត្រូវ។")
+        }
+
     },
 
     customer(frm) {
-        frappe.call({
-            method: 'ice_control.customer_management.doctype.customer.customer.get_customer_product_price',
-            args: {
-               customer: frm.doc.customer,
-               products: frm.doc.sale_products
-            },
-            callback: (r) => {
-                frm.clear_table("sale_products");
-                r.message.forEach((r => {
-                    p = frm.add_child("sale_products");
-                    p.product_code = r.product_code;
-                    p.product_name = r.product_name;
-                    p.product_category = r.product_category;
-                    p.revenue_group = r.revenue_group;
-                    p.free_quantity = r.free_quantity;
-                    p.total_sale_quantity = r.quantity - r.free_quantity;
-                    p.quantity = r.quantity;
-                    p.price = r.price;
-                    p.sub_total = r.sub_total;
-                    p.total_amount = r.total_amount;
-                    p.allow_sum_qty = r.allow_sum_qty;
-                    p.note = r.note;
-                    p.unit = r.unit,
-                    p.multiplier = r.multiplier
-                }))
-                frm.refresh_field("sale_products");
-                update_sale_total(frm)
-            }
+        frm.call("change_customer").then(r => {
+            updateSummary(frm);
         })
+
     }
 });
 
-function setIntro(frm){
-    if(!frm.is_new()){
-        if (frm.doc.parent_bill_number){
+
+
+
+function setIntro(frm) {
+    if (!frm.is_new()) {
+        if (frm.doc.parent_bill_number) {
             frm.set_intro(__('This bill is split from bill number:') + " " + `<a href='/desk/sale/${frm.doc.parent_bill_number}'>${frm.doc.parent_bill_number}</a>`);
 
 
         }
-        if (frm.doc.balance>0){
-             const posting_date = frappe.datetime.str_to_obj(frm.doc.posting_date);
+        if (frm.doc.balance > 0 && frm.doc.sale_status == "Closed") {
+            const posting_date = frappe.datetime.str_to_obj(frm.doc.posting_date);
             const today = frappe.datetime.str_to_obj(frappe.datetime.get_today());
 
             const diff_days = frappe.datetime.get_day_diff(today, posting_date);
 
-            if (diff_days>7 && diff_days<30){
+            if (diff_days > 7 && diff_days < 30) {
 
-                frm.set_intro(__('This bill is credit over {0} days', [diff_days]),"orange");
+                frm.set_intro(__('This bill is credit over {0} days', [diff_days]), "orange");
 
-            }else if(diff_days>30){
-                 frm.set_intro( __('This bill is credit over {0} days',[diff_days]),"red");
+            } else if (diff_days > 30) {
+                frm.set_intro(__('This bill is credit over {0} days', [diff_days]), "red");
             }
         }
 
@@ -113,79 +117,105 @@ function setIntro(frm){
     }
 }
 
-function setIndicator(frm){
-    if(!frm.is_new()){
-         frm.dashboard.add_indicator(
-                __("Total Quantity: {0}", [frappe.format(frm.doc.total_quantity,{"fieldtype":"Float"})]),
-                "blue"
-            );
+function setIndicator(frm) {
+    if (!frm.is_new()) {
+        frm.dashboard.add_indicator(
+            __("Total Quantity: {0}", [frappe.format(frm.doc.total_quantity, { "fieldtype": "Float" })]),
+            "blue"
+        );
 
-            frm.dashboard.add_indicator(
-                __("Total Amount: {0}", [fmt_money(frm.doc.total_amount)]),
-                "blue"
-            );
-            frm.dashboard.add_indicator(
-                __("Total Payment: {0}", [fmt_money(frm.doc.total_payment)]),
-                "green"  ,
+        frm.dashboard.add_indicator(
+            __("Total Amount: {0}", [fmt_money(frm.doc.total_amount)]),
+            "blue"
+        );
+        frm.dashboard.add_indicator(
+            __("Total Payment: {0}", [fmt_money(frm.doc.total_payment)]),
+            "green",
 
-            );
-            frm.dashboard.add_indicator(
-                __("Write Off Amount: {0}", [fmt_money(frm.doc.total_write_off)]),
-                "red"
-            );
+        );
+        frm.dashboard.add_indicator(
+            __("Write Off Amount: {0}", [fmt_money(frm.doc.total_write_off)]),
+            "red"
+        );
 
-            frm.dashboard.add_indicator(
-                __("Balance: {0}", [fmt_money(frm.doc.balance)]),
-                "blue"
-            );
+        frm.dashboard.add_indicator(
+            __("Balance: {0}", [fmt_money(frm.doc.balance)]),
+            "blue"
+        );
 
     }
 }
 
+ 
 frappe.ui.form.on("Sale Products", {
-    sale_products_remove(frm){
-        update_sale_total(frm)
+    sale_products_remove(frm) {
+
     },
-    quantity(frm,cdt,cdn) {
-        cal_total_product(frm,cdt,cdn);
+    quantity(frm, cdt, cdn) {
+        saleProductChange(frm, cdt, cdn);
     },
-    price(frm,cdt,cdn) {
-        cal_total_product(frm,cdt,cdn);
+    price(frm, cdt, cdn) {
+        saleProductChange(frm, cdt, cdn);
     },
-    free_quantity(frm,cdt,cdn) {
-        cal_total_product(frm,cdt,cdn);
+    free_quantity(frm, cdt, cdn) {
+        saleProductChange(frm, cdt, cdn);
     },
-    product_code(frm,cdt,cdn) {
-        get_customer_price(frm,cdt,cdn)
-        // get_products_default_account(frm)
+    return_quantity(frm, cdt, cdn) {
+        saleProductChange(frm, cdt, cdn);
     },
-    unit(frm,cdt,cdn) {
-        get_customer_price(frm,cdt,cdn)
+
+    product_code(frm, cdt, cdn) {
+        get_customer_price(frm, cdt, cdn)
+
+    },
+    unit(frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
+        get_customer_price(frm, cdt, cdn)
     }
 });
 
-
-
-
-function get_customer_price(frm,cdt,cdn){
-    row = locals[cdt][cdn];
+async function get_multiplier(frm, product){
     frappe.call({
-        method: 'ice_control.customer_management.doctype.customer.customer.get_customer_product_price',
-        args: {
-            customer: frm.doc.customer,
-            product_code: row.product_code,
-            unit: row.unit
-        },
-        callback: (r) => {
-            if(r.message){
-                frappe.model.set_value(cdt, cdn, "price", r.message.price);
-                frappe.model.set_value(cdt, cdn, "free_quantity", r.message.free_quantity);
-                frappe.model.set_value(cdt, cdn, "multiplier", r.message.multiplier);
-                cal_total_product(frm,cdt,cdn);
-            }
-        }
+      method: 'ice_control.api.inventory.get_purchase_cost',
+      args: {
+         "param":{
+            "doc": frm.doc,
+            "product": product
+         }
+      },
+      callback: (r) => {
+        frappe.model.set_value(product.doctype, product.name, "multiplier", (r.message.multiplier || 0));
+      }
+      })
+}
+
+function saleProductChange(frm, cdt, cdn) {
+    const row = frappe.get_doc(cdt, cdn);
+    frm.call("sale_product_update", {
+        row: row
+    }).then(r => {
+        updateSummary(frm);
     })
 }
+
+function get_customer_price(frm, cdt, cdn) {
+    const row = frappe.get_doc(cdt, cdn);
+    if (row.product_code && frm.doc.customer) {
+        frm.call("sale_product_update", {
+            row: row,
+            check_customer_price: true
+
+        }).then(r => {
+            setTimeout(() => {
+                get_multiplier(frm,row);
+            }, 250);
+            updateSummary(frm);
+        })
+    }
+
+
+}
+
 
 function updateSummary(frm) {
     frappe.call({
@@ -194,11 +224,11 @@ function updateSummary(frm) {
             sale_products: frm.doc.sale_products
         },
         callback: (r) => {
-            if((frm.doc.sale_products??[]).length > 0){
-                const html = frappe.render_template("sale_summary", {product_qty: JSON.parse(r.message),sale: frm.doc});
+            if ((frm.doc.sale_products ?? []).length > 0) {
+                const html = frappe.render_template("sale_summary", { product_qty: JSON.parse(r.message), sale: frm.doc });
                 $(frm.fields_dict['sale_summary'].wrapper).html(html);
 
-            }else{
+            } else {
                 $(frm.fields_dict['sale_summary'].wrapper).empty();
             }
             frm.refresh_field('sale_summary');
@@ -206,46 +236,67 @@ function updateSummary(frm) {
     })
 }
 
-function cal_total_product(frm,cdt,cdn) {
-    let row = locals[cdt][cdn];
-    sale_quantity = row.quantity - row.free_quantity;
-    let total_amount = sale_quantity * row.price * row.multiplier;
-    frappe.model.set_value(cdt, cdn, "total_sale_quantity", sale_quantity);
-    frappe.model.set_value(cdt, cdn, "sub_total", row.quantity * row.price * row.multiplier);
-    frappe.model.set_value(cdt, cdn, "total_amount", total_amount);
-    update_sale_total(frm);
-}
 
-function update_sale_total(frm) {
-    let total_quantity = 0;
-    let total_free_quantity = 0;
-    let total_total_sale_quantity = 0;
-    let total_sale_amount = 0;
-    frm.doc.sale_products.forEach(a => {
-        if(a.allow_sum_qty == 1){
-            total_quantity += a.quantity;
-            total_free_quantity += a.free_quantity;
-            total_total_sale_quantity += a.total_sale_quantity;
-            total_sale_amount += a.total_amount;
-        }
-    });
-    frm.set_value("total_quantity", total_quantity);
-    frm.set_value("total_free", total_free_quantity);
-    frm.set_value("total_sale_quantity", total_total_sale_quantity);
-    frm.set_value("total_amount", total_sale_amount);
-    frm.set_value("balance", total_sale_amount);
-    updateSummary(frm);
-}
+function addCustomButton(frm) {
+
+    if (frm.doc.balance > 0 && frm.doc.sale_status == "Closed") {
+        frm.add_custom_button(__("Add Payment"), function () {
+            frappe.route_options = { customer: frm.doc.customer, customer_name: frm.doc.customer_name, sale: frm.doc.name, outlet: frm.doc.outlet };
+            frappe.set_route('Form', 'Sale Payment', 'new');
+
+        });
+    }
+
+    if (frm.doc.sale_status == "Draft") {
+
+        frm.add_custom_button(__("បិទការលក់"), async function () {
+
+            // validate customer
+            if (!frm.doc.customer) {
+
+                frappe.throw({
+                    title: "Warning",
+                    message: "សូមជ្រើសរើសអិតិថិជន",
+                    indicator: "orange"
+                });
+            }
+
+            frappe.confirm(
+                "តើអ្នកពិតជាចង់បិទការលក់បុងនេះមែនទេ?",
+                async () => {
+                    await frm.set_value("sale_status", "Closed");
+
+                    await frm.save();
 
 
-function addCustomButton(frm){
+                },
 
-    if(frm.doc.balance>0){
-        frm.add_custom_button(__("Add Payment"), function() {
-        frappe.route_options = { customer: frm.doc.customer,customer_name:frm.doc.customer_name, sale:frm.doc.name,outlet:frm.doc.outlet };
-        frappe.set_route('Form', 'Sale Payment', 'new');
+            );
 
-    });
+        }).addClass("btn-danger");
+
+
+    }
+
+    // delete button
+    if (!frm.is_new() && frm.doc.sale_status!="Deleted") {
+
+        frm.page.set_secondary_action("លុបបុង", () => {
+            frappe.warn("លុបបុង","តើអ្នកពិតជាចង់លុបបុងនេះមែនទេ?", () => {
+                frm.call("delete_sale").then(async x=>{
+                      await frm.reload_doc();
+                })
+
+            },
+          
+        'លុបបុង',
+        true 
+    );
+           
+        }).removeClass("btn-secondary")
+            .addClass("btn-danger");
+
+
 
     }
 
@@ -276,4 +327,44 @@ function renderPaymentHistory(frm) {
 
         $(frm.fields_dict["html_payment_history"].wrapper).html(html);
     });
+}
+
+async function renderSplitBillList(frm) {
+    let data = [];
+
+    if (!frm.is_new() && frm.doc.sale_status =='Closed') {
+        data = await frappe.db.get_list("Sale", {
+            fields: [
+                "name",
+                "posting_date",
+                "customer",
+                "customer_name",
+                "total_quantity",
+                "total_amount",
+                "sale_status"
+            ],
+            filters: {
+                parent_bill_number: frm.doc.name
+            },
+            order_by: "creation desc",
+            limit_page_length: 0
+        });
+    }
+
+    const wrapper = $(frm.fields_dict["html_sale_split_bill_list"].wrapper);
+    const html = frappe.render_template("split_bill_list", { data });
+
+    wrapper.html(html);
+    wrapper.find(".btn-add-split-bill").on("click", () => {
+        openSplitBillDialog();
+    });
+}
+
+function openSplitBillDialog() {
+    const dialog = new frappe.ui.Dialog({
+        title: __("Split Bill"),
+        fields: []
+    });
+
+    dialog.show();
 }

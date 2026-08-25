@@ -32,7 +32,7 @@
   "customer_product_price_section",
   "product_prices",
   "free_products_section",
-  "table_bvxf",
+  "free_products",
   "summary_tab",
   "html_customer_sumary_tab",
   "recent_sale_tab",
@@ -195,11 +195,6 @@
    "label": "Free Products"
   },
   {
-   "fieldname": "table_bvxf",
-   "fieldtype": "Table",
-   "options": "Customer Free Products"
-  },
-  {
    "fieldname": "summary_tab",
    "fieldtype": "Tab Break",
    "label": "Summary"
@@ -244,13 +239,27 @@
    "fieldname": "tab_customer_calendar",
    "fieldtype": "Tab Break",
    "label": "Calender"
+  },
+  {
+   "fieldname": "free_products",
+   "fieldtype": "Table",
+   "options": "Customer Free Products"
   }
  ],
  "grid_page_length": 50,
  "image_field": "photo",
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-08-21 15:11:57.141368",
+ "links": [
+  {
+   "link_doctype": "Sale",
+   "link_fieldname": "customer"
+  },
+  {
+   "link_doctype": "Sale Payment",
+   "link_fieldname": "customer"
+  }
+ ],
+ "modified": "2026-08-24 10:02:28.856213",
  "modified_by": "Administrator",
  "module": "Customer Management",
  "name": "Customer",

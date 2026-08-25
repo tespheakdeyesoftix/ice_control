@@ -20,7 +20,7 @@ def get_default_payment_type():
                                     from `tabExchange Rate` 
                                     where from_currency = %(from_currency)s and to_currency = %(to_currency)s 
                                     order by creation desc limit 1""",
-    {"from_currency":currency,"to_currency":business_info.default_currency},as_dict=1)
+                                     {"from_currency":currency,"to_currency":business_info.default_currency},as_dict=1)
     return {
         "payment_type": payment_type,
         "exchange_rate": exchange_rate[0].get("currency_exchange_rate") or 1,
@@ -67,3 +67,35 @@ def number_to_word(amount :float=7569556):
             khmer_number = khmer_number + khmer_unit[n]
 
     return khmer_number
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_products_by_outlet(doctype:str, txt:str, searchfield:str, start:int, page_len:int, filters:dict):
+    outlet = filters.get("outlet")
+    product_codes = filters.get("product_codes") or [""]
+    return frappe.db.sql(
+        """
+        SELECT DISTINCT p.name, p.product_name
+        FROM `tabProduct` p
+        INNER JOIN `tabProduct Outlet` po
+            ON po.parent = p.name
+        WHERE
+            p.name not in %(product_codes)s  and
+            po.outlet = %(outlet)s
+          AND po.parenttype = 'Product'
+          AND po.parentfield = 'product_outlet'
+          AND (
+              p.name LIKE %(txt)s
+              OR p.product_name LIKE %(txt)s
+          )
+        ORDER BY p.name
+        LIMIT %(start)s, %(page_len)s
+        """,
+        {
+            "outlet": outlet,
+            "product_codes":product_codes,
+            "txt": f"%{txt}%",
+            "start": start,
+            "page_len": page_len,
+        },
+    )

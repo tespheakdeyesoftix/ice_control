@@ -11,9 +11,10 @@
   "lft",
   "rgt",
   "is_group",
-  "report_title",
   "parent_system_report",
+  "report_title",
   "report_url",
+  "description",
   "old_parent",
   "column_break_atfb",
   "is_seller_report",
@@ -67,6 +68,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Parent System Report",
+   "link_filters": "[[\"System Report\",\"is_group\",\"=\",1]]",
    "options": "System Report"
   },
   {
@@ -140,13 +142,18 @@
    "fieldtype": "Table",
    "label": "Roles",
    "options": "Has Role"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-08-22 15:26:58.812829",
+ "modified": "2026-08-24 10:47:08.635576",
  "modified_by": "Administrator",
  "module": "Setting",
  "name": "System Report",

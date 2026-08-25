@@ -7,7 +7,6 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "enabled",
   "info_section",
   "product_category",
   "product_code",
@@ -21,15 +20,16 @@
   "multiplier",
   "price",
   "default_sale_transaction_type",
-  "allow_change_sale_type",
+  "sort_order",
   "column_break_wphk",
+  "enabled",
   "allow_sum_qty",
   "allow_split_bill",
   "allow_free",
   "allow_return",
   "allow_change_price",
   "show_in_customer_product_price",
-  "sort_order",
+  "allow_change_sale_type",
   "section_break_tgsv",
   "product_outlet",
   "product_outlets",
@@ -41,16 +41,14 @@
   "is_inventory_product",
   "stock_location",
   "opening_quantity",
+  "default_sale_stock_location",
+  "column_break_wqjy",
   "costing_method",
   "cost",
-  "column_break_wqjy",
-  "default_sale_stock_location",
   "purchase_tab",
   "purchasing_section",
   "allow_purchase",
-  "purchase_price",
-  "column_break_jzau",
-  "allow_purchase_in_purchase_ice_feature"
+  "purchase_price"
  ],
  "fields": [
   {
@@ -117,7 +115,8 @@
    "label": "Unit",
    "link_filters": "[[{\"fieldname\":\"unit\",\"field_option\":\"Unit\"},\"enabled\",\"=\",1]]",
    "options": "Unit",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fetch_from": "unit.multiplier",
@@ -205,7 +204,8 @@
    "default": "0",
    "fieldname": "is_inventory_product",
    "fieldtype": "Check",
-   "label": "Is Inventory Product"
+   "label": "Is Inventory Product",
+   "set_only_once": 1
   },
   {
    "depends_on": "eval:doc.is_inventory_product == 1",
@@ -247,6 +247,7 @@
    "options": "Stock Location"
   },
   {
+   "depends_on": "eval:doc.is_inventory_product == 1",
    "fieldname": "purchase_tab",
    "fieldtype": "Tab Break",
    "label": "Purchase"
@@ -268,17 +269,7 @@
    "label": "Purchase Price"
   },
   {
-   "fieldname": "column_break_jzau",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "description": "This is option to allow ICE product to Purchase Ice for other Ice Factory.",
-   "fieldname": "allow_purchase_in_purchase_ice_feature",
-   "fieldtype": "Check",
-   "label": "Allow Purchase in Purchase Ice Feature"
-  },
-  {
+   "depends_on": "eval:doc.is_inventory_product == 0",
    "fieldname": "tab_5_tab",
    "fieldtype": "Tab Break",
    "label": "Product Material"
@@ -329,8 +320,13 @@
  "grid_page_length": 50,
  "image_field": "photo",
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-08-19 09:37:53.164245",
+ "links": [
+  {
+   "link_doctype": "Sale",
+   "link_fieldname": "product_code"
+  }
+ ],
+ "modified": "2026-08-25 10:25:02.741471",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Product",

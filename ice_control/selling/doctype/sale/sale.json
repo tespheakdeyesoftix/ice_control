@@ -81,9 +81,13 @@
    "options": "SO.YYYY.-.####"
   },
   {
+   "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Posting Date",
+   "reqd": 1,
    "search_index": 1
   },
   {
@@ -99,6 +103,8 @@
    "search_index": 1
   },
   {
+   "fetch_from": "outlet.default_stock_location",
+   "fetch_if_empty": 1,
    "fieldname": "stock_location",
    "fieldtype": "Link",
    "label": "Stock Location",
@@ -122,6 +128,7 @@
    "in_standard_filter": 1,
    "label": "Customer",
    "link_filters": "[[\"Customer\",\"is_customer\",\"=\",1]]",
+   "mandatory_depends_on": "eval:doc.sale_status ===\"Closed\"",
    "options": "Customer",
    "search_index": 1
   },
@@ -148,6 +155,7 @@
    "fetch_from": "customer.customer_group",
    "fieldname": "customer_group",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Customer Group",
    "options": "Customer Group"
   },
@@ -218,14 +226,18 @@
    "default": "Draft",
    "fieldname": "sale_status",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Sale Status",
+   "no_copy": 1,
    "options": "Draft\nClosed\nDeleted",
    "search_index": 1
   },
   {
    "fieldname": "parent_bill_number",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Parent Bill Number",
+   "no_copy": 1,
    "options": "Sale",
    "search_index": 1
   },
@@ -364,7 +376,9 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "hidden": 1,
+   "in_list_view": 1,
    "label": "Status",
+   "no_copy": 1,
    "options": "Unpaid\nPaid\nPartially Paid\nDeleted"
   },
   {
@@ -398,6 +412,7 @@
    "label": "Payments"
   },
   {
+   "depends_on": "eval:doc.can_split_bill == 1",
    "fieldname": "split_bill_list_tab",
    "fieldtype": "Tab Break",
    "label": "Split Bill List"
@@ -466,6 +481,7 @@
    "fetch_from": "outlet.default_unit",
    "fieldname": "outlet_unit",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Outlet Unit",
    "options": "Unit"
   },
@@ -479,7 +495,7 @@
  "image_field": "customer_photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-21 15:41:04.757640",
+ "modified": "2026-08-25 14:48:48.074762",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
@@ -488,13 +504,35 @@
  "permissions": [
   {
    "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
    "delete": 1,
    "email": 1,
    "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
+   "role": "Administrator",
    "share": 1,
    "write": 1
   }

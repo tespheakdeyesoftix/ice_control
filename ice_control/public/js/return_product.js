@@ -64,7 +64,7 @@ function returnProduct(options) {
 
                 try {
                     await frappe.call({
-                        method: 'ice_factory_management_system.selling_ifms.doctype.borrow_product.borrow_product.update_bulk_return_product',
+                        method: 'ice_control.selling_ifms.doctype.borrow_product.borrow_product.update_bulk_return_product',
                         args: { data: values },
                         freeze: true,
                         freeze_message: __('Saving...')
@@ -193,7 +193,7 @@ function returnProductTableField() {
 
 function load_return_products(d, customer) {
     frappe.call({
-        method: 'ice_factory_management_system.selling_ifms.doctype.borrow_product.borrow_product.get_customer_borrow_product_remaining',
+        method: 'ice_control.selling_ifms.doctype.borrow_product.borrow_product.get_customer_borrow_product_remaining',
         args: { customer },
         freeze: true,
         freeze_message: __('Loading products...')

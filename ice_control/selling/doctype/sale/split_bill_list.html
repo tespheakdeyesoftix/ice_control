@@ -1,0 +1,38 @@
+{% if data.length %}
+<div class="table-responsive">
+    <table class="table table-striped" style="margin: 0">
+        <thead>
+            <tr>
+                <th>{{ __("Bill Number") }}</th>
+                <th>{{ __("Posting Date") }}</th>
+                <th>{{ __("Customer") }}</th>
+                <th>{{ __("Status") }}</th>
+                <th class="text-right">{{ __("Total Quantity") }}</th>
+                <th class="text-right">{{ __("Total Amount") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data %}
+            <tr>
+                <td><a href="/app/sale/{{ d.name }}">{{ d.name }}</a></td>
+                <td>{{ frappe.format(d.posting_date, { "fieldtype": "Date" }) }}</td>
+                <td>{{ d.customer_name || d.customer || "" }}</td>
+                <td>{{ __(d.sale_status) }}</td>
+                <td class="text-right">{{ frappe.format(d.total_quantity, { "fieldtype": "Float" }) }}</td>
+                <td class="text-right">{{ frappe.format(d.total_amount, { "fieldtype": "Currency" }) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="text-center text-muted" style="padding: 30px 15px 15px">
+    {{ __("No split bills found.") }}
+</div>
+{% endif %}
+
+<div class="text-center" style="padding: 15px">
+    <button type="button" class="btn btn-primary btn-add-split-bill">
+        {{ __("Add Split Bill") }}
+    </button>
+</div>

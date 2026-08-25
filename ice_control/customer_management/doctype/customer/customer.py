@@ -25,6 +25,7 @@ class Customer(Document):
 		customer_group: DF.Link
 		customer_name: DF.Data
 		enabled: DF.Check
+		free_products: DF.Table[CustomerFreeProducts]
 		gender: DF.Literal["Male", "Female"]
 		is_company: DF.Check
 		is_customer: DF.Check
@@ -36,7 +37,6 @@ class Customer(Document):
 		photo: DF.AttachImage | None
 		plate_number: DF.Data | None
 		product_prices: DF.Table[CustomerProductPrice]
-		table_bvxf: DF.Table[CustomerFreeProducts]
 	# end: auto-generated types
 
 	_DOCTYPE_NAME = "Customer"

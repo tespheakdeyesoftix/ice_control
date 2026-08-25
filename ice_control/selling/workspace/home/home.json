@@ -1,7 +1,7 @@
 {
  "app": "ice_control",
  "charts": [],
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Welcome to the Home workspace\"}},{\"type\":\"paragraph\",\"data\":{\"text\":\"Click on <svg class=\\\"icon  icon-sm\\\"\\n\\t\\t\\t\\n\\t\\t\\t\\n\\t\\t\\tstyle=\\\"\\\" aria-hidden=\\\"true\\\">\\n\\t\\t\\t<use class=\\\"\\\" href=\\\"#icon-ellipsis\\\"\\n\\t\\t\\t\\t\\n\\t\\t\\t>\\n\\t\\t\\t</use>\\n\\t\\t</svg> to edit\"}}]",
+ "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Welcome to the Home workspace\"}},{\"type\":\"paragraph\",\"data\":{\"text\":\"Click on <svg class=\"\\&quot;icon\">\\n\\t\\t\\t<use class=\"\\&quot;\\&quot;\" href=\"\\&quot;#icon-ellipsis\\&quot;\\n\\t\\t\\t\\t\\n\\t\\t\\t\">\\n\\t\\t\\t</use>\\n\\t\\t</svg> to edit\"}}]",
  "creation": "2026-08-16 20:35:03.282274",
  "custom_blocks": [],
  "docstatus": 0,
@@ -16,7 +16,7 @@
  "link_to": "home-page",
  "link_type": "Page",
  "links": [],
- "modified": "2026-08-22 13:04:35.435738",
+ "modified": "2026-08-24 09:40:05.085977",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Home",
@@ -25,7 +25,11 @@
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
- "roles": [],
+ "roles": [
+  {
+   "role": "All"
+  }
+ ],
  "sequence_id": 0.0,
  "shortcuts": [],
  "sidebar_items": [

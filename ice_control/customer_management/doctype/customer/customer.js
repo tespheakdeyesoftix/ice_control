@@ -165,6 +165,20 @@ function render_calendar(frm) {
             });
         },
 
+		eventDidMount: function(info) {
+				const doctype = info.event.extendedProps.doctype;
+				const bgColor = doctype === "Sale" ? "#2563eb" : "#16a34a";
+
+				info.el.style.backgroundColor = bgColor;
+				info.el.style.borderColor = bgColor;
+				info.el.style.opacity = "1";   // stops FullCalendar's "past day" dimming
+				info.el.style.color = "white";
+
+				info.el.querySelectorAll("*").forEach(el => {
+					el.style.color = "white";
+				});
+			},
+
 		eventContent: function(arg) {
 
             const event = arg.event;

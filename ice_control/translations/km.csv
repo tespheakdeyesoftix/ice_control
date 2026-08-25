@@ -259,7 +259,7 @@ Update,ធ្វើបច្ចុប្បន្នភាព
 Type a reply / comment,វាយបញ្ចូលការឆ្លើយតប / មតិយោបល់
 Outlets,កន្លែងលក់
 Product Name KH,ឈ្មោះផលិតផលជាភាសាខ្មែរ
-Allow Sum QTY,អនុញ្ញាតបូកបរិមាណ
+Allow Sum QTY,អនុញ្ញាតបូកចំនួន
 Show In Sale Report,បង្ហាញក្នុងរបាយការណ៍លក់
 Allow Split Bill,អនុញ្ញាតបំបែកវិក្កយបត្រ
 Income Account,គណនីចំណូល
@@ -357,7 +357,7 @@ Index,សន្ទស្សន៍
 Journal Entry,ប្រតិទិនគណនេយ្យ
 Purchase,បញ្ជាទិញ
 Purchase Order,បញ្ជាទិញ
-Products Quantity,បរិមាណផលិតផល
+Products Quantity,ចំនួនផលិតផល
 Units,ឯកតា
 Stock Location Products,ផលិតផលទីតាំងស្តុក
 Selling,ការលក់
@@ -374,6 +374,7 @@ Stock Management,គ្រប់គ្រងឃ្លាំង
 Create a new {0},បង្កើត{0}ថ្មី
 Accounting,គណនី
 Add Row,បញ្ជូលថ្មី
+Add row,បញ្ជូលថ្មី
 Filter,តម្រង
 Last Updated On,ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ
 Created On,បង្កើតនៅ
@@ -400,7 +401,7 @@ Comments,មតិយោបល់
 Product Prices,តម្លៃផលិតផល
 Can Split Bill,អាចបំបែកវិក្កយបត្រ
 Can Edit Bill,អាចកែវិក្កយបត្រ
-Enabled,បើកដំណើរការ
+Enabled,សកម្ម
 Can Show Price,អាចបង្ហាញតម្លៃ
 Plate Number,ស្លាកលេខឡាន
 Keyword,ពាក្យគន្លឹះ
@@ -671,14 +672,14 @@ Products,ផលិតផល
 Total Transaction,ចំនួនប្រតិបត្តិការណ៌
 Print,បោះពុម្ភ
 Stock Adjustment History,ប្រវត្តិកែស្តុក
-Quantity,បរិមាណ
+Quantity,ចំនួន
 Search By Product Name,ស្វែងរកតាមឈ្មោះផលិតផល
 Pleas Select Stock Location,សូមជ្រើសរើសទីតាំងស្តុក
 Code,កូដ
 Sale Date,ថ្ងៃលក់
-Current Quantity,បរិមាណបច្ចុប្បន្ន
+Current Quantity,ចំនួនបច្ចុប្បន្ន
 Sub Total,សរុបរង
-New Quantity,បរិមាណថ្មី
+New Quantity,ចំនួនថ្មី
 Receipt List,តារាងវិកយប័ត្រ
 New Cost,ថ្លៃដើមថ្មី
 Different,លម្អៀង
@@ -995,3 +996,150 @@ Create Layout,បង្កើតទម្រង់
 Manage Layouts,គ្រប់គ្រងទម្រង់
 
 Can not duplicate Unit: {0}. It is already used in row {1}.,មិនអាចមានឯកតាស្ទួនបានទេ៖ {0}។ វាត្រូវបានប្រើរួចហើយនៅជួរទី {1}។
+
+Currency Setting, ការកំណត់រូបិយប័ណ្ណ
+Second Currency, រូបិយប័ណ្ណទីពីរ
+Base Exchange Currency, រូបិយប័ណ្ណមូលដ្ឋានសម្រាប់ប្តូរ
+Close Selling Setting, ការកំណត់បិទការលក់
+Closed Doctype, ប្រភេទឯកសារដែលបានបិទ
+Is Submittable, អាចដាក់ស្នើ
+Outlet Setting, ការកំណត់កន្លែងលក់
+Last Edited By You, បានកែសម្រួលចុងក្រោយដោយអ្នក
+Created By {0}, បង្កើតដោយ {0}
+{0}minutes ago,{0} នាទីមុន
+{0} minutes ago,{0} នាទីមុន
+Default Stock Location,ទីតាំងស្តុកលំនាំដើម
+Driver Phone Number,លេខទូរស័ព្ទអ្នកបើកបរ
+Outlet Unit, ឯកតាកន្លែងលក់
+Sale Products,ផលិតផលលក់
+Receipt #,លេខបង្កាន់ដៃ
+Booking,ការកក់
+Booking Event,ព្រឹត្តិការណ៍កក់
+Delivery Date,កាលបរិច្ឆេទដឹកជញ្ជូន
+Booking Products,ផលិតផលដែលបានកក់
+Editing Row{0},កំពុងកែសម្រួលជួរ {0}
+Editing Row {0},កំពុងកែសម្រួលជួរ {0}
+Filters{0}, តម្រង​{0}
+Filters {0}, តម្រង​ {0},
+Recent Sale,ការលក់ថ្មីៗ
+Recent Payment,ការទូទាត់ថ្មីៗ
+Invoice No,លេខវិក្កយបត្រ
+Write Off Amount,ចំនួនទឹកប្រាក់លុបចោល
+Calender,ប្រតិទិន
+Month,ខែ
+month,ខែ
+week,សប្តាហ៍
+Week,សប្តាហ៍
+day,ថ្ងៃ
+Day,ថ្ងៃ
+today,ថ្ងៃនេះ
+Today,ថ្ងៃនេះ
+Product Material,សម្ភារៈផលិតផល
+Product Materials,សម្ភារៈផលិតផល
+Allow Free,អនុញ្ញាតឱ្យឥតគិតថ្លៃ
+Allow Return,អនុញ្ញាតឱ្យប្រគល់ត្រឡប់
+Allow Change Price,អនុញ្ញាតឱ្យប្តូរតម្លៃ
+Show in Customer Product Price,បង្ហាញក្នុងតម្លៃផលិតផលរបស់អតិថិជន
+Sort Order,លំដាប់តម្រៀប
+Default Sale Transaction Type,ប្រភេទប្រតិបត្តិការលក់លំនាំដើម
+Color,ពណ៌
+Allow Change Sale Type,អនុញ្ញាតឱ្យប្តូរប្រភេទការលក់,
+Choose a color,ជ្រើសរើសពណ៌
+Delete row,លុបជួរ
+Delete Row,លុបជួរ
+Edit row,កែសម្រួលជួរ
+Edit Row,កែសម្រួលជួរ
+Duplicate row,ចម្លងជួរ
+Duplicate Row,ចម្លងជួរ
+Outlet Lable,ស្លាកសាខា
+Multipler,មេគុណ
+Is Inventory Product,ជាផលិតផលក្នុងស្តុក
+Opening Quantity,ចំនួនដើម
+Costing Method,វិធីសាស្ត្រគណនាថ្លៃដើម
+Default Sale Stock Location,ទីតាំងស្តុកលក់លំនាំដើម
+Purchasing,ការទិញ
+Allow Purchase,អនុញ្ញាតឱ្យទិញ
+Purchase Price,តម្លៃទិញ
+Allow Purchase in Purchase Ice Feature,អនុញ្ញាតឱ្យទិញក្នុងមុខងារទិញទឹកកក
+This is option to allow ICE product to Purchase Ice for other Ice Factory.,ជម្រើសនេះអនុញ្ញាតឱ្យផលិតផលទឹកកកអាចទិញតាមមុខងារទិញទឹកកកពីរោងចក្រទឹកកកផ្សេងទៀត។
+Purchase Orders,បញ្ជាទិញ
+Party Type,ប្រភេទភាគី
+Party,ភាគី
+Purchase Products,ផលិតផលដែលបានទិញ
+Party Name,ឈ្មោះភាគី
+Request By,ស្នើសុំដោយ
+Write Off,កាត់ចោល
+Purchase Order Payment,ការទូទាត់បញ្ជាទិញ
+From Purchase Orders,ពីបញ្ជាទិញ
+Get Purchase Order Invoices by Date,ទាញយកវិក្កយបត្របញ្ជាទិញតាមកាលបរិច្ឆេទ
+Get Invoice,ទាញយកវិក្កយបត្រ
+Get Invoices,ទាញយកវិក្កយបត្រ
+Purchase Order Invoices,វិក្កយបត្របញ្ជាទិញ
+PO Invoice #,លេខវិក្កយបត្រ PO
+Purchase Order Date,កាលបរិច្ឆេទបញ្ជាទិញ
+Purchase Order Balance,សមតុល្យបញ្ជាទិញ
+Input Write off Amount,បញ្ចូលចំនួនទឹកប្រាក់កាត់ចោល
+Total Invoices,សរុបវិក្កយបត្រ
+Total Write off Amount,សរុបចំនួនទឹកប្រាក់កាត់ចោល
+Inventory Transactions,ប្រតិបត្តិការស្តុក
+In Quantity,ចំនួនចូល
+Out Quantity,ចំនួនចេញ
+Current Cost,ថ្លៃដើមបច្ចុប្បន្ន
+Is Calculate Cost,គណនាថ្លៃដើម
+Ref Doctype,ប្រភេទឯកសារយោង
+Ref Docname,ឈ្មោះឯកសារយោង
+Block Grid Number,លេខក្រឡាប្លុក
+Produce Grid 1 to 4,ក្រឡាផលិត 1 ដល់ 4
+Block Ice Produce,ការផលិតទឹកកកដើម
+Total Defected Quantity,ចំនួនខូចសរុប
+Block Grid Name,ឈ្មោះក្រឡាប្លុក
+Produce Data,ទិន្នន័យផលិតកម្ម
+Defected Quantity,ចំនួនខូច
+Tube Ice Produce,ការផលិតទឹកកកអនាម័យ
+Total Start Meter Number,លេខម៉ែត្រចាប់ផ្តើមសរុប
+Total End Meter Number,លេខម៉ែត្របញ្ចប់សរុប
+Tube Ice Produce Quantity,ចំនួនផលិតទឹកកកអនាម័យ
+Machine Name,ឈ្មោះម៉ាស៊ីន
+Start Meter Number,លេខម៉ែត្រចាប់ផ្តើម
+End Meter Number,លេខម៉ែត្របញ្ចប់
+Produce Drop,ផលិតផលទម្លាក់
+Infected Quantity,ចំនួនមានបញ្ហា
+Allow Edit Start Meter Number,អនុញ្ញាតឱ្យកែប្រែលេខម៉ែត្រចាប់ផ្តើម
+Total Produce Drop,ផលិតផលទម្លាក់សរុប
+Total Infected Quantity,ចំនួនមានបញ្ហាសរុប
+Warning: Please double-check the Posting Date before submitting this form!,ការព្រមាន៖ សូមពិនិត្យកាលបរិច្ឆេទកត់ត្រាឱ្យបានច្បាស់ម្តងទៀត មុនពេលដាក់ស្នើទម្រង់នេះ!
+Permission,សិទ្ធិអនុញ្ញាត
+Remove Sale Product,លុបផលិតផលលក់
+Change Customer,ប្តូរអតិថិជន
+POS Payment,ការទូទាត់ POS
+Delete Bill,លុបវិក្កយបត្រ
+Outlet Name,ឈ្មោះសាខា
+Allow multiple site login,អនុញ្ញាតឱ្យចូលប្រព័ន្ធច្រើនទីតាំង
+Is Used,កំពុងប្រើប្រាស់
+Tube Ice Machine,ម៉ាស៊ីនផលិតទឹកកកអនាម័យ
+Total Produce Per Day,ផលិតកម្មសរុបក្នុងមួយថ្ងៃ
+Payment Type Group EN,ក្រុមប្រភេទការទូទាត់អង់គ្លេស
+Is Default,ជាលំនាំដើម
+Title,ចំណងជើង
+Search or type a command,ស្វែងរក ឬវាយពាក្យបញ្ជា
+Selling Workspace,ផ្ទាំងការងារលក់
+All,ទាំងអស់
+ALL,ទាំងអស់
+No New Notifications,មិនមានការជូនដំណឹងថ្មីទេ
+You have no new notifications,អ្នកមិនមានការជូនដំណឹងថ្មីទេ
+Manage Dock,គ្រប់គ្រងផ្ទាំងម៉ឺនុយ
+Last Edited By {0},បានកែសម្រួលចុងក្រោយដោយ {0}
+Last Edited By{0},បានកែសម្រួលចុងក្រោយដោយ {0}
+hour ago{0},{0} ម៉ោងមុន
+hour ago {0},{0} ម៉ោងមុន
+Clear Value,លុបតម្លៃ
+Produce QTY 1,ចំនួនផលិត ១
+Produce QTY 2,ចំនួនផលិត ២
+Defected QTY,ចំនួនខូច
+Are you sure you want to log out?,តើអ្នកប្រាកដថាចង់ចាកចេញពីប្រព័ន្ធមែនទេ?
+No,ទេ
+Yes,យល់ព្រម
+Bank Transfer,ការផ្ទេរប្រាក់តាមធនាគារ
+Transfer Type,ប្រភេទការផ្ទេរ
+No split bills found.,មិនទាន់មានបុងបំបែកទេ
+Add Split Bill,បញ្ជូលបុងបំបែក

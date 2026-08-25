@@ -33,16 +33,10 @@ class PurchaseOrderPayment(Document):
 				s.party = self.party
 				s.purchase_order_balance = frappe.db.get_value("Purchase Orders",s.purchase_order,["balance"])
 				s.balance = (s.purchase_order_balance or 0) - ((s.payment_amount or 0) + (s.write_off_amount or 0))
-				s.payment_type = self.payment_type	
-		self.total_invoices = len(self.purchase_orders)
-		self.total_balance = sum((a.balance or 0) for a in self.purchase_orders)
-		self.total_write_off_amount = sum(float(a.write_off_amount or 0) for a in self.purchase_orders)
+				s.payment_type = self.payment_type
 	
 	def validate_payment_amount(self):
-		if self.input_amount:
-			if (self.input_amount / float(self.exchange_rate))>self.payment_amount:
-				frappe.throw(_("សូមបែងចែកចំនួនទឹកប្រាក់តាមវិកយប័ត្រអោយបានត្រឹមត្រូវ"))
-		if self.payment_amount>self.amount_to_pay:
+		if self.balance<0:
 			frappe.throw(_("Payment amount cannot greater than amount to pay"))
 	
 	@frappe.whitelist()
@@ -86,12 +80,13 @@ class PurchaseOrderPayment(Document):
 			sql = sql.format("and 1=1")
 		data = frappe.db.sql(sql, filter,as_dict = 1)
 		return data or []
-
+		
 def update_totals(self):
-	self.total_invoice = len([d   for d in self.purchase_orders if (d.payment_amount or 0)> 0 or (d.write_off_amount or 0)>0 ])
+	self.total_write_off_amount = sum(float(a.write_off_amount or 0) for a in self.purchase_orders)
+	self.amount_to_pay = sum(float(a.purchase_order_balance or 0) for a in self.purchase_orders)
+	self.total_invoice = len([d  for d in self.purchase_orders if (d.payment_amount or 0)> 0 or (d.write_off_amount or 0)>0 ])
 	self.payment_amount = sum([d.payment_amount or 0 for d in self.purchase_orders if (d.payment_amount or 0)> 0 ])
-	self.write_off_amount = sum([d.write_off_amount or 0 for d in self.purchase_orders if (d.write_off_amount or 0)> 0 ])
-	self.balance = self.amount_to_pay - (self.payment_amount + self.write_off_amount)
+	self.balance = self.amount_to_pay - (self.payment_amount + self.total_write_off_amount)
 
 def update_purchase_order(name):
 	doc = frappe.get_doc("Purchase Order Payment",name)

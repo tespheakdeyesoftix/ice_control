@@ -54,7 +54,7 @@ frappe.ui.form.on("Purchase Order Payment", {
             frm.set_value("exchange_rate", r.message);
             if ((frm.doc.input_amount || 0) > 0) {
             let exchange_rate = (frm.doc.exchange_rate || 1);
-            let input_amount = (frm.doc.input_amount || 0)*exchange_rate;
+            let input_amount = (frm.doc.payment_amount || 0)*exchange_rate;
             frm.set_value("input_amount",input_amount)
             frm.set_value("payment_amount",input_amount)
             frm.doc.purchase_orders.forEach(r => {
@@ -93,6 +93,11 @@ frappe.ui.form.on("Purchase Order Payment", {
             frappe.throw(__("Please select payment type"))
         }
         const payment_amount = frm.doc.input_amount / (parseFloat(frm.doc.exchange_rate) || 1)
+        if(payment_amount>frm.doc.amount_to_pay){
+            amount_to_pay = frm.doc.amount_to_pay/ (parseFloat(frm.doc.exchange_rate) || 1)
+            frm.set_value("input_amount", amount_to_pay);
+            payment_amount = amount_to_pay
+        }
         frm.set_value("payment_amount", payment_amount);
         if (frm._from_set_value) return;      
         update_allocated_amount(frm);
@@ -124,11 +129,16 @@ frappe.ui.form.on("Purchase Order Payment Invoices", {
     },
     input_amount: function (frm, cdt, cdn) {
         let row = locals[cdt][cdn];   
-        frappe.model.set_value(cdt, cdn, "payment_amount", (row.input_amount || 0) * (row.exchange_rate || 1));
+        let payment_amount = (row.input_amount || 0) / (row.exchange_rate || 1);
+        if(payment_amount>row.purchase_order_balance){
+            payment_amount = row.purchase_order_balance
+            frappe.model.set_value(cdt, cdn, "input_amount", payment_amount);
+        }
+        frappe.model.set_value(cdt, cdn, "payment_amount", payment_amount);
         calculate_row_purchase_order(frm, cdt, cdn);
-        const payment_amount = frm.doc.purchase_orders.reduce((sum, s) => sum + (s.payment_amount || 0), 0);
+        const total_payment_amount = frm.doc.purchase_orders.reduce((sum, s) => sum + (s.payment_amount || 0), 0);
         frm._from_set_value = true;
-        frm.set_value("input_amount",payment_amount * parseFloat(frm.doc.exchange_rate || 1)
+        frm.set_value("input_amount",total_payment_amount * parseFloat(frm.doc.exchange_rate || 1)
         ).then(() => {
             frm._from_set_value = false;
             calculate_totals(frm);
@@ -159,7 +169,7 @@ function calculate_totals(frm) {
     frm.set_value("total_invoices", total_invoices);
     frm.set_value("amount_to_pay", total_amount_to_pay);
     frm.set_value("total_write_off_amount", total_write_off_amount);
-    frm.set_value("total_balance", balance);
+    frm.set_value("balance", balance);
 }
 
 function get_unpaid_purchase_orders(frm) {
@@ -204,22 +214,19 @@ function update_allocated_amount(frm) {
     if ((frm.doc.purchase_orders || []).length > 0) {
         frm.doc.purchase_orders.forEach(r => {
             if (paid_amount < r.purchase_order_balance) {
-                console.log(paid_amount+"||"+r.purchase_order_balance)
                 r.input_amount = paid_amount*r.exchange_rate;
                 r.payment_amount = paid_amount;
             }
             else {
-                console.log(paid_amount+"||"+r.purchase_order_balance)
                 r.input_amount = r.purchase_order_balance*r.exchange_rate;
                 r.payment_amount = r.purchase_order_balance
             }
-            r.balance = r.purchase_order_balance - r.payment_amount - r.write_off_amount
+            r.balance = (r.purchase_order_balance || 0) - (r.payment_amount || 0) - (r.write_off_amount || 0)
             paid_amount = paid_amount - r.payment_amount
         });
         frm.refresh_field("purchase_orders")
         calculate_totals(frm);
     }
-  
 }
 
 function update_allocated_payment_date(frm) {

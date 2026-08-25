@@ -1,7 +1,7 @@
 {
  "app": "ice_control",
  "charts": [],
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Welcome to the Reports workspace\"}},{\"type\":\"paragraph\",\"data\":{\"text\":\"Click on <svg class=\\\"icon  icon-sm\\\"\\n\\t\\t\\t\\n\\t\\t\\t\\n\\t\\t\\tstyle=\\\"\\\" aria-hidden=\\\"true\\\">\\n\\t\\t\\t<use class=\\\"\\\" href=\\\"#icon-ellipsis\\\"\\n\\t\\t\\t\\t\\n\\t\\t\\t>\\n\\t\\t\\t</use>\\n\\t\\t</svg> to edit\"}}]",
+ "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Welcome to the Reports workspace\"}},{\"type\":\"paragraph\",\"data\":{\"text\":\"Click on <svg class=\"\\&quot;icon\">\\n\\t\\t\\t<use class=\"\\&quot;\\&quot;\" href=\"\\&quot;#icon-ellipsis\\&quot;\\n\\t\\t\\t\\t\\n\\t\\t\\t\">\\n\\t\\t\\t</use>\\n\\t\\t</svg> to edit\"}}]",
  "creation": "2026-08-22 12:58:46.154873",
  "custom_blocks": [],
  "docstatus": 0,
@@ -15,7 +15,7 @@
  "label": "Reports",
  "link_type": "DocType",
  "links": [],
- "modified": "2026-08-22 13:03:21.778896",
+ "modified": "2026-08-25 14:49:13.683197",
  "modified_by": "Administrator",
  "module": "ice_control",
  "name": "Reports",
@@ -24,11 +24,7 @@
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
- "roles": [
-  {
-   "role": "All"
-  }
- ],
+ "roles": [],
  "sequence_id": 62.0,
  "shortcuts": [],
  "sidebar_items": [
@@ -42,19 +38,6 @@
    "label": "Reports",
    "link_to": "Reports",
    "link_type": "Workspace",
-   "open_in_new_tab": 1,
-   "show_arrow": 0,
-   "type": "Link"
-  },
-  {
-   "child": 0,
-   "collapsible": 1,
-   "default_workspace": 0,
-   "indent": 0,
-   "keep_closed": 0,
-   "label": "Sale",
-   "link_to": "Sale",
-   "link_type": "DocType",
    "open_in_new_tab": 1,
    "show_arrow": 0,
    "type": "Link"

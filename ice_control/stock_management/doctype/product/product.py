@@ -30,7 +30,6 @@ class Product(Document):
 		allow_change_sale_type: DF.Check
 		allow_free: DF.Check
 		allow_purchase: DF.Check
-		allow_purchase_in_purchase_ice_feature: DF.Check
 		allow_return: DF.Check
 		allow_split_bill: DF.Check
 		allow_sum_qty: DF.Check
@@ -88,6 +87,8 @@ class Product(Document):
 		for row in self.product_units:
 			row.base_product_unit = 1 if row.unit == self.unit else 0
 
+	def before_save(self):
+		add_base_unit_to_product_unit(self)
 
 	def autoname(self):
 		from frappe.model.naming import set_name_by_naming_series
@@ -277,7 +278,22 @@ def get_product_price(product_code,unit,customer=None):
 
 	return price
 
-
+def add_base_unit_to_product_unit(self):
+	existed = 0
+	if len(self.product_units)>0:
+		for a in self.product_units:
+			if a.unit == self.unit:
+				existed += 1
+	if existed == 0:
+		self.append("product_units", {
+			"unit": self.unit,
+			"price": self.price,
+			"multiplier": self.multiplier,
+			"base_product_unit":1
+		})
+		self.product_units.sort(key=lambda row: row.multiplier or "")
+		for idx, row in enumerate(self.product_units, start=1):
+			row.idx = idx
 
 def update_product_unit(self):
 	if len(self.product_units or [])>0:

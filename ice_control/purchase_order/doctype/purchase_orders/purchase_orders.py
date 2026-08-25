@@ -6,7 +6,6 @@ from frappe.model.document import Document
 from frappe import _
 from ice_control.api.inventory import add_inventory_transaction,get_stock_location_prouct
 import json
-from typing import Any
 class PurchaseOrders(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
@@ -43,6 +42,7 @@ class PurchaseOrders(Document):
 	# end: auto-generated types
 
 	def validate(self):
+		self.validate_product_unit()
 		for p in self.purchase_products:
 			p.sub_total = p.quantity * p.cost
 			p.total_cost = p.sub_total
@@ -50,14 +50,11 @@ class PurchaseOrders(Document):
 		self.total_quantity = sum([d.quantity for d in self.purchase_products])
 		self.total_cost = sum([d.total_cost for d in self.purchase_products])
 		self.total_payment = sum([d.payment_amount for d in self.payments])
-		self.write_off = sum([d.write_off_amount*(d.exchange_rate or 1) for d in self.payments])
+		self.write_off = sum([float(d.write_off_amount or 0)*float(d.exchange_rate or 1) for d in self.payments])
 		self.balance = (self.total_cost or 0) - (self.total_payment or 0) - (self.write_off or 0)
 		if self.balance<0:
 			frappe.throw(_("Payment amount cannot greater than purchase order amount"))
 		update_status(self)
-
-	def before_submit(self):
-		self.validate_product_unit()
 
 	def on_submit(self):
 		add_payment(self.name)
@@ -84,13 +81,12 @@ class PurchaseOrders(Document):
 		add_inventory_transaction(data)
 
 	def validate_product_unit(self):
+		from ice_control.api.inventory import get_purchase_cost
 		for p in [d for d in self.purchase_products if d.is_inventory_product ==1 and d.base_unit != d.unit]:
-			sql="select name,multiplier from `tabProduct Units` where parent=%(product_code)s and unit = %(unit)s"
-			data = frappe.db.sql(sql,{"product_code": p.product_code,"unit":p.unit},as_dict = 1)
+			data = get_purchase_cost(param={"doc": self,"product": p})
 			if data:
-				p.multiplier = data[0].get("multiplier")
-			else:
-				frappe.throw("Product <strong>{}-{}</strong> does not have unit <strong>{}</strong>.".format(p.product_code,p.product_name,p.unit))
+				p.cost = float(data.get("cost"))
+				p.multiplier = float(data.get("multiplier"))
 
 	def update_party_name(self):
 		doctype = self.party_type
@@ -116,33 +112,9 @@ def update_status(self):
 	elif self.docstatus == 2:
 		status = "Cancelled"
 	self.status = status
-
-@frappe.whitelist()
-def get_purchase_cost(param: dict[str, Any]) -> Any:
-	doc = param.get("doc")
-	product = param.get("product")
-	vendor_price = frappe.db.sql("""select 
-										cost 
-									from `tabVendor Product Price` 
-									where product = %(product_code)s and 
-									stock_location = %(stock_location)s and
-									unit = %(unit)s and
-									parent = %(party)s""",{"product_code":product.get("product_code"),"stock_location":doc.get("stock_location"),"unit":product.get("unit"),"party":doc.get("party")},as_dict=1)
-	if vendor_price:
-		return vendor_price[0]["cost"]
-	else:
-		stock_location_product = frappe.db.sql("""select 
-											cost 
-										from `tabStock Location Products` 
-										where product_code = %(product_code)s and 
-										stock_location = %(stock_location)s and 
-										unit = %(unit)s""",{"product_code":product.get("product_code"),"stock_location":doc.get("stock_location"),"unit":product.get("unit")},as_dict=1)
-		if stock_location_product:
-			return stock_location_product[0]["cost"]
-		else:
-			return frappe.db.get_value("Product",product_code,"cost")
 			
 def update_stock_product(self):
+	from ice_control.api.inventory import calculate_cost
 	data = [
 		{
 			"ref_doctype":self.doctype,
@@ -150,10 +122,10 @@ def update_stock_product(self):
 			"posting_date":self.posting_date,
 			"stock_location":self.stock_location,
 			"product_code":p.product_code,
-			"unit":p.unit,
+			"unit": p.unit,
 			"quantity": p.quantity,
-			"multiplier":p.multiplier or 1,
-			"cost":p.cost,
+			"multiplier": p.multiplier or 1,
+			"cost": calculate_cost(p.product_code,self.stock_location,p.quantity,p.cost),
 			"note": "បញ្ជូលចំនួនបន្ថែមពីបញ្ជារទិញលេខ {}".format(self.name)
 		}
 		for p in self.purchase_products if p.is_inventory_product == 1

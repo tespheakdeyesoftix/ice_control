@@ -47,7 +47,7 @@ class Sale(Document):
 		payments: DF.Table[POSSalePayment]
 		phone_number: DF.Data | None
 		plate_number: DF.Data | None
-		posting_date: DF.Date | None
+		posting_date: DF.Date
 		product_qty: DF.LongText | None
 		reference_number: DF.Data | None
 		sale_products: DF.Table[SaleProducts]
@@ -89,13 +89,49 @@ class Sale(Document):
 
 		self.validate_permission()
 
-		verify_product(self)
+		
 		get_customer_product_price(self)
+		
+		self.validate_sale_products()
+		verify_product(self)
 		self.validate_sale()
-		update_total_amounts(self)
+		self.update_total_amounts()
 
 		update_payment_status(self)
 		# validate parent bill if this bill is a split bill
+
+	def validate_sale_products(self):
+		# validte sale product quantity vs return vs free 
+		_invalid_products = [
+								x for x 
+								in self.sale_products 
+								if (x.quantity or 0) - ((x.free_quantity or 0) + (x.return_quantity or 0) + (x.split_quantity or  0)) <0 
+							]
+
+		for d in _invalid_products:
+			frappe.throw(
+				f"ទំនិញនៅជួរទី {d.idx} ({d.product_name})៖ "
+				f"ចំនួនសល់មកវិញ + ចំនួនថែម/Free + ចំនួនបំបែក "
+				f"មិនអាចលើសចំនួនដើមបានទេ។"
+			)
+	
+		# validate product valid outlet
+		if self.sale_products:
+			_product_codes = [x.get("product_code") for x in self.sale_products]
+			_product_codes = _product_codes or []
+			if len(_product_codes)>0:
+				sql="""
+						select parent as product_code,outlet from `tabProduct Outlet` a
+						where
+							parent in %(product_codes)s and outlet = %(outlet)s
+					
+				"""
+				_product_outlets = frappe.db.sql(sql,{"product_codes":_product_codes,"outlet":self.outlet},as_dict=1)
+				for sp in self.sale_products:
+					if len([x for x in _product_outlets if x.get("product_code") == sp.product_code])==0:
+						frappe.throw("ទំនិញ {0} មិនអាច់លក់នៅទីតាំងលក់ {1} បានទេ។".format(sp.product_name, self.outlet))
+				
+		
 
 
 	def validate_sale(self):
@@ -181,63 +217,51 @@ class Sale(Document):
 		return data
 
 	def on_update(self):
-
 		if self.flags.get("ignore_update"):
 			return
-
 		if self.sale_status == "Closed":
 			# dont for get more this to eqnueue
-			frappe.enqueue("icon_control.selling.doctype.sale.sale.update_stock_product",queue="short",self=self)
-			# update_stock_product(self)
-
-
-
+			# frappe.enqueue("ice_control.selling.doctype.sale.sale.update_stock_product",queue="short",self=self)
+			update_stock_product(self)
 			if self.parent_bill_number:
 				update_split_quantity_to_parent_bill(self.parent_bill_number)
-
-
-
 			if self.payments:
 				# add_pos_payment_to_sale_payment(self)
-				frappe.enqueue("icon_control.selling.doctype.sale.sale.add_pos_payment_to_sale_payment",queue="short",self=self)
-
+				frappe.enqueue("ice_control.selling.doctype.sale.sale.add_pos_payment_to_sale_payment",queue="short",self=self)
 			# update to borrow product
-			frappe.enqueue("icon_control.selling.doctype.sale.sale.update_borrow_product",queue="short",old_doc=self.get_doc_before_save() ,new_doc=self)
-
+			frappe.enqueue("ice_control.selling.doctype.sale.sale.update_borrow_product",queue="short",old_doc=self.get_doc_before_save() ,new_doc=self)
 			# update_borrow_product(self.get_doc_before_save() ,self)
-
 		elif self.sale_status == "Deleted":
-
 			update_stock_product(self)
 			# add comment
 			comment_text = f"""
 			<br/>
 				<strong style='color:red'>លុបបុង</strong> <br/>
 				មូលហេតុលុបបុង៖ <strong>{self.deleted_note}</strong>
-
 			"""
 			self.add_comment('Deleted', comment_text)
-
-
 			# cancell all borrow product
 			cancell_all_borrow_product(self)
-
-
 		if self.parent_bill_number:
-			frappe.enqueue("icon_control.selling.doctype.sale.sale.update_sub_bill_audit_trail",queue="short",old_doc = self.get_doc_before_save() ,new_doc = self)
+			frappe.enqueue("ice_control.selling.doctype.sale.sale.update_sub_bill_audit_trail",queue="short",old_doc = self.get_doc_before_save() ,new_doc = self)
 			# update_sub_bill_audit_trail(self.get_doc_before_save() ,self)
-
 		if self.enable_edit_mode ==0:
 			frappe.db.sql("update `tabSale` set workflow_state = 'Closed' where name=%(name)s",{"name":self.name})
 
-
-
-
+	def update_total_amounts(self):		
+		self.total_quantity = (sum((d.quantity or 0) for d in self.sale_products if d.allow_sum_qty == 1) or 0)
+		self.total_free = (sum((d.free_quantity or 0) for d in self.sale_products if d.allow_sum_qty == 1) or 0)
+		self.total_quantity_return = (sum((d.return_quantity or 0) for d in self.sale_products if d.allow_sum_qty == 1) or 0)
+		self.total_split_quantity = (sum((d.split_quantity or 0) for d in self.sale_products if d.allow_sum_qty == 1) or 0)
+		self.total_sale_quantity = (self.total_quantity or 0)  - ((self.total_free or 0) + (self.total_quantity_return or 0) + (self.total_split_quantity or 0))
+		self.total_amount = sum([x.get("total_amount") for x in self.sale_products if x.allow_sum_qty==1])
+		self.total_payment = 0
+		self.balance = self.total_amount - (self.total_payment or 0)
+		self.product_qty = generate_product_qty(self.sale_products)
 
 	def validate_permission(self):
 		if frappe.session.user == "Administrator":
 			return
-
 		employee = frappe.db.exists("Employee",{"user_id":frappe.session.user})
 		employee_doc = {"change_sale_date_after_save":0,"change_customer_after_close_sale":0}
 		if employee:
@@ -251,25 +275,75 @@ class Sale(Document):
 			if not old_doc.sale_status == "Draft" and self.sale_status == "Closed":
 				if self.has_value_changed("customer") and not employee_doc.change_customer_after_close_sale:
 					frappe.throw("អ្នកមិនមានសិទ្ធកែប្រែអតិថិជនក្នុងបុងបានទេ")
+	# this method run form 
+	@frappe.whitelist(methods=["POST"])
+	def change_customer(self):
+		if not self.customer:
+			return
+		for sp in self.sale_products:
+			if sp.product_code and sp.unit:
+				sp.price = get_product_price(self.customer,sp.product_code, sp.unit)
+				sp.product_price = sp.price
+				sp.sub_total = (sp.total_sale_quantity or 0)  * (sp.price or 0)
+				sp.total_amount = (sp.total_sale_quantity or 0)  * (sp.price or 0)
+	
+	# sale product method
+	@frappe.whitelist(methods=["POST"])
+	def sale_product_update(self,row:dict, check_customer_price:bool=False):
+		sp = next((x for x in self.sale_products if x.name == row.get("name")),None)
+		if sp:
+			if check_customer_price and self.customer and sp.product_code and sp.unit:
+				sp.price = get_product_price(self.customer, sp.product_code, sp.unit )
+				sp.product_price =sp.price
+			sp.quantity = row.get("quantity") 
+			sp.total_sale_quantity = row.get("quantity") - ((row.get("free_quantity") or 0) + (row.get("return_quantity") or 0) + (row.get("total_split_bill") or 0))
+			sp.sub_total = (sp.total_sale_quantity or 0)  * (sp.price or 0)
+			sp.total_amount = (sp.total_sale_quantity or 0)  * (sp.price or 0)
+			if sp.total_sale_quantity<0:
+				frappe.throw("ចំនួនសល់មកវិញ + ចំនួនថែម/Free + ចំនួនបំបែក មិនអាចលើសចំនួនដើមបានទេ។")
+			self.update_total_amounts()
 
+	@frappe.whitelist(methods=["POST"])
+	def delete_sale(self):
+		delete_bill(sale_doc=self.as_dict())
 
+def get_product_price(customer:str, product_code:str,unit:str):
+	filter = {
+		"customer":customer,
+		"product_code":product_code,
+		"unit":unit
+	}
+	price = 0
+	sql="select max(price) as price from `tabCustomer Product Price` where product_code=%(product_code)s and unit=%(unit)s and parent=%(customer)s" 
+	data = frappe.db.sql(sql,filter,as_dict=1)
+	
+	if data:
+		price = data[0].get("price") or 0
+
+		if price>0:
+			frappe.msgprint("ទំនិញ៖ {0} ត្រូវបានកំណត់តម្លៃតាមអតិថិជន".format(frappe.get_cached_value("Product",product_code,"product_name")))
+			return price
+	# get from product unit
+	sql="select max(price) as price from `tabProduct Units` where parent=%(product_code)s and unit=%(unit)s" 
+	data = frappe.db.sql(sql,filter,as_dict=1)
+	if data:
+		price = data[0].get("price") or 0
+		if price>0:
+			return price
+	return frappe.get_cached_value("Product", product_code,"price")
 
 def get_employee_name(self):
-
 	if self.seller:
 		return
-
 	if frappe.session.user == "Administrator":
 		self.seller = "Administrator"
 		return
-
 	name = frappe.db.get_value('Employee', {'user_id':self.owner}, 'employee_name')
 	self.seller = name
 
-
 @frappe.whitelist()
 def query_permission(user):
-	from icon_control.api.auth import get_employee_outlets
+	from ice_control.api.auth import get_employee_outlets
 	if frappe.session.user !="Administrator":
 		outlets = get_employee_outlets()
 		escaped_outlets = ", ".join(
@@ -280,9 +354,8 @@ def query_permission(user):
 
 @frappe.whitelist()
 def update_stock_product(self):
-	# find old doc and new doc merge product list when user remove item
 	sale_products = []
-	if not self.sale_status == "Deleted":
+	if self.sale_status == "Closed":
 		sale_products = [
 			{
 				"product_code":p.product_code,
@@ -290,58 +363,23 @@ def update_stock_product(self):
 				"stock_location":p.stock_location or self.stock_location,
 				"quantity": p.quantity+ (p.free_quantity or 0)  -  (p.return_quantity or 0)
 			}
-			for p in  self.sale_products if p.is_inventory_product ==1
+			for p in  self.sale_products
 		]
-
-	old_doc = self.get_doc_before_save()
-	if old_doc:
-		sale_products = sale_products +  [
-		{
-			"product_code":p.product_code,
-			"unit":p.unit,
-			"stock_location":p.stock_location or self.stock_location,
-			"quantity": (p.quantity+ p.free_quantity  -  p.return_quantity) * -1
-		}
-		for p in  old_doc.sale_products if p.is_inventory_product ==1
-	]
-
-
-
-	product_codes =  list({(d["product_code"], d["unit"],d["stock_location"]) for d in sale_products})
-
-	data = [
-		{
-			"ref_doctype":self.doctype,
-			"ref_docname":self.name,
-			"posting_date":self.posting_date,
-			"stock_location":p[2], #stock location index
-			"product_code":p[0],
-			"unit":p[1],
-			"quantity": sum([d.get("quantity") for d in sale_products if d.get("product_code") == p[0] and d.get("unit") == p[1]]) * -1,
-			"is_calculate_cost":0,
-		}
-		for p in product_codes
-	]
-	add_inventory_transaction(data)
-
-
-
-
-def update_total_amounts(self):
-	self.total_quantity = (sum((d.quantity or 0) for d in self.sale_products if d.allow_sum_qty == 1) or 0)
-	self.total_free = (sum((d.free_quantity or 0) for d in self.sale_products if d.allow_sum_qty == 1) or 0)
-	self.total_quantity_return = (sum((d.return_quantity or 0) for d in self.sale_products if d.allow_sum_qty == 1) or 0)
-	self.total_split_quantity = (sum((d.split_quantity or 0) for d in self.sale_products if d.allow_sum_qty == 1) or 0)
-
-
-	self.total_sale_quantity = (self.total_quantity or 0)  - ((self.total_free or 0) + (self.total_quantity_return or 0) + (self.total_split_quantity or 0))
-
-	self.total_amount = (sum((d.price or 0)*(d.total_sale_quantity or 0)*(d.multiplier or 1) for d in self.sale_products if d.allow_sum_qty == 1) or 0)
-	self.total_payment = 0
-	self.balance = self.total_amount - (self.total_payment or 0)
-
-
-	self.product_qty = generate_product_qty(self.sale_products)
+		product_codes =  list({(d["product_code"], d["unit"],d["stock_location"]) for d in sale_products})
+		data = [
+			{
+				"ref_doctype":self.doctype,
+				"ref_docname":self.name,
+				"posting_date":self.posting_date,
+				"stock_location":p[2], #stock location index
+				"product_code":p[0],
+				"unit":p[1],
+				"quantity": sum([d.get("quantity") for d in sale_products if d.get("product_code") == p[0] and d.get("unit") == p[1]]) * -1,
+				"is_calculate_cost":0,
+			}
+			for p in product_codes
+		]
+		add_inventory_transaction(data)
 
 def verify_product(self):
 	from ice_control.stock_management.doctype.product.product import get_product_price
@@ -471,7 +509,7 @@ def validate_edit_sale_action(name):
 	# validate close report
 
 @frappe.whitelist()
-def get_sale_for_edit(name,station_name=""):
+def get_sale_for_edit(name:str,station_name:str = "")->dict:
 
 	if not frappe.db.exists("Sale",name):
 		frappe.throw("មិនមានបុងលេខ {} នៅក្នុងប្រព័ន្ធទេ".format(name))
@@ -489,7 +527,7 @@ def get_sale_for_edit(name,station_name=""):
 			"audit_trail_type":"កែប្រែបុង",
 			"description": "បើកបុងកំពុងរង់ចាំដើម្បីកែប្រែ"
 		}
-		frappe.enqueue("icon_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
+		frappe.enqueue("ice_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
 
 		return sale_doc
 
@@ -504,7 +542,7 @@ def get_sale_for_edit(name,station_name=""):
 			"audit_trail_type":"កែប្រែបុង",
 			"description": "ព្យាយាមបើកបុងដើម្បីកែប្រែ ប៉ុន្តែគ្មានសិទ្ធកែប្រែបុងនៅកន្លែលកល {} ទេ។".format(frappe.get_cached_value("Outlet",sale_doc.outlet,"outlet_name_kh"))
 		}
-		frappe.enqueue("icon_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
+		frappe.enqueue("ice_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
 
 		frappe.throw("អ្នកមិនមានសិទ្ធកែប្រែបុងនៅកន្លែងលក់ {}ទេ".format(frappe.get_cached_value("Outlet",sale_doc.outlet,"outlet_name_kh")))
 
@@ -538,7 +576,7 @@ def get_sale_for_edit(name,station_name=""):
 			"audit_trail_type":"កែប្រែបុង",
 			"description": "ព្យាយាមបើកបុងដែលមានប្រតិបត្តិការបង់ប្រាក់ដើម្បីកែប្រែ"
 		}
-		frappe.enqueue("icon_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
+		frappe.enqueue("ice_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
 
 		frappe.throw("អ្នកមិនអាចកែប្រែបុងដែលមានប្រតិបត្តិការបង់ប្រាក់ទេ")
 	# valite sale has child split bill
@@ -568,7 +606,7 @@ def get_sale_for_edit(name,station_name=""):
 			"audit_trail_type":"កែប្រែបុង",
 			"description": "បើកបុងដើម្បីកែប្រែ"
 		}
-	frappe.enqueue("icon_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
+	frappe.enqueue("ice_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
 
 	return sale_doc
 
@@ -621,7 +659,7 @@ def delete_bill(sale_doc:dict = None, doc_name:str = None,note:str = None,statio
 
 
 
-		frappe.enqueue("icon_control.api.utils.add_audit_trail_log",queue="short",data=audit_trails)
+		frappe.enqueue("ice_control.api.utils.add_audit_trail_log",queue="short",data=audit_trails)
 
 		if doc.parent_bill_number:
 			update_split_quantity_to_parent_bill(doc.parent_bill_number)
@@ -882,7 +920,7 @@ def change_sale_date(sale,date,station_name=""):
 			"audit_trail_type":"ប្តូរថ្ងៃចេញបុង",
 			"description": f"ប្តូរថ្ងៃចេញបុងពី {get_date(sale_doc.posting_date)} ទៅ {get_date(date)}"
 		}
-	frappe.enqueue("icon_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
+	frappe.enqueue("ice_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
 
 
 
@@ -915,7 +953,7 @@ def change_driver(sale,data):
 			"audit_trail_type":"ប្តូរអ្នកបើកបរ",
 			"description": f"ប្តូរអ្នកបើកបរពី {saleDoc.driver} - {saleDoc.driver_name} ទៅ {data.get('driver')} - {data.get('driver_name')}"
 		}
-		frappe.enqueue("icon_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
+		frappe.enqueue("ice_control.api.utils.add_audit_trail_log",queue="short",data=audit_trail_doc)
 	elif saleDoc.driver and not data.get("driver"):
 		# remove driver
 		# update to sub bill
@@ -1008,3 +1046,6 @@ def cancell_all_borrow_product(self):
 		doc.flags.ignore_permissions = True
 		doc.flags.force_cancel = True
 		doc.cancel()
+
+
+

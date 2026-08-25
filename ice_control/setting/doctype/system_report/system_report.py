@@ -16,6 +16,7 @@ class SystemReport(NestedSet):
 		from frappe.types import DF
 
 		default_filter_options: DF.JSON | None
+		description: DF.SmallText | None
 		doctype_name: DF.Link | None
 		is_backend_report: DF.Check
 		is_doctype_report: DF.Check

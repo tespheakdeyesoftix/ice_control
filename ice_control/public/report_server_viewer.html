@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sales Report</title>
+
+    <link rel="stylesheet" href="https://cdn.boldreports.com/14.1.12/content/v2.0/tailwind-light/bold.report-viewer.min.css">
+
+    <style>
+        html,
+        body,
+        #viewer {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            margin: 0;
+        }
+
+        body {
+            overflow: hidden;
+           
+            color: #172033;
+            font-family: Arial, sans-serif;
+        }
+
+        #status {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: #f8fafc;
+            text-align: center;
+        }
+
+        #status[hidden] {
+            display: none;
+        }
+
+        #status.error {
+            color: #991b1b;
+        }
+
+        #status-message {
+            max-width: 680px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="status" role="status" aria-live="polite">
+        <div id="status-message">Loading report...</div>
+    </div>
+    <div id="viewer" aria-label="Sales report viewer"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.boldreports.com/14.1.12/scripts/v2.0/common/bold.reports.common.min.js"></script>
+    <script src="https://cdn.boldreports.com/14.1.12/scripts/v2.0/common/bold.reports.widgets.min.js"></script>
+    <script src="https://cdn.boldreports.com/14.1.12/scripts/v2.0/bold.report-viewer.min.js"></script>
+
+    <script>
+        (function () {
+            "use strict";
+
+            var reportServiceUrl = "";
+            // A fragment keeps the Windows file URL identical to opening the
+            // HTML directly. Fall back to the query string for compatibility
+            // with older deployments.
+            var contextValues = window.location.hash.length > 1
+                ? window.location.hash.substring(1)
+                : window.location.search.substring(1);
+            var query = new URLSearchParams(contextValues);
+            var reportPath = query.get("report_path") || "";
+            var outlet = query.get("outlet") || "";
+            var user = query.get("user") || "";
+
+            // Configure only reports that actually define an outlet parameter.
+            // Example:
+            // "/Sales Report/Daily Sales": { outlet: "Outlet" }
+            var reportParameterMappings = {
+            };
+
+            var status = document.getElementById("status");
+            var statusMessage = document.getElementById("status-message");
+            var hasError = false;
+
+            function buildReportParameters() {
+                var mapping = reportParameterMappings[reportPath] || {};
+                var valuesByQueryName = { outlet: outlet };
+                var parameters = [];
+
+                if (user) {
+                    parameters.push({
+                        name: "user",
+                        labels: [user],
+                        values: [user]
+                    });
+                }
+
+                return Object.keys(mapping).reduce(function (reportParameters, queryName) {
+                    var value = valuesByQueryName[queryName];
+                    if (value) {
+                        reportParameters.push({
+                            name: mapping[queryName],
+                            labels: [value],
+                            values: [value]
+                        });
+                    }
+                    return reportParameters;
+                }, parameters);
+            }
+
+            // Custom production JavaScript can read this context directly.
+            window.reportViewerContext = Object.freeze({
+                reportPath: reportPath,
+                outlet: outlet,
+                user: user
+            });
+
+            function hideStatus() {
+                if (!hasError) {
+                    status.hidden = true;
+                }
+            }
+
+            function showError(message) {
+                hasError = true;
+                status.classList.add("error");
+                statusMessage.textContent = message;
+                status.hidden = false;
+            }
+
+            async function loadViewerConfig() {
+                var endpoint = new URL(
+                    "/api/method/ice_control.api.bold_reports.get_viewer_config",
+                    window.location.origin
+                );
+                endpoint.searchParams.set("report_path", reportPath);
+
+                var response = await fetch(endpoint.toString(), {
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store",
+                    headers: { "Accept": "application/json" }
+                });
+                var payload;
+
+                try {
+                payload = await response.json();
+                } catch (_error) {
+                    throw new Error("Frappe returned an invalid configuration response.");
+                }
+
+                if (!response.ok || !payload.message) {
+                    throw new Error("Frappe could not provide the report server configuration.");
+                }
+
+                return payload.message;
+            }
+
+            window.addEventListener("error", function (event) {
+                if (event.target && event.target.tagName === "SCRIPT") {
+                    showError("A required Bold Reports script could not be loaded. Check the network connection and reload the page.");
+                }
+            }, true);
+
+            $(async function () {
+                if (!reportPath) {
+                    showError("No report selected. Add report_url to the Server Report Viewer page URL.");
+                    return;
+                }
+
+                if (typeof $.fn.boldReportViewer !== "function") {
+                    showError("Bold Report Viewer could not be initialized because its scripts did not load.");
+                    return;
+                }
+
+                try {
+                    var config = await loadViewerConfig();
+                    if (!config.report_server_url || !config.report_service_url || !config.service_authorization_token) {
+                        throw new Error("Frappe returned incomplete report server configuration.");
+                    }
+
+                    reportServiceUrl = config.report_service_url;
+                    $(document).ajaxError(function (_event, request, settings) {
+                        if (settings.url && settings.url.indexOf(reportServiceUrl) === 0) {
+                            showError("The report service returned HTTP " + request.status + ". Check CORS, permissions, and report server availability.");
+                        }
+                    });
+
+                    var viewerOptions = {
+                        reportServerUrl: config.report_server_url,
+                        reportServiceUrl: reportServiceUrl,
+                        serviceAuthorizationToken: config.service_authorization_token,
+                        reportPath: reportPath,
+                          zoomFactor: 1.25,
+                        isResponsive: true,
+                        // Printing needs its own WebView window on Flutter
+                        // desktop so the printable page can open WebView2's
+                        // native print preview without replacing the viewer.
+                        printOption: ej.ReportViewer.PrintOptions.NewTab,
+                        reportLoaded: hideStatus
+                    };
+                    var reportParameters = buildReportParameters();
+                    if (reportParameters.length > 0) {
+                        viewerOptions.parameters = reportParameters;
+                    }
+                    $("#viewer").boldReportViewer(viewerOptions);
+
+                    // Do not hide this status on a timer. In production that
+                    // turned a stalled script or report request into a blank
+                    // white screen with no useful information.
+                    window.setTimeout(function () {
+                        if (!status.hidden && !hasError) {
+                            statusMessage.textContent = "The report is still loading. Check the network connection and report server availability.";
+                        }
+                    }, 15000);
+                } catch (error) {
+                    showError("Could not start Bold Report Viewer: " + error.message);
+                }
+            });
+        }());
+    </script>
+</body>
+</html>

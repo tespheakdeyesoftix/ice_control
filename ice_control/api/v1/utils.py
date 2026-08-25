@@ -25,3 +25,7 @@ def update_doc(
         data=data,
         doc_flags=doc_flags
     )
+
+@frappe.whitelist(methods=["POST"])
+def get_bold_report_config()->dict:
+    return frappe.conf.get("bold_reports")
