@@ -10,7 +10,6 @@
   "posting_date",
   "stock_location",
   "base_unit",
-  "is_calculate_cost",
   "column_break_mwvd",
   "product_code",
   "product_name",
@@ -142,12 +141,6 @@
    "label": "Note"
   },
   {
-   "default": "0",
-   "fieldname": "is_calculate_cost",
-   "fieldtype": "Check",
-   "label": "Is Calculate Cost"
-  },
-  {
    "fieldname": "cost",
    "fieldtype": "Currency",
    "label": "New Cost"
@@ -188,7 +181,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-21 15:10:49.588210",
+ "modified": "2026-08-26 13:46:53.660870",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Inventory Transactions",

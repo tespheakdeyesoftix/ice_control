@@ -2,7 +2,7 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
- "autoname": "field:product_name",
+ "autoname": "hash",
  "creation": "2026-08-14 14:40:20.865500",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -11,6 +11,7 @@
   "product_name",
   "stock_location",
   "vendor",
+  "column_break_tkbq",
   "unit",
   "quantity",
   "cost"
@@ -66,16 +67,20 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Cost"
+  },
+  {
+   "fieldname": "column_break_tkbq",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-15 15:04:57.041470",
+ "modified": "2026-08-26 10:58:00.440884",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Stock Location Products",
- "naming_rule": "By fieldname",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {
@@ -93,7 +98,9 @@
  ],
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
+ "search_fields": "product_name",
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "product_name"
 }

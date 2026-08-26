@@ -11,11 +11,22 @@ frappe.ui.form.on("*", {
     refresh(frm) {
         // reset tabLoaded state
         window.loadTab = {}
+        // Keep Frappe's standard print handler as the default. Only replace it
+        // when this DocType has an enabled document report configured.
+        if (!frm.__standard_print_doc) {
+            frm.__standard_print_doc = frm.print_doc;
+        }
+        frm.print_doc = frm.__standard_print_doc;
 
-        frm.print_doc = function () {
-       
-            printDoc(frm)
-        };
+        getDoctypeReports(frm.doctype).then(function (reports) {
+            const reportPath = reports.length ? reports[0].report_url : "";
+            if (reportPath) {
+                frm.print_doc = function () {
+                    printDoc(frm, reportPath);
+                };
+            }
+        });
+
         cleanFormSidebar();
         hideMenus();
        
@@ -34,9 +45,56 @@ frappe.ui.form.on("*", {
 });
 
 
-function printDoc(frm,report_name="") {
+function printDoc(frm,report_path="") {
+
+    openReportViewerDialog(frm.doctype, frm.docname, report_path);
+}
+
+function getDoctypeReports(doctype) {
+    return frappe.call({
+        method: "ice_control.api.bold_reports.get_doctype_reports",
+        args: { doctype: doctype }
+    }).then(function (response) {
+        return response.message || [];
+    });
+}
+
+async function printDoctypeReport(doctype, docName) {
+    if (!doctype || !docName) {
+        frappe.msgprint(__("A document type and document name are required to print the report."));
+        return;
+    }
+
+    try {
+        const reports = await getDoctypeReports(doctype);
+        const reportPath = reports.length ? reports[0].report_url : "";
+
+        if (!reportPath) {
+            frappe.msgprint(__("No document report is configured for {0}.", [doctype]));
+            return;
+        }
+
+        openReportViewerDialog(doctype, docName, reportPath);
+    } catch (error) {
+        console.error("Unable to load the document report", error);
+        frappe.msgprint(__("Unable to load the document report for {0}.", [doctype]));
+    }
+}
+
+window.printDoctypeReport = printDoctypeReport;
+
+function openReportViewerDialog(doctype, docName, reportPath) {
+
+    const viewerUrl = new URL(
+        "/assets/ice_control/report_server_viewer.html",
+        window.location.origin
+    );
+    viewerUrl.searchParams.set("doctype", doctype);
+    viewerUrl.searchParams.set("doc_name", docName);
+    viewerUrl.searchParams.set("report_path", reportPath);
+
     let d = new frappe.ui.Dialog({
-        title: __('Print Report') + " " + frm.doc.name,
+        title: __('Print Report') + " " + docName,
         size: 'large', // 'small', 'large', 'extra-large'
         fields: [
             {
@@ -46,15 +104,16 @@ function printDoc(frm,report_name="") {
             }
         ]
     });
+  
+    const iframe = $("<iframe>", {
+        src: viewerUrl.toString(),
+        width: "100%",
+        height: `${window.innerHeight - 150}px`,
+        frameborder: 0,
+        title: __("Report Viewer")
+    }).css("border-radius", "8px");
 
-    d.fields_dict.iframe_html.$wrapper.html(`
-                <iframe src="/embed/doctype-server-report?doctype=${frm.doctype}&docname=${frm.docname}&report_name=${report_name}" 
-                        width="100%" 
-                        height="${window.innerHeight - 150}px" 
-                        frameborder="0"
-                        style="border-radius: 8px;">
-                </iframe>
-            `);
+    d.fields_dict.iframe_html.$wrapper.empty().append(iframe);
 
     d.show();
     d.$wrapper.find('.modal-dialog').css({

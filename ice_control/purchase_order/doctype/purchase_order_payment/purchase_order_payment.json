@@ -84,7 +84,6 @@
    "in_standard_filter": 1,
    "label": "Outlet",
    "options": "Outlet",
-   "reqd": 1,
    "search_index": 1
   },
   {
@@ -294,7 +293,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-22 17:49:41.292123",
+ "modified": "2026-08-26 13:56:14.501237",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Order Payment",

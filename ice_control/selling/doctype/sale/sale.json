@@ -65,7 +65,6 @@
   "column_break_jdxc",
   "status",
   "id",
-  "enable_edit_mode",
   "can_edit_bill",
   "can_split_bill",
   "can_show_price",
@@ -389,12 +388,6 @@
    "read_only": 1
   },
   {
-   "default": "1",
-   "fieldname": "enable_edit_mode",
-   "fieldtype": "Check",
-   "label": "Enable Edit Mode"
-  },
-  {
    "fieldname": "station",
    "fieldtype": "Link",
    "label": "Station",
@@ -494,8 +487,14 @@
  "grid_page_length": 50,
  "image_field": "customer_photo",
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-08-25 14:48:48.074762",
+ "links": [
+  {
+   "link_doctype": "Sale Payment",
+   "link_fieldname": "sale"
+  }
+ ],
+ "make_attachments_public": 1,
+ "modified": "2026-08-26 09:41:19.720535",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

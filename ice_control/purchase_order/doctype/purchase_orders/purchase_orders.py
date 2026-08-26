@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe import _
-from ice_control.api.inventory import add_inventory_transaction,get_stock_location_prouct
+from ice_control.api.inventory import add_inventory_transaction
 import json
 class PurchaseOrders(Document):
 	# begin: auto-generated types
@@ -114,7 +114,6 @@ def update_status(self):
 	self.status = status
 			
 def update_stock_product(self):
-	from ice_control.api.inventory import calculate_cost
 	data = [
 		{
 			"ref_doctype":self.doctype,
@@ -125,7 +124,7 @@ def update_stock_product(self):
 			"unit": p.unit,
 			"quantity": p.quantity,
 			"multiplier": p.multiplier or 1,
-			"cost": calculate_cost(p.product_code,self.stock_location,p.quantity,p.cost),
+			"cost": p.cost,
 			"note": "បញ្ជូលចំនួនបន្ថែមពីបញ្ជារទិញលេខ {}".format(self.name)
 		}
 		for p in self.purchase_products if p.is_inventory_product == 1

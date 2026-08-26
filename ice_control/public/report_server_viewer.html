@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sales Report</title>
 
-    <link rel="stylesheet" href="https://cdn.boldreports.com/14.1.12/content/v2.0/tailwind-light/bold.report-viewer.min.css">
+    <link rel="stylesheet" href="/assets/ice_control/vendor/bold-reports/14.1.12/css/bold.report-viewer.min.css">
 
     <style>
         html,
         body,
-        #viewer {
+        #report-viewer-layout {
             width: 100%;
             height: 100%;
             min-height: 400px;
@@ -22,6 +22,67 @@
            
             color: #172033;
             font-family: Arial, sans-serif;
+        }
+
+        #report-viewer-layout {
+            display: flex;
+            min-width: 0;
+        }
+
+        #report-sidebar {
+            box-sizing: border-box;
+            width: 260px;
+            flex: 0 0 260px;
+            overflow-y: auto;
+            padding: 16px 12px;
+            border-right: 1px solid #dce1e8;
+            background: #f8fafc;
+        }
+
+        #report-sidebar[hidden] {
+            display: none;
+        }
+
+        #report-sidebar-title {
+            margin: 0 8px 12px;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .report-list-button {
+            display: block;
+            width: 100%;
+            margin: 0 0 6px;
+            padding: 10px 12px;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: #334155;
+            cursor: pointer;
+            font: inherit;
+            line-height: 1.35;
+            text-align: left;
+        }
+
+        .report-list-button:hover {
+            background: #e9eef5;
+        }
+
+        .report-list-button.active {
+            background: #e0e7ff;
+            color: #3730a3;
+            font-weight: 600;
+        }
+
+        #viewer {
+            width: 100%;
+            height: 100%;
+            min-width: 0;
+            min-height: 400px;
+            flex: 1 1 auto;
         }
 
         #status {
@@ -54,12 +115,18 @@
     <div id="status" role="status" aria-live="polite">
         <div id="status-message">Loading report...</div>
     </div>
-    <div id="viewer" aria-label="Sales report viewer"></div>
+    <div id="report-viewer-layout">
+        <aside id="report-sidebar" aria-label="Available reports" hidden>
+            <div id="report-sidebar-title">Reports</div>
+            <div id="report-list"></div>
+        </aside>
+        <div id="viewer" aria-label="Report viewer"></div>
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.boldreports.com/14.1.12/scripts/v2.0/common/bold.reports.common.min.js"></script>
-    <script src="https://cdn.boldreports.com/14.1.12/scripts/v2.0/common/bold.reports.widgets.min.js"></script>
-    <script src="https://cdn.boldreports.com/14.1.12/scripts/v2.0/bold.report-viewer.min.js"></script>
+    <script src="/assets/ice_control/vendor/bold-reports/14.1.12/js/jquery.min.js"></script>
+    <script src="/assets/ice_control/vendor/bold-reports/14.1.12/js/bold.reports.common.min.js"></script>
+    <script src="/assets/ice_control/vendor/bold-reports/14.1.12/js/bold.reports.widgets.min.js"></script>
+    <script src="/assets/ice_control/vendor/bold-reports/14.1.12/js/bold.report-viewer.min.js"></script>
 
     <script>
         (function () {
@@ -74,8 +141,45 @@
                 : window.location.search.substring(1);
             var query = new URLSearchParams(contextValues);
             var reportPath = query.get("report_path") || "";
+            var doctype = query.get("doctype") || "";
             var outlet = query.get("outlet") || "";
-            var user = query.get("user") || "";
+            var docName = query.get("doc_name") || "";
+
+            function getFrappeContext() {
+                var frappeContext;
+
+                try {
+                    if (window.parent && window.parent.frappe) {
+                        frappeContext = window.parent.frappe;
+                    } else if (window.opener && window.opener.frappe) {
+                        frappeContext = window.opener.frappe;
+                    }
+                } catch (_error) {
+                    frappeContext = null;
+                }
+
+                return frappeContext;
+            }
+
+            function getCurrentUser() {
+                var frappeContext = getFrappeContext();
+
+                if (!frappeContext || !frappeContext.session) {
+                    return { printedBy: "", username: "" };
+                }
+
+                var username = frappeContext.session.user || "";
+                var printedBy = frappeContext.session.user_fullname || username;
+
+                return {
+                    printedBy: printedBy,
+                    username: username
+                };
+            }
+
+            var currentUser = getCurrentUser();
+            var printedBy = currentUser.printedBy;
+            var username = currentUser.username;
 
             // Configure only reports that actually define an outlet parameter.
             // Example:
@@ -85,20 +189,141 @@
 
             var status = document.getElementById("status");
             var statusMessage = document.getElementById("status-message");
+            var reportSidebar = document.getElementById("report-sidebar");
+            var reportList = document.getElementById("report-list");
             var hasError = false;
+            var isSwitchingReport = false;
+
+            async function loadDoctypeReports() {
+                var endpoint;
+                var response;
+                var payload;
+
+                if (!doctype) {
+                    return [];
+                }
+
+                endpoint = new URL(
+                    "/api/method/ice_control.api.bold_reports.get_doctype_reports",
+                    window.location.origin
+                );
+                endpoint.searchParams.set("doctype", doctype);
+
+                response = await fetch(endpoint.toString(), {
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store",
+                    headers: { "Accept": "application/json" }
+                });
+                payload = await response.json();
+
+                if (!response.ok || !Array.isArray(payload.message)) {
+                    throw new Error("Frappe could not provide the document report list.");
+                }
+
+                return payload.message;
+            }
+
+            function updateReportUrl(nextReportPath) {
+                var targetUrl = new URL(window.location.href);
+                var targetQuery = new URLSearchParams(contextValues);
+
+                targetQuery.set("report_path", nextReportPath);
+                targetUrl.hash = "";
+                targetUrl.search = targetQuery.toString();
+                contextValues = targetQuery.toString();
+                try {
+                    window.history.replaceState(null, "", targetUrl.toString());
+                } catch (error) {
+                    console.warn("Unable to update the report viewer URL", error);
+                }
+            }
+
+            function updateActiveReportButton() {
+                reportList.querySelectorAll(".report-list-button").forEach(function (button) {
+                    var isActive = button.dataset.reportPath === reportPath;
+
+                    button.classList.toggle("active", isActive);
+                    if (isActive) {
+                        button.setAttribute("aria-current", "true");
+                    } else {
+                        button.removeAttribute("aria-current");
+                    }
+                });
+            }
+
+            function renderReportList(reports) {
+                reportList.replaceChildren();
+
+                reports.forEach(function (report) {
+                    var button = document.createElement("button");
+
+                    button.type = "button";
+                    button.className = "report-list-button";
+                    button.textContent = report.report_title || report.report_url;
+                    button.title = report.report_url;
+                    button.dataset.reportPath = report.report_url;
+                    if (report.report_url === reportPath) {
+                        button.classList.add("active");
+                        button.setAttribute("aria-current", "true");
+                    }
+                    button.addEventListener("click", function () {
+                        if (report.report_url !== reportPath) {
+                            selectReport(report.report_url);
+                        }
+                    });
+                    reportList.appendChild(button);
+                });
+
+                reportSidebar.hidden = reports.length <= 1;
+            }
+
+            async function prepareDoctypeReports() {
+                var reports;
+                var selectedReport;
+
+                if (!doctype) {
+                    return;
+                }
+
+                try {
+                    reports = (await loadDoctypeReports()).filter(function (report) {
+                        return Boolean(report.report_url);
+                    });
+                } catch (error) {
+                    console.warn("Unable to load document reports", error);
+                    return;
+                }
+
+                if (!reports.length) {
+                    return;
+                }
+
+                selectedReport = reports.find(function (report) {
+                    return report.report_url === reportPath;
+                }) || reports[0];
+                reportPath = selectedReport.report_url;
+                renderReportList(reports);
+            }
 
             function buildReportParameters() {
                 var mapping = reportParameterMappings[reportPath] || {};
                 var valuesByQueryName = { outlet: outlet };
                 var parameters = [];
 
-                if (user) {
-                    parameters.push({
-                        name: "user",
-                        labels: [user],
-                        values: [user]
-                    });
+                function addParameter(name, value) {
+                    if (value) {
+                        parameters.push({
+                            name: name,
+                            labels: [value],
+                            values: [value]
+                        });
+                    }
                 }
+
+                addParameter("printed_by", printedBy);
+                addParameter("username", username);
+                addParameter("doc_name", docName);
 
                 return Object.keys(mapping).reduce(function (reportParameters, queryName) {
                     var value = valuesByQueryName[queryName];
@@ -113,12 +338,17 @@
                 }, parameters);
             }
 
-            // Custom production JavaScript can read this context directly.
-            window.reportViewerContext = Object.freeze({
-                reportPath: reportPath,
-                outlet: outlet,
-                user: user
-            });
+            function updateReportViewerContext() {
+                // Custom production JavaScript can read this context directly.
+                window.reportViewerContext = Object.freeze({
+                    reportPath: reportPath,
+                    doctype: doctype,
+                    outlet: outlet,
+                    docName: docName,
+                    printedBy: printedBy,
+                    username: username
+                });
+            }
 
             function hideStatus() {
                 if (!hasError) {
@@ -161,63 +391,90 @@
                 return payload.message;
             }
 
-            window.addEventListener("error", function (event) {
-                if (event.target && event.target.tagName === "SCRIPT") {
-                    showError("A required Bold Reports script could not be loaded. Check the network connection and reload the page.");
-                }
-            }, true);
+            function destroyCurrentViewer() {
+                var viewerElement = $("#viewer");
+                var viewerInstance = viewerElement.data("boldReportViewer");
 
-            $(async function () {
-                if (!reportPath) {
-                    showError("No report selected. Add report_url to the Server Report Viewer page URL.");
+                if (viewerInstance && typeof viewerInstance.destroy === "function") {
+                    viewerInstance.destroy();
+                }
+                viewerElement.removeData("boldReportViewer");
+                viewerElement.empty();
+            }
+
+            async function renderSelectedReport() {
+                var config = await loadViewerConfig();
+                var viewerOptions;
+                var reportParameters;
+
+                if (!config.report_server_url || !config.report_service_url || !config.service_authorization_token) {
+                    throw new Error("Frappe returned incomplete report server configuration.");
+                }
+
+                reportServiceUrl = config.report_service_url;
+                destroyCurrentViewer();
+
+                viewerOptions = {
+                    reportServerUrl: config.report_server_url,
+                    reportServiceUrl: reportServiceUrl,
+                    serviceAuthorizationToken: config.service_authorization_token,
+                    reportPath: reportPath,
+                    zoomFactor: 1.25,
+                    isResponsive: true,
+                    // Printing needs its own WebView window on Flutter
+                    // desktop so the printable page can open WebView2's
+                    // native print preview without replacing the viewer.
+                    printOption: ej.ReportViewer.PrintOptions.NewTab,
+                    reportLoaded: hideStatus
+                };
+                reportParameters = buildReportParameters();
+                if (reportParameters.length > 0) {
+                    viewerOptions.parameters = reportParameters;
+                }
+
+                $("#viewer").boldReportViewer(viewerOptions);
+            }
+
+            async function selectReport(nextReportPath) {
+                var previousReportPath;
+
+                if (!nextReportPath || nextReportPath === reportPath || isSwitchingReport) {
                     return;
                 }
 
-                if (typeof $.fn.boldReportViewer !== "function") {
-                    showError("Bold Report Viewer could not be initialized because its scripts did not load.");
-                    return;
-                }
+                previousReportPath = reportPath;
+                isSwitchingReport = true;
+                reportPath = nextReportPath;
+                updateActiveReportButton();
+                updateReportViewerContext();
+                updateReportUrl(reportPath);
 
                 try {
-                    var config = await loadViewerConfig();
-                    if (!config.report_server_url || !config.report_service_url || !config.service_authorization_token) {
-                        throw new Error("Frappe returned incomplete report server configuration.");
+                    await renderSelectedReport();
+                } catch (error) {
+                    reportPath = previousReportPath;
+                    updateActiveReportButton();
+                    updateReportViewerContext();
+                    updateReportUrl(reportPath);
+                    showError("Could not change report: " + error.message);
+                } finally {
+                    isSwitchingReport = false;
+                }
+            }
+
+            $(async function () {
+              
+ 
+                try {
+                    await prepareDoctypeReports();
+                    updateReportViewerContext();
+
+                    if (!reportPath) {
+                        throw new Error("No document report is configured.");
                     }
 
-                    reportServiceUrl = config.report_service_url;
-                    $(document).ajaxError(function (_event, request, settings) {
-                        if (settings.url && settings.url.indexOf(reportServiceUrl) === 0) {
-                            showError("The report service returned HTTP " + request.status + ". Check CORS, permissions, and report server availability.");
-                        }
-                    });
+                    await renderSelectedReport();
 
-                    var viewerOptions = {
-                        reportServerUrl: config.report_server_url,
-                        reportServiceUrl: reportServiceUrl,
-                        serviceAuthorizationToken: config.service_authorization_token,
-                        reportPath: reportPath,
-                          zoomFactor: 1.25,
-                        isResponsive: true,
-                        // Printing needs its own WebView window on Flutter
-                        // desktop so the printable page can open WebView2's
-                        // native print preview without replacing the viewer.
-                        printOption: ej.ReportViewer.PrintOptions.NewTab,
-                        reportLoaded: hideStatus
-                    };
-                    var reportParameters = buildReportParameters();
-                    if (reportParameters.length > 0) {
-                        viewerOptions.parameters = reportParameters;
-                    }
-                    $("#viewer").boldReportViewer(viewerOptions);
-
-                    // Do not hide this status on a timer. In production that
-                    // turned a stalled script or report request into a blank
-                    // white screen with no useful information.
-                    window.setTimeout(function () {
-                        if (!status.hidden && !hasError) {
-                            statusMessage.textContent = "The report is still loading. Check the network connection and report server availability.";
-                        }
-                    }, 15000);
                 } catch (error) {
                     showError("Could not start Bold Report Viewer: " + error.message);
                 }

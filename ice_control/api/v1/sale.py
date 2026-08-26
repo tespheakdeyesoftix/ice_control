@@ -9,7 +9,7 @@ def search_bill_for_edit(outlet:str,keyword:str):
 
 @frappe.whitelist(methods=["POST"])
 def save_order(data: dict | str) -> dict:
-     
+    
     """Insert or update a Sale and return the saved document."""
     payload = frappe.parse_json(data) if isinstance(data, str) else data
 

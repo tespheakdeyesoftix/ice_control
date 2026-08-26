@@ -4,22 +4,60 @@
         <thead>
             <tr>
                 <th>{{ __("Bill Number") }}</th>
-                <th>{{ __("Posting Date") }}</th>
+
                 <th>{{ __("Customer") }}</th>
-                <th>{{ __("Status") }}</th>
                 <th class="text-right">{{ __("Total Quantity") }}</th>
                 <th class="text-right">{{ __("Total Amount") }}</th>
+                <th class="text-center">{{ __("Status") }}</th>
+                <th class="text-center">{{ __("Actions") }}</th>
             </tr>
         </thead>
         <tbody>
             {% for d in data %}
             <tr>
                 <td><a href="/app/sale/{{ d.name }}">{{ d.name }}</a></td>
-                <td>{{ frappe.format(d.posting_date, { "fieldtype": "Date" }) }}</td>
+
                 <td>{{ d.customer_name || d.customer || "" }}</td>
-                <td>{{ __(d.sale_status) }}</td>
                 <td class="text-right">{{ frappe.format(d.total_quantity, { "fieldtype": "Float" }) }}</td>
                 <td class="text-right">{{ frappe.format(d.total_amount, { "fieldtype": "Currency" }) }}</td>
+                <td class="text-center">
+                    {% if d.status == "Paid" %}
+                        <span class="indicator-pill green">{{ __("Paid") }}</span>
+                    {% else %}
+                        {% if d.status == "Unpaid" %}
+                            <span class="indicator-pill red">{{ __("Unpaid") }}</span>
+                        {% else %}
+                            {% if d.status == "Partially Paid" %}
+                                <span class="indicator-pill orange">{{ __("Partially Paid") }}</span>
+                            {% else %}
+                                <span class="indicator-pill gray">{{ __(d.status || "") }}</span>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <button
+                        type="button"
+                        class="btn btn-xs btn-primary btn-print-split-bill"
+                        data-sale-name="{{ d.name }}"
+                    >
+                        {{ __("Print") }}
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-xs btn-secondary btn-edit-split-bill"
+                        data-sale-name="{{ d.name }}"
+                    >
+                        {{ __("Edit") }}
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-xs btn-danger btn-delete-split-bill"
+                        data-sale-name="{{ d.name }}"
+                    >
+                        {{ __("Delete") }}
+                    </button>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

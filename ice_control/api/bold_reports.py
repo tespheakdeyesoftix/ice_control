@@ -2,6 +2,20 @@ import frappe
 from frappe import _
 
 
+def _get_report_roles(report_name: str) -> set[str]:
+	return set(
+		frappe.get_all(
+			"Has Role",
+			filters={
+				"parent": report_name,
+				"parenttype": "System Report",
+				"parentfield": "roles",
+			},
+			pluck="role",
+		)
+	)
+
+
 def _validate_report_access(report_path: str) -> None:
 	report_name = frappe.db.get_value(
 		"System Report",
@@ -12,19 +26,48 @@ def _validate_report_access(report_path: str) -> None:
 	if not report_name:
 		frappe.throw(_("You are not permitted to view this report."), frappe.PermissionError)
 
-	allowed_roles = frappe.get_all(
-		"Has Role",
-		filters={
-			"parent": report_name,
-			"parenttype": "System Report",
-			"parentfield": "roles",
-		},
-		pluck="role",
-	)
+	allowed_roles = _get_report_roles(report_name)
 	user_roles = set(frappe.get_roles(frappe.session.user))
 
 	if allowed_roles and not user_roles.intersection(allowed_roles):
 		frappe.throw(_("You are not permitted to view this report."), frappe.PermissionError)
+
+
+@frappe.whitelist()
+def get_doctype_reports(doctype: str) -> list[dict[str, str]]:
+	if frappe.session.user == "Guest":
+		frappe.throw(_("Authentication required."), frappe.PermissionError)
+
+	doctype = (doctype or "").strip()
+	if not doctype:
+		frappe.throw(_("A document type is required."))
+
+	reports = frappe.get_all(
+		"System Report",
+		filters={
+			"doctype_name": doctype,
+			"is_doctype_report": 1,
+		},
+		fields=["name", "report_title", "report_url"],
+		order_by="sort_order asc, creation asc",
+	)
+	user_roles = set(frappe.get_roles(frappe.session.user))
+	allowed_reports = []
+
+	for report in reports:
+		if not report.report_url:
+			continue
+
+		allowed_roles = _get_report_roles(report.name)
+		if allowed_roles and not user_roles.intersection(allowed_roles):
+			continue
+
+		allowed_reports.append({
+			"report_title": report.report_title,
+			"report_url": report.report_url,
+		})
+
+	return allowed_reports
 
 
 def _get_bold_reports_config() -> dict[str, str]:

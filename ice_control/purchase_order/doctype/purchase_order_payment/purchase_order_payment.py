@@ -8,6 +8,41 @@ from ice_control.api.api import money_to_word
 
 
 class PurchaseOrderPayment(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+		from ice_control.purchase_order.doctype.purchase_order_payment_invoices.purchase_order_payment_invoices import PurchaseOrderPaymentInvoices
+
+		amended_from: DF.Link | None
+		amount_to_pay: DF.Currency
+		balance: DF.Currency
+		currency: DF.Link | None
+		end_date: DF.Date | None
+		exchange_rate: DF.Data | None
+		from_purchase_orders: DF.Check
+		input_amount: DF.Float
+		naming_series: DF.Literal["POP.YYYY.-.####"]
+		note: DF.SmallText | None
+		outlet: DF.Link | None
+		party: DF.DynamicLink
+		party_name: DF.Data | None
+		party_type: DF.Literal["Vendor", "Employee", "Customer"]
+		payment_amount: DF.Currency
+		payment_amount_in_word: DF.Data | None
+		payment_name: DF.Data | None
+		payment_type: DF.Link
+		photo: DF.AttachImage | None
+		posting_date: DF.Date
+		purchase_orders: DF.Table[PurchaseOrderPaymentInvoices]
+		start_date: DF.Date | None
+		total_invoices: DF.Int
+		total_write_off_amount: DF.Currency
+	# end: auto-generated types
+
 	def validate(self):
 		self.payment_amount_in_word = money_to_word(int(self.payment_amount))
 		self.validate_purchase_order_payment_invoices()

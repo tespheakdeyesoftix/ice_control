@@ -4,12 +4,22 @@
 frappe.ui.form.on("Purchase Order Payment", {
      onload(frm) {         
         frm.set_query("purchase_order", "purchase_orders", function (doc, cdt, cdn) {
-            let purchase_order_filter = {
+             let purchase_order_filter = {}
+            if(frm.doc.outlet){
+                purchase_order_filter = {
                     "party": doc.party || 'Not Set',
                     "outlet": doc.outlet || 'Not Set',
                     "balance": [">", 0],
                     "docstatus": 1
-                };          
+                };    
+            }
+            else{
+                purchase_order_filter = {
+                    "party": doc.party || 'Not Set',
+                    "balance": [">", 0],
+                    "docstatus": 1
+                };    
+            } 
             if (doc.purchase_order){
                 purchase_order_filter.name = doc.purchase_order
             }

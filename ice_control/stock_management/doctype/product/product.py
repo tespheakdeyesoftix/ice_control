@@ -34,15 +34,12 @@ class Product(Document):
 		allow_split_bill: DF.Check
 		allow_sum_qty: DF.Check
 		color: DF.Color | None
-		cost: DF.Currency
-		costing_method: DF.Literal["Average Cost", "Fixed Cost"]
 		default_sale_stock_location: DF.Link | None
 		default_sale_transaction_type: DF.Literal["", "Sale", "Borrow"]
 		enabled: DF.Check
 		is_inventory_product: DF.Check
 		multiplier: DF.Float
 		naming_series: DF.Data | None
-		opening_quantity: DF.Float
 		photo: DF.AttachImage | None
 		price: DF.Currency
 		product_category: DF.Link
@@ -56,34 +53,18 @@ class Product(Document):
 		revenue_group: DF.Link | None
 		show_in_customer_product_price: DF.Check
 		sort_order: DF.Int
-		stock_location: DF.Link | None
 		unit: DF.Link
 	# end: auto-generated types
 
 	_DOCTYPE_NAME = "Product"
-
-
 	def validate(self):
-		if self.cost and not self.purchase_price:
-			self.purchase_price =  self.cost
-		if not self.cost and  self.purchase_price:
-			self.cost = self.purchase_price
-
 		seen_units = {}
-
 		for row in self.product_units or []:
 			if not row.unit:
 				continue
-
 			if row.unit in seen_units:
-				frappe.throw(
-				_("Can not duplicate Unit: {0}. It is already used in row {1}.").format(
-						row.unit,
-						seen_units[row.unit]
-					)
-				)
+				frappe.throw(_("Can not duplicate Unit: {0}. It is already used in row {1}.").format(row.unit,seen_units[row.unit]))
 			seen_units[row.unit] = row.idx
-
 		for row in self.product_units:
 			row.base_product_unit = 1 if row.unit == self.unit else 0
 
@@ -104,24 +85,16 @@ class Product(Document):
 			product_outlets.append({"outlet":a.outlet})
 		self.product_outlets = json.dumps(product_outlets)
 		update_product_unit(self)
-
 		# update inventory transaction
 		if self.has_value_changed("is_inventory_product"):
 			self.validate_product_use_in_inventory_transaction()
-
-
-		# self.update_stock()
-
-	def after_insert(self):
-		if self.is_inventory_product==1:
-			self.update_stock()
+		if self.is_inventory_product == 1:
+			self.product_materials = []
 
 	@frappe.whitelist()
 	def get_stats(self):
-
 		sql="select stock_location as label,quantity, quantity as value,cost  from `tabStock Location Products` where product_code=%(product_code)s"
 		data = frappe.db.sql(sql,{"product_code":self.name},as_dict = 1)
-
 		if data:
 			data.append({
 				"label":_("Total"),
@@ -131,40 +104,13 @@ class Product(Document):
 		# format number
 		for d in data:
 			d["value"] = frappe.format(d.get("value"),{"fieldtype":"Float"})
-
-
 		if data:
 			stock_value = sum([(d.get("quantity") or  0)* (d.get("cost") or 0) for d in data ])
-
 			data.append({
-
 				"label":_("Stock Value"),
 				"value":frappe.format(stock_value or 0,{"fieldtype":"Currency"}),
-
 			})
-
 		return data
-
-	def update_stock(self):
-
-
-		add_inventory_transaction([
-			{
-			"ref_doctype":self.doctype,
-			"ref_docname":self.name,
-			"posting_date":frappe.utils.getdate(self.creation),
-			"stock_location":self.stock_location,
-			"product_code":self.name,
-			"unit":self.unit,
-			"quantity": self.opening_quantity,
-			"multiplier":1,
-			"cost":self.cost,
-			"is_calculate_cost": 0 if self.costing_method == "Fixed Cost" else 1,
-			"note": "ចំនួនដើមគ្រា"
-		}
-		])
-
-
 
 	def validate_product_use_in_inventory_transaction(self):
 		if self.is_inventory_product == 0:
@@ -285,10 +231,11 @@ def add_base_unit_to_product_unit(self):
 			if a.unit == self.unit:
 				existed += 1
 	if existed == 0:
+		multiplier = frappe.db.get_value("Unit",self.unit,"multiplier")
 		self.append("product_units", {
 			"unit": self.unit,
 			"price": self.price,
-			"multiplier": self.multiplier,
+			"multiplier": multiplier,
 			"base_product_unit":1
 		})
 		self.product_units.sort(key=lambda row: row.multiplier or "")

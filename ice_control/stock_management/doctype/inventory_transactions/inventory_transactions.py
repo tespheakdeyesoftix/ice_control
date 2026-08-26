@@ -19,7 +19,6 @@ class InventoryTransactions(Document):
 		cost: DF.Currency
 		current_cost: DF.Currency
 		in_quantity: DF.Float
-		is_calculate_cost: DF.Check
 		multiplier: DF.Float
 		note: DF.LongText | None
 		opening_quantity: DF.Float
