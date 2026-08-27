@@ -4,9 +4,8 @@ from frappe import _
 from frappe.model.document import Document
 import json
 from datetime import datetime, date
-from ice_control.api.utils import get_previous_closed_date,get_sale_product_changed
+from ice_control.api.utils import get_previous_closed_date,get_sale_product_changed,get_exchange_rate
 from ice_control.api.inventory import add_inventory_transaction,get_stock_location_prouct,get_product_units_multiplier
-
 class Sale(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
@@ -20,6 +19,7 @@ class Sale(Document):
 
 		amended_from: DF.Link | None
 		balance: DF.Currency
+		booking_number: DF.Link | None
 		can_edit_bill: DF.Check
 		can_show_price: DF.Check
 		can_split_bill: DF.Check
@@ -70,6 +70,7 @@ class Sale(Document):
 
 
 	def validate(self):
+		
 		self.validate_require_fields()
 		get_previous_closed_date(self.posting_date,self.creation,self.outlet)
 		if(self.parent_bill_number):
@@ -89,6 +90,7 @@ class Sale(Document):
 		verify_product(self)
 		self.validate_sale()
 		self.update_total_amounts()
+		self.validate_payments()
 
 		update_payment_status(self)
 		# validate parent bill if this bill is a split bill
@@ -168,6 +170,28 @@ class Sale(Document):
 
 		get_employee_name(self)
 
+	def validate_payments(self):
+		if self.payments:
+			for p in self.payments:
+				p.exchange_rate = get_exchange_rate(p.currency, frappe.get_cached_value("Business Information",None,"default_currency"))
+				
+				p.payment_amount = (p.input_amount or 0) * ( float( p.exchange_rate) or 1)
+
+			self.total_payment = sum([x.payment_amount or 0 for x in self.payments])
+		else:
+			self.total_payment = 0
+
+		self.balance = self.total_amount - self.total_payment
+		if self.balance<0:
+			self.balance = 0
+		
+		update_payment_status(self)
+		
+
+		
+		 
+
+
 	# other doc method
 	@frappe.whitelist()
 	def update_sale_information(self):
@@ -223,8 +247,9 @@ class Sale(Document):
 
 				update_split_quantity_to_parent_bill(self.parent_bill_number)
 			if self.payments:
-				# add_pos_payment_to_sale_payment(self)
-				frappe.enqueue("ice_control.selling.doctype.sale.sale.add_pos_payment_to_sale_payment",queue="short",self=self)
+				add_pos_payment_to_sale_payment(self)
+				
+				# frappe.enqueue("ice_control.selling.doctype.sale.sale.add_pos_payment_to_sale_payment",queue="short",self=self)
 			# update to borrow product
 			frappe.enqueue("ice_control.selling.doctype.sale.sale.update_borrow_product",queue="short",old_doc=self.get_doc_before_save() ,new_doc=self)
 			# update_borrow_product(self.get_doc_before_save() ,self)

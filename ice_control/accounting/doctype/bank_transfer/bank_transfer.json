@@ -19,6 +19,7 @@
   "amount",
   "withdraw_by",
   "amended_from",
+  "bank",
   "section_break_xdsj",
   "note",
   "column_break_ubqx"
@@ -73,6 +74,7 @@
    "fieldname": "exchange_rate",
    "fieldtype": "Float",
    "label": "Exchange Rate",
+   "precision": "9",
    "read_only": 1
   },
   {
@@ -119,13 +121,19 @@
    "label": "Currency",
    "options": "Currency",
    "reqd": 1
+  },
+  {
+   "fieldname": "bank",
+   "fieldtype": "Link",
+   "label": "Bank",
+   "options": "Banks"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-25 11:37:20.343493",
+ "modified": "2026-08-27 10:27:42.184305",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Bank Transfer",

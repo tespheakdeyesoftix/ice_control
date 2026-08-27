@@ -181,6 +181,16 @@
             var printedBy = currentUser.printedBy;
             var username = currentUser.username;
 
+            function formatLocalDate(date) {
+                var year = date.getFullYear();
+                var month = String(date.getMonth() + 1).padStart(2, '0');
+                var day = String(date.getDate()).padStart(2, '0');
+
+                return year + '-' + month + '-' + day;
+            }
+
+            var currentDate = formatLocalDate(new Date());
+
             // Configure only reports that actually define an outlet parameter.
             // Example:
             // "/Sales Report/Daily Sales": { outlet: "Outlet" }
@@ -323,7 +333,10 @@
 
                 addParameter("printed_by", printedBy);
                 addParameter("username", username);
-                addParameter("doc_name", docName);
+                addParameter("id", docName);
+
+                addParameter('start_date', currentDate);
+                addParameter('end_date', currentDate);
 
                 return Object.keys(mapping).reduce(function (reportParameters, queryName) {
                     var value = valuesByQueryName[queryName];

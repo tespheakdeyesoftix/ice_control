@@ -26,6 +26,8 @@
   "second_currency",
   "base_exchange_currency",
   "tab_3_tab",
+  "number_of_day_seller_can_view_sale_list",
+  "section_break_zbpn",
   "closed_doctypes",
   "server_report_setting_tab",
   "server_report_url",
@@ -167,6 +169,16 @@
    "fieldname": "report_server_token",
    "fieldtype": "Small Text",
    "label": "Report Server Token"
+  },
+  {
+   "default": "7",
+   "fieldname": "number_of_day_seller_can_view_sale_list",
+   "fieldtype": "Int",
+   "label": "Number of Day Seller Can View Sale List"
+  },
+  {
+   "fieldname": "section_break_zbpn",
+   "fieldtype": "Section Break"
   }
  ],
  "grid_page_length": 50,
@@ -174,7 +186,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-08-15 08:30:22.318561",
+ "modified": "2026-08-27 10:51:00.625027",
  "modified_by": "Administrator",
  "module": "Setting",
  "name": "Business Information",

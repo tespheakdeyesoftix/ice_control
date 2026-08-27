@@ -17,6 +17,7 @@ class Booking(Document):
 		address: DF.SmallText | None
 		booking_event: DF.Link
 		booking_products: DF.Table[BookingProducts]
+		booking_products_description: DF.SmallText | None
 		created_by: DF.Data | None
 		customer: DF.Link | None
 		customer_name: DF.Data | None
@@ -41,4 +42,12 @@ class Booking(Document):
 			self.total_amount = sum([x.total_amount or 0 for x in self.booking_products]) 
 		else:
 			self.total_amount = 0
+
+		# update product description to booking
+		if self.booking_products:
+			self.booking_products_description ="\n".join( [
+				f"{x.get('product_name')} - ({x.quantity} {x.unit or ''})" for x in self.booking_products
+			])
+		else:
+			self.booking_products_description = ""
 			

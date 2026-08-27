@@ -37,14 +37,11 @@ def reset_sale_transaction(password):
         frappe.db.sql("delete from `tabClosed Selling Date Items`")
         frappe.db.sql("delete from `tabStock In`")
         frappe.db.sql("delete from `tabStock In Products`")
-        frappe.db.sql("delete from `tabJournal Entry`")
 
-        doctypes = ["GL Entry","Sale","Sale Payment","Bulk Sale Payment","Closed Selling Date","Closed Selling Date Data","Stock In","Journal Entry"]
+        doctypes = ["Sale","Sale Payment","Bulk Sale Payment","Closed Selling Date","Closed Selling Date Data","Stock In","Journal Entry"]
         for d in doctypes:
             formats = ""
-            if d == "GL Entry":
-                formats = "GLE.YYYY.-.#####"
-            elif d == "Closed Selling Date Data":
+            if d == "Closed Selling Date Data":
                 formats = "CSDD.YYYY.-.#####"
             else:
                 formats =  frappe.get_meta(d).get_field("naming_series").options
@@ -146,8 +143,8 @@ def get_setting(station_name:str="",outlet:str=None):
 
 
 
-def get_exchange_rate(from_currency:str=None, to_currency:str=None)->dict:
-
+def get_exchange_rate(from_currency:str=None, to_currency:str=None)->float:
+    
     exchange_rate = 1
     exchange_rate_data =  frappe.db.sql("select currency_exchange_rate from `tabExchange Rate` where from_currency=%(from_currency)s and to_currency =  %(to_currency)s and docstatus = 1 order by creation desc  limit 1",{"from_currency":from_currency,"to_currency":to_currency},as_dict = 1)
     if exchange_rate_data:
@@ -501,3 +498,12 @@ def update_doc(
     return doc
 
 
+
+@frappe.whitelist()
+@redis_cache(ttl=60*60)
+def get_payment_types()->list[dict]:
+    data =frappe.db.sql( "select name, currency from `tabPayment Type`",as_dict = 1)
+    for d in data:
+        d['exchange_rate'] = get_exchange_rate(d.get("currency"), frappe.get_cached_value("Business Information",None,"default_currency"))
+
+    return data

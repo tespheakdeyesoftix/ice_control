@@ -24,6 +24,7 @@ class BusinessInformation(Document):
 		currency_format: DF.Data | None
 		currency_symbol: DF.Data | None
 		default_currency: DF.Link | None
+		number_of_day_seller_can_view_sale_list: DF.Int
 		phone_number_1: DF.Data | None
 		phone_number_2: DF.Data | None
 		photo: DF.AttachImage | None

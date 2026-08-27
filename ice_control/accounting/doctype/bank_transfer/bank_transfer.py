@@ -16,6 +16,7 @@ class BankTransfer(Document):
 
 		amended_from: DF.Link | None
 		amount: DF.Currency
+		bank: DF.Link | None
 		currency: DF.Link
 		exchange_rate: DF.Float
 		input_amount: DF.Float

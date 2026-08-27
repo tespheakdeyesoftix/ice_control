@@ -29,3 +29,8 @@ def update_doc(
 @frappe.whitelist(methods=["POST"])
 def get_bold_report_config()->dict:
     return frappe.conf.get("bold_reports")
+
+
+@frappe.whitelist()
+def get_payment_types()->list[dict]:
+    return utils.get_payment_types()

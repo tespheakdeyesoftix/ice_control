@@ -21,6 +21,7 @@
   "booking_products",
   "section_break_gqam",
   "note",
+  "booking_products_description",
   "column_break_zpvl",
   "total_amount"
  ],
@@ -124,12 +125,17 @@
    "fieldtype": "Link",
    "label": "Customer",
    "options": "Customer"
+  },
+  {
+   "fieldname": "booking_products_description",
+   "fieldtype": "Small Text",
+   "label": "Booking Products Description"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-22 08:41:47.956891",
+ "modified": "2026-08-27 07:08:18.385816",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Booking",

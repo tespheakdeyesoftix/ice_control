@@ -14,6 +14,7 @@
   "outlet_unit",
   "stock_location",
   "seller",
+  "booking_number",
   "column_break_avnw",
   "customer",
   "customer_name",
@@ -44,6 +45,7 @@
   "total_write_off",
   "balance",
   "payments_tab",
+  "column_break_esyx",
   "html_payment_history",
   "section_break_nkgl",
   "payments_column",
@@ -442,6 +444,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:frappe.session.user == \"Administrator\"",
    "fieldname": "payments_column",
    "fieldtype": "Column Break",
    "label": "Payments"
@@ -482,6 +485,17 @@
    "fieldname": "html_payment_history",
    "fieldtype": "HTML",
    "options": "<div id=\"payment_history\"></div>"
+  },
+  {
+   "fieldname": "booking_number",
+   "fieldtype": "Link",
+   "label": "Booking Number",
+   "options": "Booking"
+  },
+  {
+   "depends_on": "eval:doc.sale_status ==\"Closed\"",
+   "fieldname": "column_break_esyx",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
@@ -494,7 +508,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2026-08-26 09:41:19.720535",
+ "modified": "2026-08-27 08:38:13.800079",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

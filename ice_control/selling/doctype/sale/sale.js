@@ -281,12 +281,15 @@ function addCustomButton(frm) {
         const deleteLabel = __("\u179b\u17bb\u1794\u1794\u17bb\u1784");
 
         frm.page.set_secondary_action(deleteLabel, () => {
+            if (frm.doc.total_payment>0 || frm.doc.status =="Paid" || frm.doc.status =="Partially Paid"){
+            frappe.throw("មិនអាចលុបបុងនេះបានទេ ព្រោះបុងនេះបានបុង់ប្រាក់រួចហើយ")
+        }
             openDeleteBillDialog(frm, frm.doc.name, null, {
-                title: deleteLabel,
-                message: __("\u178f\u17be\u17a2\u17d2\u1793\u1780\u1796\u17b7\u178f\u1787\u17b6\u1785\u1784\u17cb\u179b\u17bb\u1794\u1794\u17bb\u1784\u1793\u17c1\u17c7\u1798\u17c2\u1793\u1791\u17c1?"),
-                freeze_message: __("Deleting bill..."),
-                success_message: __("Bill {0} was deleted.", [frm.doc.name])
-            });
+    title: deleteLabel,
+    message: __("តើអ្នកពិតជាចង់លុបបុងនេះមែនទេ?"),
+    freeze_message: __("កំពុងលុបបុង..."),
+    success_message: __("បុង {0} ត្រូវបានលុបដោយជោគជ័យ។", [frm.doc.name])
+});
         }).removeClass("btn-secondary")
             .addClass("btn-danger");
     }
@@ -451,6 +454,9 @@ async function renderSplitBillList(frm) {
 
     wrapper.html(html);
     wrapper.find(".btn-add-split-bill").on("click", () => {
+        if (frm.doc.total_payment>0 || frm.doc.status =="Paid" || frm.doc.status =="Partially Paid"){
+            frappe.throw("មិនអាចបំបែកបុងបានទេ ព្រោះបុងនេះបានបុង់ប្រាក់រួចហើយ")
+        }
         openSplitBillDialog(frm);
     });
     wrapper.find(".btn-print-split-bill").on("click", async event => {

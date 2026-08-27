@@ -3,6 +3,18 @@ import frappe
 def boot_session(bootinfo):
     user = frappe.session.user
 
+    business = frappe.get_cached_doc('Business Information')
+    bootinfo.business_info = {
+        'business_name_en': business.business_name_en,
+        'business_name_kh': business.business_name_kh,
+        'property_code': business.property_code,
+        'photo': business.photo,
+        'receipt_logo': business.receipt_logo,
+        'address': business.address,
+        'phone_number_1': business.phone_number_1,
+        'phone_number_2': business.phone_number_2,
+    }
+
     # Admin sees everything
     if user == "Administrator":
         bootinfo.employee_outlet = None
