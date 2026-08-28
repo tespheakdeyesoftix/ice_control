@@ -221,7 +221,7 @@ permission_query_conditions = {
 # Overriding Methods
 # ------------------------------
 
-from ice_control import overrides
+# from ice_control import overrides
 
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "ice_control.event.get_events"
