@@ -16,7 +16,6 @@ class PaymentType(Document):
 
 		currency: DF.Link | None
 		enabled: DF.Check
-		exchange_rate: DF.Data | None
 		is_default: DF.Check
 		payment_type: DF.Data | None
 		payment_type_group: DF.Link | None

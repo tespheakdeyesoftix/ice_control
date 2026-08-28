@@ -1,15 +1,3 @@
-// Copyright (c) 2026, Tes Pheakdey and contributors
-// For license information, please see license.txt
-
-// frappe.ui.form.on("Sale Payment", {
-// 	refresh(frm) {
-
-// 	},
-// });
-
-
-// Copyright (c) 2025, Tes Pheakdey and contributors
-// For license information, please see license.txt
 
 frappe.ui.form.on("Sale Payment", {
     onload(frm) {
@@ -63,12 +51,13 @@ frappe.ui.form.on("Sale Payment", {
 
     },
     async payment_type(frm) {
-        if ((frm.doc.input_amount || 0) > 0) {
-            update_allocated_amount(frm)
-        }
-        if(frm.doc.exchange_rate){
-            set_value_if_changed(frm, "exchange_rate_virtual", 1 / parseFloat(frm.doc.exchange_rate));
-        }
+        // if ((frm.doc.input_amount || 0) > 0) {
+        //     update_allocated_amount(frm)
+        // }
+        // if(frm.doc.exchange_rate){
+        //     set_value_if_changed(frm, "exchange_rate_virtual", 1 / parseFloat(frm.doc.exchange_rate));
+        // }
+        frm.call("payment_type_change")
     },
     // this is button get Sale Invoice by Date
     async get_sales_invoice(frm) {

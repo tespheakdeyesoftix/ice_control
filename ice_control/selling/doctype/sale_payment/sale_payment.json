@@ -81,6 +81,7 @@
    "options": "SP.YYYY.-.####"
   },
   {
+   "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -137,9 +138,7 @@
    "fetch_from": "payment_type.exchange_rate",
    "fieldname": "exchange_rate",
    "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Exchange Rate",
-   "read_only": 1
+   "label": "Exchange Rate"
   },
   {
    "fetch_from": "payment_type.exchange_rate",
@@ -367,7 +366,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-21 15:59:32.308256",
+ "modified": "2026-08-28 09:08:15.612604",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

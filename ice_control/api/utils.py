@@ -108,11 +108,7 @@ def get_setting(station_name:str="",outlet:str=None):
     data  = frappe.get_cached_doc("Business Information",None)
     data =json.loads( frappe.as_json(data))
 
-    # system_setting = frappe.get_cached_doc("Setting",None)
-    # data["server_report_url"] = setting.server_report_url
-    # data["report_service_url"] = setting.report_service_url
-    # data["server_report_token"] = setting.server_report_token
-
+ 
 
     if station_name:
 
@@ -144,7 +140,9 @@ def get_setting(station_name:str="",outlet:str=None):
 
 
 def get_exchange_rate(from_currency:str=None, to_currency:str=None)->float:
-    
+    if not to_currency:
+        to_currency = frappe.get_cached_value("Business Information",None,"default_currency")
+        
     exchange_rate = 1
     exchange_rate_data =  frappe.db.sql("select currency_exchange_rate from `tabExchange Rate` where from_currency=%(from_currency)s and to_currency =  %(to_currency)s and docstatus = 1 order by creation desc  limit 1",{"from_currency":from_currency,"to_currency":to_currency},as_dict = 1)
     if exchange_rate_data:
@@ -269,24 +267,7 @@ def get_response_user_information(property):
 
     }
 
-@frappe.whitelist()
-def on_login(login_manager):
-    pass
-    # from frappe.core.doctype.session_default_settings.session_default_settings import set_session_default_values
-    # sql = "select default_outlet from `tabEmployee` where user_id = %(user_id)s"
-    # data = frappe.db.sql(sql,{"user_id":login_manager.user},as_dict=1)
-    # default_outlet = ""
-    # if data:
-    #     default_outlet = data[0]["default_outlet"]
-    # if not  default_outlet:
-    #     outlets = frappe.get_list("Outlet")
-    #     if outlets:
-    #         default_outlet = outlets[0].name
-
-    # if default_outlet:
-    #     set_session_default_values(
-    #         {"outlet":default_outlet}
-    #     )
+ 
 
 
 @frappe.whitelist()

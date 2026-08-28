@@ -89,6 +89,7 @@
   },
   {
    "default": "0",
+   "fetch_from": "product_code.allow_split_bill",
    "fieldname": "allow_split_bill",
    "fieldtype": "Check",
    "label": "Allow Split Bill"
@@ -289,7 +290,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-08-24 13:14:30.430629",
+ "modified": "2026-08-28 07:58:08.236755",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Products",

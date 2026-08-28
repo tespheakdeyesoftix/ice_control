@@ -82,7 +82,6 @@
    "options": "SO.YYYY.-.####"
   },
   {
-   "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -501,14 +500,9 @@
  "grid_page_length": 50,
  "image_field": "customer_photo",
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "Sale Payment",
-   "link_fieldname": "sale"
-  }
- ],
+ "links": [],
  "make_attachments_public": 1,
- "modified": "2026-08-27 08:38:13.800079",
+ "modified": "2026-08-28 07:02:54.522132",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

@@ -943,7 +943,7 @@ Add new Store Payment,បញ្ចូលទូទាត់តាមហាងថ�
 This product has been use in inventory transaction. We can not change this to none inventory tracking product.,ផលិតផលនេះបានប្រើក្នុងប្រតិបត្តិការសារពើភ័ណ្ឌរួចហើយ។ យើងមិនអាចផ្លាស់ប្តូរវាទៅជាផលិតផលដែលមិនតាមដានសារពើភ័ណ្ឌបានទេ។
 Borrow,ខ្ចី
 Borrow Product,ខ្ចីសងទំនិញ
-Return,សង
+Return,សល់មកវិញ
 Please select account code for borrow account,សូមជ្រើសរើសលេខកូដគនណីសម្រាប់គនណីខ្ចីទំនិញ,
 Submit this document to confirm,សូមចុចលើបូតុង បញ្ជូន បញ្ជាក់នឹងបិទឯកសារនេះ
 Customer Code Name,អតិថិជន
@@ -1145,3 +1145,20 @@ No split bills found.,មិនទាន់មានបុងបំបែកទ�
 Add Split Bill,បញ្ជូលបុងបំបែក
 Edit Order,កែបុង
 Reference #,លេខយោង
+"Across accessible outlets","តាមទីតាំងលក់ដែលអ្នកមានសិទ្ធចូលប្រើប្រាស់"
+"Completed orders","បញ្ជាទិញបានបញ្ចប់"
+"Daily Sales Summary","សង្ខេបការលក់ប្រចាំថ្ងៃ"
+"Free","ហ្វ្រី"
+"Here is what is happening with your business today.","នេះជាស្ថានភាពអាជីវកម្មរបស់អ្នកនៅថ្ងៃនេះ។"
+"Net qty","ចំនួនសុទ្ធ"
+"Tootal Revenue","សរុបចំណូលលក់"
+"orders","បញ្ជាទិញ"
+"Pending","កំពុងរង់ចាំ"
+"products sold","ផលិតផលបានលក់"
+"Sales overview","ទិដ្ឋភាពទូទៅនៃការលក់"
+"Sold","បានលក់"
+"Split","បំបែក"
+"Welcome back","សូមស្វាគមន៍មកវិញ"
+"Sale Quantity","ចំនួនលក់"
+"Sale Quantity: {0} {1}","ចំនួនលក់: {0} {1}"
+"Booking Number","លេខបុងកក់"

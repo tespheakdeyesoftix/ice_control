@@ -320,7 +320,7 @@ class Sale(Document):
 				sp.price = get_product_price(self.customer, sp.product_code, sp.unit )
 				sp.product_price = sp.price
 			sp.quantity = row.get("quantity") 
-			sp.total_sale_quantity = row.get("quantity") - ((row.get("free_quantity") or 0) + (row.get("return_quantity") or 0) + (row.get("total_split_bill") or 0))
+			sp.total_sale_quantity = row.get("quantity") - ((row.get("free_quantity") or 0) + (row.get("return_quantity") or 0) + (row.get("split_quantity") or 0))
 			sp.sub_total = (sp.total_sale_quantity or 0)  * (sp.price or 0)
 			sp.total_amount = (sp.total_sale_quantity or 0)  * (sp.price or 0)
 			if sp.total_sale_quantity<0:

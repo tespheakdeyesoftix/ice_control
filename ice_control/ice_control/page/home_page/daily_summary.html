@@ -1,0 +1,105 @@
+<section class="daily-summary">
+    <header class="daily-summary__header">
+        <div>
+            <p class="daily-summary__eyebrow">{{ __("Sales overview") }}</p>
+            <h2 class="daily-summary__title">{{ __("Daily Sales Summary") }}</h2>
+            <p class="daily-summary__subtitle">{{ display_date }} · {{ outlet_count }} {{ outlet_label }}</p>
+        </div>
+        <div class="daily-summary__actions"><input class="daily-summary__date" data-summary-date type="date"
+                value="{{ posting_date }}"><button class="daily-summary__refresh" data-summary-refresh title="{{ __("
+                Refresh") }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6v5h-5M4 18v-5h5" />
+                    <path d="M18.5 9A7 7 0 006.2 6.2L4 8m16 8-2.2 1.8A7 7 0 015.5 15" />
+                </svg></button></div>
+    </header>
+    <div class="daily-summary__overview">
+        <article class="summary-kpi">
+            <p class="summary-kpi__label">{{ __("Total Revenue") }}</p>
+            <p class="summary-kpi__value">{{ totals.amount }}</p>
+            <p class="summary-kpi__hint">{{ __("Across accessible outlets") }}</p>
+        </article>
+        <article class="summary-kpi">
+            <p class="summary-kpi__label">{{ __("Completed orders") }}</p>
+            <p class="summary-kpi__value">{{ totals.orders }}</p>
+            <div class="summary-kpi__hint">{% for item in totals.quantities %}<span>{{ item.outlet }}: {{ item.value }}
+                    {{ item.unit }}</span>{% endfor %}</div>
+        </article>
+        <article class="summary-kpi summary-kpi--pending">
+            <p class="summary-kpi__label">{{ __("Pending") }}</p>
+            <p class="summary-kpi__value">{{ totals.pending_amount }}</p>
+            <div class="summary-kpi__hint"><span>{{ totals.pending_orders }} {{ __("orders") }}</span>{% for item in
+                totals.pending_quantities %}<span>{{ item.outlet }}: {{ item.value }} {{ item.unit }}</span>{% endfor %}
+            </div>
+        </article>
+        <article class="summary-kpi summary-kpi--deleted">
+            <p class="summary-kpi__label">{{ __("Deleted") }}</p>
+            <p class="summary-kpi__value">{{ totals.deleted_amount }}</p>
+            <div class="summary-kpi__hint"><span>{{ totals.deleted_orders }} {{ __("orders") }}</span>{% for item in
+                totals.deleted_quantities %}<span>{{ item.outlet }}: {{ item.value }} {{ item.unit }}</span>{% endfor %}
+            </div>
+        </article>
+    </div>
+    <div class="daily-summary__outlets{% if outlet_count == 1 %} daily-summary__outlets--single{% endif %}">
+
+        {% for outlet in outlets %}
+        <article class="outlet-summary">
+            <header class="outlet-summary__header">
+                <div class="outlet-summary__identity"><span class="outlet-summary__icon"><svg viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor">
+                            <path d="M4 10h16v10H4zM3 10l2-6h14l2 6M8 20v-5h4v5" />
+                        </svg></span>
+                    <div>
+                        <h3 class="outlet-summary__name">{{ outlet.outlet }}</h3>
+                        <p class="outlet-summary__caption">{{ outlet.product_count }} {{ __("products sold") }}</p>
+                    </div>
+                </div><span class="outlet-summary__badge">{{ outlet.total_order }} {{ __("orders") }}</span>
+            </header>
+            <div class="outlet-summary__metrics">
+                <div class="outlet-metric">
+                    <p class="outlet-metric__label">{{ __("Total Revenue") }}</p>
+                    <p class="outlet-metric__value">{{ outlet.total_amount }}</p>
+                    <p class="outlet-metric__meta">{{ outlet.total_quantity }} {{ outlet.default_unit }}</p>
+                </div>
+                <div class="outlet-metric">
+                    <p class="outlet-metric__label">{{ __("Pending") }}</p>
+                    <p class="outlet-metric__value outlet-metric__value--pending">{{ outlet.total_pending_amount }}</p>
+                    <p class="outlet-metric__meta">{{ outlet.total_pending_order }} {{ __("orders") }} · {{
+                        outlet.total_pending_quantity }} {{ outlet.default_unit }}</p>
+                </div>
+                <div class="outlet-metric">
+                    <p class="outlet-metric__label">{{ __("Deleted") }}</p>
+                    <p class="outlet-metric__value outlet-metric__value--deleted">{{ outlet.total_deleted_amount }}</p>
+                    <p class="outlet-metric__meta">{{ outlet.total_deleted_order }} {{ __("orders") }} · {{
+                        outlet.total_deleted_quantity }} {{ outlet.default_unit }}</p>
+                </div>
+            </div>
+            <div class="outlet-summary__table-wrap">
+                <table class="outlet-summary__table">
+                    <thead>
+                        <tr>
+                            <th>{{ __("Product") }}</th>
+                            <th>{{ __("Out Quantity") }}</th>
+                            <th>{{ __("Free") }}</th>
+                            <th>{{ __("Return") }}</th>
+                            <th>{{ __("Split") }}</th>
+                            <th>{{ __("Sale Quantity") }}</th>
+                            <th>{{ __("Amount") }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{% for product in outlet.products %}<tr>
+                            <td class="product-cell"><span class="product-cell__name">{{ product.product_name
+                                    }}</span><span class="product-cell__code">{{ product.product_code }} · {{
+                                    product.unit }}</span></td>
+                            <td>{{ product.quantity }}</td>
+                            <td class="quantity--free">{{ product.free_quantity }}</td>
+                            <td class="quantity--return">{{ product.return_quantity }}</td>
+                            <td>{{ product.split_quantity }}</td>
+                            <td class="quantity--total">{{ product.total_sale_quantity }}</td>
+                            <td class="amount-cell">{{ product.total_amount }}</td>
+                        </tr>{% endfor %}</tbody>
+                </table>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>

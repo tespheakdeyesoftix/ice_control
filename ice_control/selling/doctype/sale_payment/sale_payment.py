@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe import _
-from ice_control.api.utils import get_default_outlet,money_to_word
+from ice_control.api.utils import get_default_outlet,money_to_word,get_exchange_rate
 
 
 class SalePayment(Document):
@@ -57,6 +57,12 @@ class SalePayment(Document):
 		self.validate_sale_payment_invoices()
 		update_totals(self)
 		self.validate_payment_amount()
+
+	def payment_type_change(self):
+		frappe.throw( "hello")
+		# if self.payment_type:
+		# 	self.exchange_rate = get_exchange_rate(self.currency)
+			
 
 	def before_submit(self):
 		self.sales = [
