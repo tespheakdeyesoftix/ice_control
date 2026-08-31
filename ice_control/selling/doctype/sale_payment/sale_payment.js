@@ -24,9 +24,15 @@ frappe.ui.form.on("Sale Payment", {
          })
       },
       refresh(frm) {
+         frm.__previous_customer = frm.doc.customer;
+         frm.__previous_outlet = frm.doc.outlet;
          updateExchangeRateDisplay(frm);
          renderSalePaymentSummary(frm);
          hideSalesGridRowActions(frm);
+         setTimeout(() => {
+            setupSalesRowIndicators(frm);
+         }, 500);
+
          if (frm.doc.docstatus === 0) {
             frm.add_custom_button(__("Select Sale Invoice"), () => {
                openSaleInvoiceDialog(frm)
@@ -38,41 +44,101 @@ frappe.ui.form.on("Sale Payment", {
          frm.call("get_customer_credit_balance")
       },
       outlet(frm) {
-         frm.call("get_customer_credit_balance")
+         handleSaleContextChange(frm, "outlet")
       },
       customer(frm) {
-         frm.call("get_customer_credit_balance")
+         handleSaleContextChange(frm, "customer")
       },
       payment_type(frm) {
          frm.call("get_exchange_rate").then(() => {
             updateExchangeRateDisplay(frm)
+            renderAmountToPayDisplay(frm)
          })
       },
       exchange_rate(frm) {
          updateExchangeRateDisplay(frm)
+         renderAmountToPayDisplay(frm)
+      },
+      currency(frm) {
+         renderAmountToPayDisplay(frm)
+      },
+      async input_amount(frm) {
+         await callAllocatePaymentAmount(frm);
       },
 
 
 })
 
+function handleSaleContextChange(frm, fieldname) {
+    if (frm.__reverting_sale_context) return;
+
+    const previousKey = fieldname === "customer"
+        ? "__previous_customer"
+        : "__previous_outlet";
+    const previousValue = frm[previousKey];
+    const currentValue = frm.doc[fieldname];
+    const hasSelectedSales = (frm.doc.sales || []).some(row => row.sale);
+
+    if (!hasSelectedSales || previousValue === currentValue) {
+        frm[previousKey] = currentValue;
+        getCustomerCreditBalance(frm);
+        return;
+    }
+
+    const fieldLabel = fieldname === "customer" ? __("Customer") : __("Outlet");
+    frappe.confirm(
+        __("Changing {0} will clear all selected Sale Invoices. You must select the Sale Invoices again. Do you want to continue?", [fieldLabel]),
+        async () => {
+            frm[previousKey] = currentValue;
+            frm.clear_table("sales");
+            frm.refresh_field("sales");
+            await callAllocatePaymentAmount(frm);
+            getCustomerCreditBalance(frm);
+        },
+        async () => {
+            frm.__reverting_sale_context = true;
+            await frm.set_value(fieldname, previousValue);
+            frm.__reverting_sale_context = false;
+        }
+    );
+}
+
 frappe.ui.form.on("Sale Payment Invoices", {
-    async sales_add(frm, cdt, cdn) {
+    sales_add(frm, cdt, cdn) {
         if (locals[cdt][cdn].sale) {
-            await callUpdateSummary(frm);
+            scheduleAllocatePaymentAmount(frm);
         }
     },
-    async sales_remove(frm) {
-        await callUpdateSummary(frm);
+    sales_remove(frm) {
+        scheduleAllocatePaymentAmount(frm);
     },
     sale(frm) {
-        frappe.after_ajax(() => callUpdateSummary(frm));
+        frappe.after_ajax(() => callAllocatePaymentAmount(frm));
     },
     async payment_amount(frm, cdt, cdn) {
         updateChildSaleBalance(frm, cdt, cdn);
         await callUpdateSummary(frm);
     },
     async write_off_amount(frm, cdt, cdn) {
-        updateChildSaleBalance(frm, cdt, cdn);
+        const row = locals[cdt][cdn];
+        const saleBalance = Math.max(flt(row.sale_balance), 0);
+        const writeOffAmount = Math.min(
+            Math.max(flt(row.write_off_amount), 0),
+            saleBalance
+        );
+
+        row.write_off_amount = writeOffAmount;
+        if (writeOffAmount > 0) {
+            row.payment_amount = saleBalance - writeOffAmount;
+            row.balance = 0;
+        } else {
+            updateChildSaleBalance(frm, cdt, cdn);
+        }
+
+        frm.refresh_field("sales");
+        updateWriteOffPaymentLock(
+            frm.get_field("sales")?.grid?.grid_rows_by_docname?.[cdn]
+        );
         await callUpdateSummary(frm);
     },
 });
@@ -119,7 +185,7 @@ async function openSaleInvoiceDialog(frm) {
                 ],
             },
         ],
-        primary_action_label: __("Add Selected"),
+        primary_action_label: __("Add Selected Sale Invoice"),
         async primary_action() {
             const selected = dialog.fields_dict.sale_invoices.grid.get_selected_children();
 
@@ -141,7 +207,7 @@ async function openSaleInvoiceDialog(frm) {
             });
 
             frm.refresh_field("sales");
-            await callUpdateSummary(frm);
+            await callAllocatePaymentAmount(frm);
             dialog.hide();
         },
     });
@@ -193,10 +259,34 @@ async function loadSaleInvoices(frm, dialog) {
 }
 
 
+async function callAllocatePaymentAmount(frm) {
+    clearTimeout(frm.__allocate_payment_timer);
+    frm.__allocate_payment_timer = null;
+    await frm.call("allocate_payment_amount");
+    frm.refresh_fields();
+    renderSalePaymentSummary(frm);
+    ensureSalesGridObserver(frm);
+    refreshSalesRowFormatting(frm);
+    setTimeout(() => refreshSalesRowFormatting(frm), 300);
+}
+
 async function callUpdateSummary(frm) {
+    clearTimeout(frm.__update_summary_timer);
+    frm.__update_summary_timer = null;
     await frm.call("update_summary");
     frm.refresh_fields();
     renderSalePaymentSummary(frm);
+    ensureSalesGridObserver(frm);
+    refreshSalesRowFormatting(frm);
+    setTimeout(() => refreshSalesRowFormatting(frm), 300);
+}
+
+function scheduleAllocatePaymentAmount(frm) {
+    clearTimeout(frm.__allocate_payment_timer);
+    frm.__allocate_payment_timer = setTimeout(() => {
+        frm.__allocate_payment_timer = null;
+        callAllocatePaymentAmount(frm);
+    }, 150);
 }
 
 function updateChildSaleBalance(frm, cdt, cdn) {
@@ -220,8 +310,93 @@ function hideSalesGridRowActions(frm) {
                 .sales-grid-no-row-actions .grid-duplicate-rows {
                     display: none !important;
                 }
+                .sales-grid-no-row-actions .grid-row[data-payment-status="paid"] {
+                    border-left: 4px solid #28a745;
+                }
+                .sales-grid-no-row-actions .grid-row[data-payment-status="partial"] {
+                    border-left: 4px solid #f0ad4e;
+                }
+                .sales-grid-no-row-actions .grid-row[data-payment-status="unpaid"] {
+                    border-left: 4px solid #dc3545;
+                }
+                .sales-grid-no-row-actions .grid-row[data-has-write-off="true"]
+                    .grid-static-col[data-fieldname="write_off_amount"],
+                .sales-grid-no-row-actions .grid-row[data-has-write-off="true"]
+                    .grid-static-col[data-fieldname="write_off_amount"] .static-area,
+                .sales-grid-no-row-actions .grid-row[data-has-write-off="true"]
+                    .grid-static-col[data-fieldname="write_off_amount"] input {
+                    color: #dc3545 !important;
+                    font-weight: 600;
+                }
             </style>
         `);
+    }
+}
+
+function setupSalesRowIndicators(frm) {
+    if (!frm.__sales_row_indicator_bound) {
+        frm.__sales_row_indicator_bound = true;
+        $(frm.wrapper).on("grid-row-render.sale-payment-status", (event, gridRow) => {
+            if (gridRow.grid?.df?.fieldname === "sales") {
+                updateSalesRowIndicator(gridRow);
+                updateWriteOffPaymentLock(gridRow);
+            }
+        });
+    }
+
+    ensureSalesGridObserver(frm);
+    refreshSalesRowFormatting(frm);
+    setTimeout(() => refreshSalesRowFormatting(frm), 300);
+}
+
+function ensureSalesGridObserver(frm) {
+    const wrapper = frm.get_field("sales")?.$wrapper;
+    if (frm.__sales_grid_observer || !wrapper?.[0]) return;
+
+    frm.__sales_grid_observer = new MutationObserver(() => {
+        clearTimeout(frm.__sales_grid_format_timer);
+        frm.__sales_grid_format_timer = setTimeout(
+            () => refreshSalesRowFormatting(frm),
+            50
+        );
+    });
+    frm.__sales_grid_observer.observe(wrapper[0], {
+        childList: true,
+        subtree: true,
+    });
+}
+
+function refreshSalesRowFormatting(frm) {
+    const grid = frm.get_field("sales")?.grid;
+    (grid?.grid_rows || []).forEach(gridRow => {
+        updateSalesRowIndicator(gridRow);
+        updateWriteOffPaymentLock(gridRow);
+    });
+}
+
+function updateSalesRowIndicator(gridRow) {
+    const row = gridRow.doc;
+    const saleBalance = flt(row.sale_balance);
+    const allocatedAmount = flt(row.payment_amount) + flt(row.write_off_amount);
+    const balance = flt(row.balance);
+    let status = "unpaid";
+
+    if (row.sale && saleBalance > 0 && balance <= 0) {
+        status = "paid";
+    } else if (row.sale && allocatedAmount > 0) {
+        status = "partial";
+    }
+
+    gridRow.wrapper.attr("data-payment-status", row.sale ? status : null);
+}
+
+function updateWriteOffPaymentLock(gridRow) {
+    if (!gridRow) return;
+    const hasWriteOff = flt(gridRow.doc.write_off_amount) > 0;
+    gridRow.wrapper.attr("data-has-write-off", hasWriteOff ? "true" : null);
+    const paymentField = gridRow.on_grid_fields_dict?.payment_amount;
+    if (paymentField && cint(paymentField.df.read_only) !== cint(hasWriteOff)) {
+        gridRow.toggle_editable("payment_amount", !hasWriteOff);
     }
 }
 
@@ -230,6 +405,77 @@ function renderSalePaymentSummary(frm) {
     if (field) {
         field.$wrapper.html(frappe.render_template("payment_summary", { doc: frm.doc }));
     }
+    renderAmountToPayDisplay(frm);
+}
+
+async function renderAmountToPayDisplay(frm) {
+    const field = frm.get_field("html_amount_to_pay");
+    if (!field) return;
+
+    if (!frm.__default_currency_promise) {
+        frm.__default_currency_promise = frappe.db.get_single_value(
+            "Business Information",
+            "default_currency"
+        );
+    }
+
+    const defaultCurrency = await frm.__default_currency_promise;
+    const paymentCurrency = frm.doc.currency || defaultCurrency;
+    const defaultAmount = flt(frm.doc.amount_to_pay);
+    const exchangeRate = flt(frm.doc.exchange_rate) || 1;
+    const amounts = [{
+        label: __("Amount to Pay"),
+        currency: defaultCurrency,
+        amount: defaultAmount,
+        accent: "primary",
+    }];
+
+    if (paymentCurrency && paymentCurrency !== defaultCurrency) {
+        amounts.push({
+            label: __("Amount in Payment Currency"),
+            currency: paymentCurrency,
+            amount: defaultAmount * exchangeRate,
+            accent: "success",
+        });
+    }
+
+    await Promise.all(amounts.map(async item => {
+        item.precision = await getCurrencyPrecision(frm, item.currency);
+    }));
+
+    const columnClass = amounts.length === 1 ? "col-12" : "col-md-6";
+    const html = amounts.map(item => {
+        const currency = frappe.utils.escape_html(item.currency || "");
+        return `<div class="${columnClass} mb-2">
+            <div class="border rounded p-3 h-100 shadow-sm border-${item.accent}">
+                <div class="small text-muted mb-1">${item.label}</div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <strong class="h4 mb-0 text-${item.accent}">${format_currency(item.amount, item.currency, item.precision)}</strong>
+                    <span class="badge badge-light">${currency}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join("");
+
+    field.$wrapper.html(`<div class="row">${html}</div>`);
+}
+
+async function getCurrencyPrecision(frm, currency) {
+    if (!currency) return undefined;
+
+    frm.__currency_precision_promises ||= {};
+    if (!frm.__currency_precision_promises[currency]) {
+        frm.__currency_precision_promises[currency] = frappe.db
+            .get_value("Currency", currency, "custom_precision")
+            .then(result => {
+                const precision = result.message?.custom_precision;
+                return precision === null || precision === undefined || precision === ""
+                    ? undefined
+                    : cint(precision);
+            });
+    }
+
+    return frm.__currency_precision_promises[currency];
 }
 
 function updateExchangeRateDisplay(frm) {

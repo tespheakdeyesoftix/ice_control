@@ -71,7 +71,17 @@ def get_doctype_reports(doctype: str) -> list[dict[str, str]]:
 
 
 def _get_bold_reports_config() -> dict[str, str]:
-	config = frappe.conf.get("bold_reports") or {}
+	config = dict(frappe.conf.get("bold_reports") or {})
+	setting_fields = {
+		"report_server_url": "server_report_url",
+		"report_service_url": "report_service_url",
+		"report_token": "server_report_token",
+	}
+
+	for config_key, fieldname in setting_fields.items():
+		if not config.get(config_key):
+			config[config_key] = frappe.db.get_single_value("Setting", fieldname)
+
 	required_keys = (
 		"report_server_url",
 		"report_service_url",

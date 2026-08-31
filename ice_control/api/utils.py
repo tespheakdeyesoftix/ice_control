@@ -13,6 +13,7 @@ from frappe.utils.file_manager import save_file
 
 from frappe.utils.caching import redis_cache
 from datetime import date, datetime
+from decimal import Decimal, InvalidOperation
 
 
 
@@ -284,16 +285,28 @@ def get_default_outlet():
 
 
 def money_to_word(amount:float=7569556,currency:str="KHR")->str:
+    try:
+        amount = int(Decimal(str(amount or 0).replace(",", "")))
+    except (InvalidOperation, TypeError, ValueError):
+        frappe.throw(_("Invalid amount: {0}").format(amount))
+
+    if amount < 0:
+        frappe.throw(_("Amount cannot be negative."))
+
     amount = str(amount)
     if len(amount)>6:
         first_number = int(amount[:len(amount) - 6])
 
 
-        return number_to_word(int(first_number)) + "លាន" + number_to_word(int(amount[-6:] )) + " " + ("រៀល" if currency=="KHR" else "ដុល្លា")
+        remaining_amount = int(amount[-6:])
+        remaining_words = number_to_word(remaining_amount) if remaining_amount else ""
+        return number_to_word(first_number) + "លាន" + remaining_words + " " + ("រៀល" if currency=="KHR" else "ដុល្លា")
     else:
         return number_to_word(int(amount)) + " " + ("រៀល" if currency=="KHR" else "ដុល្លា")
 
 def number_to_word(amount=7569556):
+    if int(amount) == 0:
+        return "សូន្យ"
 
     khmer_digit = ["","មួយ","ពីរ","បី","បួន","ប្រាំ","ប្រាំមួយ","ប្រាំពីរ","ប្រាំបី","ប្រាំបួន"]
     khmer_unit = ["","ដប់","រយ","ពាន់","ម៉ឺន","សែន","លាន"]

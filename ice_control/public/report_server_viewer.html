@@ -161,6 +161,17 @@
                 return frappeContext;
             }
 
+            function getFrappeHeaders() {
+                var frappeContext = getFrappeContext();
+                var headers = { "Accept": "application/json" };
+
+                if (frappeContext && frappeContext.csrf_token) {
+                    headers["X-Frappe-CSRF-Token"] = frappeContext.csrf_token;
+                }
+
+                return headers;
+            }
+
             function getCurrentUser() {
                 var frappeContext = getFrappeContext();
 
@@ -223,7 +234,7 @@
                     method: "GET",
                     credentials: "same-origin",
                     cache: "no-store",
-                    headers: { "Accept": "application/json" }
+                    headers: getFrappeHeaders()
                 });
                 payload = await response.json();
 
@@ -387,7 +398,7 @@
                     method: "GET",
                     credentials: "same-origin",
                     cache: "no-store",
-                    headers: { "Accept": "application/json" }
+                    headers: getFrappeHeaders()
                 });
                 var payload;
 
@@ -398,7 +409,25 @@
                 }
 
                 if (!response.ok || !payload.message) {
-                    throw new Error("Frappe could not provide the report server configuration.");
+                    var serverMessage = "";
+
+                    if (payload && payload._server_messages) {
+                        try {
+                            serverMessage = JSON.parse(payload._server_messages)
+                                .map(function (message) {
+                                    var parsedMessage = JSON.parse(message);
+                                    return parsedMessage.message || "";
+                                })
+                                .filter(Boolean)
+                                .join(" ");
+                        } catch (_error) {
+                            serverMessage = "";
+                        }
+                    }
+
+                    throw new Error(
+                        serverMessage || "Frappe could not provide the report server configuration."
+                    );
                 }
 
                 return payload.message;

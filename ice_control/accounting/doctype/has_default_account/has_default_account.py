@@ -5,7 +5,7 @@
 from frappe.model.document import Document
 
 
-class SalePaymentInvoices(Document):
+class HasDefaultAccount(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -14,23 +14,11 @@ class SalePaymentInvoices(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		balance: DF.Currency
-		customer: DF.Link | None
-		note: DF.SmallText | None
+		default_sale_payment_account: DF.Link | None
 		outlet: DF.Link | None
-		paid_amount: DF.Currency
 		parent: DF.Data
 		parentfield: DF.Data
 		parenttype: DF.Data
-		payment_amount: DF.Currency
-		payment_date: DF.Date | None
-		payment_type: DF.Link | None
-		payment_type_group: DF.Link | None
-		posting_date: DF.Date | None
-		sale: DF.Link
-		sale_balance: DF.Currency
-		total_amount: DF.Currency
-		write_off_amount: DF.Currency
 	# end: auto-generated types
 
-	_DOCTYPE_NAME = "Sale Payment Invoices"
+	_DOCTYPE_NAME = "Has Default Account"
