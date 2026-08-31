@@ -166,3 +166,4 @@ def update_status(name):
 	elif doc.docstatus == 2:
 		status = "Cancelled"
 	frappe.db.set_value("Purchase Orders", name, "status", status, update_modified=False)
+

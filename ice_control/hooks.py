@@ -23,8 +23,8 @@ add_to_apps_screen = [
     {
         "name": "ice_control",
         "logo": "/assets/ice_control/logo.png",
-        "title": "Ice Factory Management System",
-        "route": "/desk/selling",
+        "title": "Hello",
+        "route": "/desk/home-page",
         "sequence_id": 10,
     }
 ]
@@ -163,6 +163,9 @@ boot_session = "ice_control.boot.boot_session"
 
 permission_query_conditions = {
 	"Employee":  "ice_control.hr.doctype.employee.employee.get_permission_query_conditions",
+	"Outlet":  "ice_control.setting.doctype.outlet.outlet.get_permission_query_conditions",
+	"Sale":  "ice_control.selling.doctype.sale.sale.get_permission_query_conditions",
+	"Sale Payment":  "ice_control.selling.doctype.sale_payment.sale_payment.get_permission_query_conditions",
 	"Role": "ice_control.api.permission.role_has_permission",
 	"Module Def": "ice_control.api.permission.module_def_has_permission"
 }

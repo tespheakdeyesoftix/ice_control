@@ -4,8 +4,11 @@ from frappe import _
 from frappe.model.document import Document
 import json
 from datetime import datetime, date
-from ice_control.api.utils import get_previous_closed_date,get_sale_product_changed,get_exchange_rate
+from ice_control.api.utils import get_previous_closed_date,get_sale_product_changed,get_exchange_rate,get_current_employee_outlets
 from ice_control.api.inventory import add_inventory_transaction,get_stock_location_prouct,get_product_units_multiplier
+from ice_control.selling.doctype.sale.accounting import submit_to_gl_entry
+
+
 class Sale(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
@@ -253,6 +256,11 @@ class Sale(Document):
 			# update to borrow product
 			frappe.enqueue("ice_control.selling.doctype.sale.sale.update_borrow_product",queue="short",old_doc=self.get_doc_before_save() ,new_doc=self)
 			# update_borrow_product(self.get_doc_before_save() ,self)
+
+			# add sale data to gl entry
+			submit_to_gl_entry(self)
+
+
 		elif self.sale_status == "Deleted":
 			update_stock_product(self)
 			# add comment
@@ -1025,3 +1033,22 @@ def enable_edit_mode(doc_name: str, note: str):
 		_("Edit mode enabled. Reason: {0}").format(note),
 	)
 	return {"name": doc.name, "enable_edit_mode": 1}
+
+
+
+
+def get_permission_query_conditions(user=None):
+    user = user or frappe.session.user
+
+    if user == "Administrator":
+        return None
+
+    access_outlets = get_current_employee_outlets()
+
+    if not access_outlets:
+        return "1 = 0"
+
+    outlets = ", ".join(frappe.db.escape(outlet) for outlet in access_outlets)
+
+    return f"tabSale.outlet IN ({outlets})"
+	

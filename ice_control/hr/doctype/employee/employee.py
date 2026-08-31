@@ -29,6 +29,7 @@ class Employee(Document):
 		edit_bill: DF.Check
 		employee_code: DF.Data | None
 		employee_name: DF.Data | None
+		enabled: DF.Check
 		language: DF.Link | None
 		naming_series: DF.Literal["EMP.####"]
 		outlets: DF.Table[OutletChild]

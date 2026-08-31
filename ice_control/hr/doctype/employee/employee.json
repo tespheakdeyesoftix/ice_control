@@ -7,6 +7,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "enabled",
+  "section_break_vskm",
   "naming_series",
   "employee_code",
   "employee_name",
@@ -208,6 +210,16 @@
    "fieldname": "change_customer",
    "fieldtype": "Check",
    "label": "Change Customer"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "section_break_vskm",
+   "fieldtype": "Section Break"
   }
  ],
  "grid_page_length": 50,
@@ -215,7 +227,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-08-18 13:59:38.251424",
+ "modified": "2026-08-29 10:30:43.581470",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",

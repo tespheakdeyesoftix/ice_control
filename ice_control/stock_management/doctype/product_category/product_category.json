@@ -15,17 +15,26 @@
  ],
  "fields": [
   {
+   "fieldname": "product_prefix",
+   "fieldtype": "Data",
+   "label": "Product Prefix"
+  },
+  {
+   "fieldname": "category_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Category Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
    "fieldname": "revenue_group",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Revenue Group",
    "options": "Revenue Group"
-  },
-  {
-   "fieldname": "product_prefix",
-   "fieldtype": "Data",
-   "label": "Product Prefix"
   },
   {
    "default": "1",
@@ -36,23 +45,14 @@
   {
    "fieldname": "column_break_qbqp",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "category_name",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Category Name",
-   "reqd": 1,
-   "unique": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-15 14:59:58.814371",
+ "modified": "2026-08-28 15:58:51.009077",
  "modified_by": "Administrator",
- "module": "Customer Management",
+ "module": "Stock Management",
  "name": "Product Category",
  "naming_rule": "By fieldname",
  "owner": "Administrator",

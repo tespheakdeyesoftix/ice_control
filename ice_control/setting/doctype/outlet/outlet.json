@@ -10,7 +10,10 @@
   "enabled",
   "outlet_name",
   "default_unit",
-  "default_stock_location"
+  "default_stock_location",
+  "accounting_tab",
+  "default_receivable_account",
+  "default_income_account"
  ],
  "fields": [
   {
@@ -39,12 +42,31 @@
    "fieldtype": "Data",
    "label": "Outlet Name",
    "unique": 1
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_receivable_account",
+   "fieldtype": "Link",
+   "label": "Default Receivable Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"=\",\"Receivable\"]]",
+   "options": "Chart of Account"
+  },
+  {
+   "fieldname": "default_income_account",
+   "fieldtype": "Link",
+   "label": "Default Income Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"=\",\"Income\"]]",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-21 14:26:32.693668",
+ "modified": "2026-08-29 16:20:24.396160",
  "modified_by": "Administrator",
  "module": "Setting",
  "name": "Outlet",

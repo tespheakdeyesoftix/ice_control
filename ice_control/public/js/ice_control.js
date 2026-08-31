@@ -1,3 +1,32 @@
+if (frappe.session.user !== "Administrator" && frappe.ui.SidebarHeader) {
+	const original_switcher_items =
+		frappe.ui.SidebarHeader.prototype.switcher_items;
+
+	const original_menu_items =
+		frappe.ui.SidebarHeader.prototype.menu_items;
+
+	frappe.ui.SidebarHeader.prototype.switcher_items = function () {
+		const app = this.sidebar.get_sidebar_app();
+
+		if (app?.app_name === "ice_control") {
+			return [];
+		}
+
+		return original_switcher_items.call(this);
+	};
+
+	frappe.ui.SidebarHeader.prototype.menu_items = function () {
+		const items = original_menu_items.call(this);
+		const app = this.sidebar.get_sidebar_app();
+
+		if (app?.app_name === "ice_control") {
+			return items.filter((item) => item.name !== "edit-sidebar");
+		}
+
+		return items;
+	};
+}
+
 frappe.ui.form.on("*", {
     onload: function(frm) {
         if (!frm.is_new()) {

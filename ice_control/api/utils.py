@@ -139,7 +139,7 @@ def get_setting(station_name:str="",outlet:str=None):
 
 
 
-def get_exchange_rate(from_currency:str=None, to_currency:str=None)->float:
+def get_exchange_rate(from_currency:str, to_currency:str=None)->float:
     if not to_currency:
         to_currency = frappe.get_cached_value("Business Information",None,"default_currency")
         
@@ -283,7 +283,7 @@ def get_default_outlet():
 
 
 
-def money_to_word(amount=7569556,currency="KHR"):
+def money_to_word(amount:float=7569556,currency:str="KHR")->str:
     amount = str(amount)
     if len(amount)>6:
         first_number = int(amount[:len(amount) - 6])
@@ -488,3 +488,21 @@ def get_payment_types()->list[dict]:
         d['exchange_rate'] = get_exchange_rate(d.get("currency"), frappe.get_cached_value("Business Information",None,"default_currency"))
 
     return data
+
+
+
+@frappe.whitelist()
+def get_current_employee_outlets()->list[str]:
+    if frappe.session.user =="Guest":
+        return []
+    if frappe.session.user == "Administrator":
+        return frappe.db.get_list("Outlet",pluck="name")
+
+    employee_id = frappe.db.exists("Employee",{"user_id":frappe.session.user,"allow_login":1,"enabled":1})
+    if not employee_id:
+        return []
+    employee_doc = frappe.get_cached_doc("Employee",employee_id)
+    outlets = [employee_doc.get("default_outlet")]
+    
+    outlets = set(outlets + [x.outlet for x in employee_doc.outlets])
+    return list(outlets) 
