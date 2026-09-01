@@ -1,7 +1,6 @@
 frappe.treeview_settings['Chart of Account'] = {
     breadcrumb: 'Accounting',
     title: 'Chart of Accounts',
-
     fields: [
         {
             fieldtype: 'Data', fieldname: 'account_code',

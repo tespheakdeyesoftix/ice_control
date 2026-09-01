@@ -1,6 +1,8 @@
 // Copyright (c) 2026, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
+{% include "ice_control/accounting/report/account_receivable/customer_receivable_detail.html" %}
+
 frappe.query_reports["Account Receivable"] = {
 	onload(query_report) {
 		const report_settings = frappe.query_reports["Account Receivable"];
@@ -173,7 +175,10 @@ frappe.query_reports["Account Receivable"] = {
 		});
 
 		dialog.fields_dict.details_html.$wrapper.html(
-			this.get_customer_details_html(details)
+			frappe.render_template(
+				"customer_receivable_detail",
+				this.get_customer_details_context(details)
+			)
 		);
 		dialog.show();
 		dialog.$wrapper.find(".modal-body").css({
@@ -182,19 +187,14 @@ frappe.query_reports["Account Receivable"] = {
 		});
 	},
 
-	get_customer_details_html(details) {
+	get_customer_details_context(details) {
 		const escape = (value) => frappe.utils.escape_html(String(value ?? ""));
 		const money = (value) =>
 			frappe.format(value || 0, { fieldtype: "Currency" }, { only_value: true });
 		const date = (value) => (value ? frappe.datetime.str_to_user(value) : "");
+		const customer = details.customer || {};
+		const filters = details.filters || {};
 		const summary = details.summary || {};
-		const summary_items = [
-			[__("Opening Balance"), summary.opening_balance],
-			[__("Debit"), summary.debit_amount],
-			[__("Credit"), summary.credit_amount],
-			[__("Write Off"), summary.write_off_amount],
-			[__("Closing Balance"), summary.closing_balance],
-		];
 		const aging_colors = [
 			"#d6ecff",
 			"#b8d8f0",
@@ -204,111 +204,64 @@ frappe.query_reports["Account Receivable"] = {
 			"#d64545",
 		];
 
-		const summary_html = summary_items
-			.map(
-				([label, value]) => `
-					<div class="col-sm">
-						<div class="border rounded p-3 mb-3">
-							<div class="text-muted small">${escape(label)}</div>
-							<div class="font-weight-bold">${money(value)}</div>
-						</div>
-					</div>`
-			)
-			.join("");
+		const summary_items = [
+			[__("Opening Balance"), summary.opening_balance],
+			[__("Debit"), summary.debit_amount],
+			[__("Credit"), summary.credit_amount],
+			[__("Write Off"), summary.write_off_amount],
+			[__("Closing Balance"), summary.closing_balance],
+		].map(([label, value]) => ({
+			label: escape(label),
+			value: money(value),
+		}));
+		const aging = (details.aging || []).map((item, index) => ({
+			label: escape(item.label),
+			value: money(item.value),
+			color: aging_colors[index] || aging_colors[aging_colors.length - 1],
+		}));
+		const transactions = (details.transactions || []).map((transaction) => {
+			let voucher = escape(transaction.voucher_no);
+			if (transaction.voucher_type && transaction.voucher_no) {
+				voucher = frappe.utils.get_form_link(
+					transaction.voucher_type,
+					transaction.voucher_no,
+					true,
+					voucher
+				);
+			}
 
-		const aging_html = (details.aging || [])
-			.map(
-				(item, index) => `
-					<div class="col-sm-2">
-						<div class="rounded p-2 mb-3" style="border-top: 4px solid ${
-							aging_colors[index]
-						}; background: var(--control-bg);">
-							<div class="text-muted small">${escape(item.label)}</div>
-							<div class="font-weight-bold">${money(item.value)}</div>
-						</div>
-					</div>`
-			)
-			.join("");
+			return {
+				posting_date: escape(date(transaction.posting_date)),
+				voucher,
+				voucher_type: escape(transaction.voucher_type),
+				account: escape(transaction.account),
+				debit_amount: money(transaction.debit_amount),
+				credit_amount: money(transaction.credit_amount),
+				running_balance: money(transaction.running_balance),
+				age: escape(transaction.age),
+				remark: escape(transaction.remark),
+			};
+		});
 
-		const transaction_rows = (details.transactions || [])
-			.map((transaction) => {
-				let voucher = escape(transaction.voucher_no);
-				if (transaction.voucher_type && transaction.voucher_no) {
-					voucher = frappe.utils.get_form_link(
-						transaction.voucher_type,
-						transaction.voucher_no,
-						true,
-						voucher
-					);
-				}
-				const voucher_title = escape(transaction.voucher_type);
-
-				return `
-					<tr>
-						<td>${escape(date(transaction.posting_date))}</td>
-						<td><span title="${voucher_title}">${voucher}</span></td>
-						<td>${escape(transaction.account)}</td>
-						<td class="text-right">${money(transaction.debit_amount)}</td>
-						<td class="text-right">${money(transaction.credit_amount)}</td>
-						<td class="text-right">${money(transaction.running_balance)}</td>
-						<td class="text-center">${escape(transaction.age)}</td>
-						<td>${escape(transaction.remark)}</td>
-					</tr>`;
-			})
-			.join("");
-
-		const transaction_note = details.is_truncated
-			? `<div class="alert alert-warning mb-3">${__(
-					"Showing the first {0} of {1} transactions.",
-					[details.max_transactions, details.transaction_count]
-			  )}</div>`
-			: `<div class="text-muted mb-3">${__("Transactions: {0}", [
-					details.transaction_count || 0,
-			  ])}</div>`;
-
-		return `
-			<div class="mb-3">
-				<div><strong>${escape(details.customer.code)} - ${escape(
-					details.customer.name
-				)}</strong></div>
-				<div class="text-muted">
-					${escape(details.customer.group)}
-					${details.customer.phone_number ? ` · ${escape(details.customer.phone_number)}` : ""}
-				</div>
-				<div class="text-muted">
-					${escape(details.filters.outlet)} · ${escape(date(details.filters.start_date))}
-					— ${escape(date(details.filters.end_date))}
-				</div>
-			</div>
-			<div class="row">${summary_html}</div>
-			<h5 class="mt-2">${__("Aging Breakdown")}</h5>
-			<div class="row">${aging_html}</div>
-			<h5 class="mt-2">${__("GL Transactions")}</h5>
-			${transaction_note}
-			<div class="table-responsive">
-				<table class="table table-bordered table-hover">
-					<thead style="position: sticky; top: 0; background: var(--card-bg); z-index: 1;">
-						<tr>
-							<th>${__("Posting Date")}</th>
-							<th>${__("Voucher No")}</th>
-							<th>${__("Account")}</th>
-							<th class="text-right">${__("Debit")}</th>
-							<th class="text-right">${__("Credit")}</th>
-							<th class="text-right">${__("Running Balance")}</th>
-							<th class="text-center">${__("Age")}</th>
-							<th>${__("Remark")}</th>
-						</tr>
-					</thead>
-					<tbody>
-						${
-							transaction_rows ||
-							`<tr><td colspan="8" class="text-center text-muted">${__(
-								"No transactions found."
-							)}</td></tr>`
-						}
-					</tbody>
-				</table>
-			</div>`;
+		return {
+			customer: {
+				code: escape(customer.code),
+				name: escape(customer.name),
+				group: escape(customer.group),
+				phone_number: escape(customer.phone_number),
+			},
+			filters: {
+				outlet: escape(filters.outlet),
+				start_date: escape(date(filters.start_date)),
+				end_date: escape(date(filters.end_date)),
+			},
+			summary_items,
+			aging,
+			transactions,
+			is_truncated: Boolean(details.is_truncated),
+			max_transactions: Number(details.max_transactions) || 0,
+			transaction_count: Number(details.transaction_count) || 0,
+		};
 	},
 	formatter(value, row, column, data, default_formatter) {
 		const formatted_value = default_formatter(value, row, column, data);

@@ -15,6 +15,7 @@ class Outlet(Document):
 		from frappe.types import DF
 
 		default_income_account: DF.Link | None
+		default_payable_account: DF.Link | None
 		default_receivable_account: DF.Link | None
 		default_stock_location: DF.Link | None
 		default_unit: DF.Link | None

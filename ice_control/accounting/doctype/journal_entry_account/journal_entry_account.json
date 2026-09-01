@@ -34,7 +34,8 @@
    "fieldname": "debit",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Debit"
+   "label": "Debit",
+   "non_negative": 1
   },
   {
    "columns": 1,
@@ -42,7 +43,8 @@
    "fieldname": "credit",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Credit"
+   "label": "Credit",
+   "non_negative": 1
   },
   {
    "columns": 2,
@@ -86,7 +88,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-01 09:29:40.719947",
+ "modified": "2026-09-01 14:53:44.067022",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Journal Entry Account",

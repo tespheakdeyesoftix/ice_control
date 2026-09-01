@@ -29,7 +29,7 @@ class PaymentType(Document):
 				frappe.db.commit()
 				frappe.msgprint(f"Payment Type {self.name} is set as default payment type.")
 		else:
-			if self.is_default != old_doc.is_default:
+			if self.is_default != old_doc.is_default and self.is_default == 1:
 				frappe.db.sql("update `tabPayment Type` set is_default=0 where name != %s", self.name)
 				frappe.db.commit()
 				frappe.msgprint(f"Payment Type {self.name} is set as default payment type.")

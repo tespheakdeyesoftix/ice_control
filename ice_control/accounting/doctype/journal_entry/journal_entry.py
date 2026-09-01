@@ -35,36 +35,17 @@ class JournalEntry(Document):
 	_DOCTYPE_NAME = "Journal Entry"
 
 	def validate(self):
-		validate_account_debit_credit(self)
 		self.total_debit = sum(d.debit for d in self.get("account_entries"))
 		self.total_credit = sum(d.credit for d in self.get("account_entries"))
-
-		if self.total_credit == 0 or self.total_debit == 0:
-			frappe.throw(_("Credit and Debit must be greater than zero"))
 		self.balance = self.total_debit - self.total_credit
-		if self.balance != 0:
-			frappe.throw(_("Balance must be zero"))
-
-		for d in  self.account_entries:
-			if d.party:
-				fieldname =get_party_name_field(d.party_type)
-				if fieldname:
-					d.party_name = frappe.get_cached_value(d.party_type, d.party, fieldname)
-			else:
-				d.party_name = None
-
-		fieldname =get_party_name_field(self.party_type)
+		validate_account_debit_credit(self)
+		update_party_name(self)
+		fieldname = get_party_name_field(self.party_type)
 		if fieldname:
 			self.party_name = frappe.get_cached_value(self.party_type, self.party, get_party_name_field(self.party_type))
 
 	def before_submit(self):
-		for d in  self.account_entries:
-			if d.party:
-				fieldname =get_party_name_field(d.party_type)
-				d.party_name = frappe.get_cached_value(d.party_type, d.party, fieldname)
-			else:
-				d.party_name = None
-
+		update_party_name(self)
 
 	def on_submit(self):
 		submit_to_general_ledger_entry(self)
@@ -73,14 +54,25 @@ class JournalEntry(Document):
 		self.flags.ignore_links = 1
 		cancel_general_ledger_entery("Journal Entry", self.name)
 
+def update_party_name(self):
+	for d in  self.account_entries:
+		if d.party:
+			fieldname = get_party_name_field(d.party_type)
+			d.party_name = frappe.get_cached_value(d.party_type, d.party, fieldname)
+		else:
+			d.party_name = ""
+
 def validate_account_debit_credit(self):
+	if self.total_credit == 0 or self.total_debit == 0:
+		frappe.throw(_("Credit and Debit must be greater than zero"))
+	if self.balance != 0:
+		frappe.throw(_("Balance must be zero"))
 	msg = ""
 	for a in self.account_entries:
 		if a.debit > 0 and a.credit > 0:
-			msg += "<b>Row {0}</b>: You cannot credit and debit same account at the same time.".format(a.idx)
+			msg += "<b>Row {0}</b>: You cannot credit and debit same account at the same time.</br>".format(a.idx)
 	if msg:
 		frappe.throw(msg)
-
 
 def get_party_name_field(party_type):
 	if party_type:
@@ -94,6 +86,7 @@ def get_party_name_field(party_type):
 			frappe.throw(_("Party type must be either Customer or Vendor or Employee"))
 	else:
 		return None
+	
 def submit_to_general_ledger_entry(self):
 	docs = []
 	for i in self.account_entries:
@@ -104,7 +97,6 @@ def submit_to_general_ledger_entry(self):
 			"account":i.account,
 			"debit_amount":i.debit,
 			"credit_amount":i.credit,
-
 			"againt":(i.party or "") + " - " + (i.party_name or ""),
 			"voucher_type":"Journal Entry",
 			"voucher_no":self.name,
@@ -112,7 +104,5 @@ def submit_to_general_ledger_entry(self):
 			"party":i.party,
 			"remark":i.description
 		}
-
 		docs.append(doc)
-
 	submit_general_ledger_entry(docs=docs)

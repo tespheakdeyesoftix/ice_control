@@ -27,7 +27,7 @@ class Banks(Document):
 				frappe.db.commit()
 				frappe.msgprint(f"Bank {self.name} is set as default bank.")
 		else:
-			if self.is_default != old_doc.is_default:
+			if self.is_default != old_doc.is_default and self.is_default == 1:
 				frappe.db.sql("update `tabBanks` set is_default=0 where name != %s", self.name)
 				frappe.db.commit()
 				frappe.msgprint(f"Bank {self.name} is set as default bank.")

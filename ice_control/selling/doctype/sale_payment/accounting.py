@@ -77,7 +77,7 @@ def submit_to_gl_entry(self):
                     "party_type": "Customer",
                     "party": self.customer,
                     "party_name": self.customer_name,
-                    "transaction_type":"Receivable",
+                    "transaction_type":"Payment",
                     
                 },
             ]

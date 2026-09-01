@@ -13,7 +13,8 @@
   "default_stock_location",
   "accounting_tab",
   "default_receivable_account",
-  "default_income_account"
+  "default_income_account",
+  "default_payable_account"
  ],
  "fields": [
   {
@@ -61,12 +62,19 @@
    "label": "Default Income Account",
    "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"=\",\"Income\"]]",
    "options": "Chart of Account"
+  },
+  {
+   "fieldname": "default_payable_account",
+   "fieldtype": "Link",
+   "label": "Default Payable Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"=\",\"Payable\"]]",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-29 16:20:24.396160",
+ "modified": "2026-09-01 14:31:51.425400",
  "modified_by": "Administrator",
  "module": "Setting",
  "name": "Outlet",

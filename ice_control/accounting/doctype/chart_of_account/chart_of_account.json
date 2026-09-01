@@ -6,18 +6,20 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "account_code",
   "parent_chart_of_account",
+  "account_code",
   "account_name",
-  "account_name_kh",
-  "is_group",
   "column_break_rwal",
   "account_type",
   "root_type",
+  "is_group",
+  "section_break_lvlt",
+  "descriptions",
   "section_break_snju",
   "lft",
-  "rgt",
-  "old_parent"
+  "old_parent",
+  "column_break_uyoi",
+  "rgt"
  ],
  "fields": [
   {
@@ -39,12 +41,8 @@
   {
    "fieldname": "account_name",
    "fieldtype": "Data",
-   "label": "Account Name"
-  },
-  {
-   "fieldname": "account_name_kh",
-   "fieldtype": "Data",
-   "label": "Account Name Kh"
+   "label": "Account Name",
+   "reqd": 1
   },
   {
    "default": "0",
@@ -70,7 +68,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Root Type",
-   "options": "\nAsset\nLiabilities\nEquity\nIncome\nExpenses"
+   "options": "Asset\nLiabilities\nEquity\nIncome\nExpenses",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_snju",
@@ -98,12 +97,25 @@
    "label": "Right",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_uyoi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_lvlt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "descriptions",
+   "fieldtype": "Small Text",
+   "label": "Descriptions"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-28 14:50:00.145820",
+ "modified": "2026-09-01 14:34:25.950453",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Chart of Account",
