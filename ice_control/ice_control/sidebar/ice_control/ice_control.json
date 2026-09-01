@@ -178,6 +178,22 @@
    "indent": 0,
    "is_default_module": 1,
    "keep_closed": 0,
+   "label": "\u17a2\u17b6\u1799\u17bb\u1780\u17b6\u179b\u1787\u17c6\u1796\u17b6\u1780\u17cb",
+   "link_to": "Account Receivable Aging",
+   "link_type": "Report",
+   "open_in_new_tab": 1,
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "added": 0,
+   "child": 1,
+   "collapsible": 1,
+   "hidden": 0,
+   "icon": "chevron-right",
+   "indent": 0,
+   "is_default_module": 1,
+   "keep_closed": 0,
    "label": "\u1782\u178e\u1793\u17b8\u179f\u1784\u1794\u17d2\u179a\u17b6\u1780\u17cb",
    "link_to": "Account Payable",
    "link_type": "Report",
@@ -506,7 +522,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-08-31 08:45:48.259712",
+ "modified": "2026-09-01 07:09:57.183886",
  "modified_by": "Administrator",
  "module": "ice_control",
  "name": "ice_control",

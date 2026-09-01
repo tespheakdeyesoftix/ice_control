@@ -68,12 +68,6 @@ def ensure_date(posting_date,creation):
     else:
         return datetime.now()
 
-# we call this from hook
-@frappe.whitelist()
-def validate_close_date(doc,method):
-    if doc.doctype in get_validate_close_date_doctype():
-        frappe.msgprint("validate close date from hook")
-        get_previous_closed_date(doc.posting_date, doc.creation, doc.outlet)
 
 @redis_cache(ttl=60*60*24)
 def get_validate_close_date_doctype():
@@ -89,6 +83,17 @@ def get_previous_closed_date(posting_date:str|date,creation:str|datetime,outlet:
         posting_date =frappe.utils.getdate(ensure_date(str(posting_date),str(creation)))
         previous_closed_date = frappe.utils.getdate(ensure_date(str(b[0]["posting_date"]),str(b[0]["creation"])))
 
+
+        if previous_closed_date >= posting_date:
+            frappe.throw("អ្នកមិនធ្វើប្រតិបត្តិការនេះបានទេ។ ព្រោះថ្ងៃទី {} ត្រូបានបិទបញ្ជីររួចហើយ.".format(frappe.format(previous_closed_date,{"fieldtype":"Date"})))
+
+def validate_close_date(posting_date:str|date,creation:str|datetime,outlet:str):
+
+    b = frappe.db.sql("select posting_date,creation from `tabClosed Selling Date` where docstatus=1 and outlet = '{0}' order by CONCAT(posting_date,' ',DATE_FORMAT(modified, '%H:%i:%s')) desc limit 1".format(outlet),as_dict=1)
+
+    if len(b or []) > 0:
+        posting_date =frappe.utils.getdate(ensure_date(str(posting_date),str(creation)))
+        previous_closed_date = frappe.utils.getdate(ensure_date(str(b[0]["posting_date"]),str(b[0]["creation"])))
 
         if previous_closed_date >= posting_date:
             frappe.throw("អ្នកមិនធ្វើប្រតិបត្តិការនេះបានទេ។ ព្រោះថ្ងៃទី {} ត្រូបានបិទបញ្ជីររួចហើយ.".format(frappe.format(previous_closed_date,{"fieldtype":"Date"})))

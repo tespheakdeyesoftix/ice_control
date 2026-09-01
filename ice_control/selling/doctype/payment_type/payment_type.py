@@ -13,8 +13,10 @@ class PaymentType(Document):
 
 	if TYPE_CHECKING:
 		from frappe.types import DF
+		from ice_control.accounting.doctype.has_default_account.has_default_account import HasDefaultAccount
 
 		currency: DF.Link | None
+		default_account: DF.Table[HasDefaultAccount]
 		enabled: DF.Check
 		is_default: DF.Check
 		payment_type: DF.Data | None

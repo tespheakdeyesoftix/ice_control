@@ -484,8 +484,7 @@
   },
   {
    "fieldname": "html_payment_history",
-   "fieldtype": "HTML",
-   "options": "<div id=\"payment_history\"></div>"
+   "fieldtype": "HTML"
   },
   {
    "fieldname": "booking_number",
@@ -504,7 +503,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-08-31 08:20:10.927443",
+ "modified": "2026-08-31 16:19:18.240275",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

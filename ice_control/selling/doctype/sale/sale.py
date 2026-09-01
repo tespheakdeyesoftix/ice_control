@@ -4,7 +4,7 @@ from frappe import _
 from frappe.model.document import Document
 import json
 from datetime import datetime, date
-from ice_control.api.utils import get_previous_closed_date,get_sale_product_changed,get_exchange_rate,get_current_employee_outlets
+from ice_control.api.utils import validate_close_date,get_sale_product_changed,get_exchange_rate,get_current_employee_outlets
 from ice_control.api.inventory import add_inventory_transaction,get_stock_location_prouct,get_product_units_multiplier
 from ice_control.selling.doctype.sale.accounting import submit_to_gl_entry
 
@@ -75,7 +75,7 @@ class Sale(Document):
 	def validate(self):
 		
 		self.validate_require_fields()
-		get_previous_closed_date(self.posting_date,self.creation,self.outlet)
+		validate_close_date(self.posting_date,self.creation,self.outlet)
 		if(self.parent_bill_number):
 			# check if customer already have split bill
 			if self.is_new() and  frappe.db.exists("Sale",{"parent_bill_number":self.parent_bill_number,"customer":self.customer,"sale_status":"Closed"}):
@@ -871,8 +871,10 @@ def change_sale_date(sale,date,station_name=""):
 	sale_doc = frappe.get_doc("Sale",sale)
 	if sale_doc.posting_date == date:
 		return
-	get_previous_closed_date(sale_doc.posting_date, frappe.utils.now(), sale_doc.outlet)
-	get_previous_closed_date(date,frappe.utils.now(), sale_doc.outlet)
+	validate_close_date(sale_doc.posting_date, frappe.utils.now(), sale_doc.outlet)
+	validate_close_date(date,frappe.utils.now(), sale_doc.outlet)
+	
+
 	# already have payment
 	if sale_doc.total_payment> 0:
 		frappe.throw("អ្នកមិនអាចកែថ្ងៃចេញបុងនេះបានទេ ព្រោះបុងនេះបានបង់ប្រាក់រួចហើយ")

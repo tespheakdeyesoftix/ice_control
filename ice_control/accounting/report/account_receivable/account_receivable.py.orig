@@ -225,9 +225,9 @@ def get_totals(data: list[dict]) -> dict:
 	total_opening = sum(flt(row.get("opening_balance")) for row in data)
 	total_debit = sum(flt(row.get("debit_amount")) for row in data)
 	total_credit = sum(flt(row.get("credit_amount")) for row in data)
-	total_write_off = sum(flt(row.get("write_off_amount")) for row in data)
 
 	return {
+	total_write_off = sum(flt(row.get("write_off_amount")) for row in data)
 		"opening_balance": total_opening,
 		"debit_amount": total_debit,
 		"credit_amount": total_credit,

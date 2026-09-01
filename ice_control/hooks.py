@@ -167,7 +167,8 @@ permission_query_conditions = {
 	"Sale":  "ice_control.selling.doctype.sale.sale.get_permission_query_conditions",
 	"Sale Payment":  "ice_control.selling.doctype.sale_payment.sale_payment.get_permission_query_conditions",
 	"Role": "ice_control.api.permission.role_has_permission",
-	"Module Def": "ice_control.api.permission.module_def_has_permission"
+	"Module Def": "ice_control.api.permission.module_def_has_permission",
+	"Currency": "ice_control.api.permission.currency_has_permission"
 }
 
 #

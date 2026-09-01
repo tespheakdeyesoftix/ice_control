@@ -26,12 +26,17 @@ frappe.ui.form.on("Sale Payment", {
       refresh(frm) {
          frm.__previous_customer = frm.doc.customer;
          frm.__previous_outlet = frm.doc.outlet;
+         refreshSalePaymentIndicators(frm);
          updateExchangeRateDisplay(frm);
          renderSalePaymentSummary(frm);
          hideSalesGridRowActions(frm);
          setTimeout(() => {
             setupSalesRowIndicators(frm);
          }, 500);
+
+         if (frm.is_new() && frm.doc.sale) {
+            addSaleFromRoute(frm);
+         }
 
          if (frm.doc.docstatus === 0) {
             frm.add_custom_button(__("Select Sale Invoice"), () => {
@@ -68,6 +73,101 @@ frappe.ui.form.on("Sale Payment", {
 
 
 })
+
+async function addSaleFromRoute(frm) {
+    const saleName = frm.doc.sale;
+    if (!saleName || frm.__adding_route_sale === saleName) return;
+
+    frm.doc.sales = (frm.doc.sales || []).filter(row => row.sale);
+    if (frm.doc.sales.some(row => row.sale === saleName)) {
+        frm.refresh_field("sales");
+        return;
+    }
+
+    frm.__adding_route_sale = saleName;
+    try {
+        const result = await frappe.db.get_value("Sale", saleName, [
+            "name",
+            "customer",
+            "outlet",
+            "posting_date",
+            "total_amount",
+            "total_payment",
+            "balance",
+        ]);
+        const sale = result.message;
+
+        if (
+            !sale?.name
+            || !frm.is_new()
+            || frm.doc.sale !== saleName
+            || (frm.doc.sales || []).some(row => row.sale === saleName)
+        ) {
+            return;
+        }
+
+        const row = frm.add_child("sales");
+        row.sale = sale.name;
+        row.customer = sale.customer;
+        row.outlet = sale.outlet;
+        row.posting_date = sale.posting_date;
+        row.total_amount = sale.total_amount;
+        row.paid_amount = sale.total_payment;
+        row.sale_balance = sale.balance;
+        row.balance = sale.balance;
+
+        frm.refresh_field("sales");
+        await callAllocatePaymentAmount(frm);
+    } finally {
+        if (frm.__adding_route_sale === saleName) {
+            frm.__adding_route_sale = null;
+        }
+    }
+}
+
+function refreshSalePaymentIndicators(frm) {
+    const requestId = (frm.__sale_payment_indicator_request_id || 0) + 1;
+    frm.__sale_payment_indicator_request_id = requestId;
+
+    if (frm.doc.docstatus !== 1) return;
+    frm.dashboard.clear_headline();
+    addSalePaymentIndicators(frm, requestId);
+}
+
+async function addSalePaymentIndicators(frm, requestId) {
+    const defaultCurrency = await getDefaultCurrency(frm);
+    const precision = await getCurrencyPrecision(frm, defaultCurrency);
+
+    if (
+        frm.doc.docstatus !== 1
+        || frm.__sale_payment_indicator_request_id !== requestId
+    ) {
+        return;
+    }
+
+    const formatAmount = value => format_currency(
+        flt(value),
+        defaultCurrency,
+        precision
+    );
+
+    frm.dashboard.add_indicator(
+        __("Amount to Pay") + ": " + formatAmount(frm.doc.amount_to_pay),
+        "blue"
+    );
+    frm.dashboard.add_indicator(
+        __("Payment Amount") + ": " + formatAmount(frm.doc.payment_amount),
+        "green"
+    );
+    frm.dashboard.add_indicator(
+        __("Write Off Amount") + ": " + formatAmount(frm.doc.write_off_amount),
+        "red"
+    );
+    frm.dashboard.add_indicator(
+        __("Balance") + ": " + formatAmount(frm.doc.balance),
+        "blue"
+    );
+}
 
 function handleSaleContextChange(frm, fieldname) {
     if (frm.__reverting_sale_context) return;
@@ -110,36 +210,50 @@ frappe.ui.form.on("Sale Payment Invoices", {
         }
     },
     sales_remove(frm) {
-        scheduleAllocatePaymentAmount(frm);
+        scheduleAllocationAfterRowRemoval(frm);
     },
     sale(frm) {
         frappe.after_ajax(() => callAllocatePaymentAmount(frm));
     },
     async payment_amount(frm, cdt, cdn) {
-        updateChildSaleBalance(frm, cdt, cdn);
-        await callUpdateSummary(frm);
+        if (frm.__syncing_manual_child_amounts) return;
+        frm.__syncing_manual_child_amounts = true;
+        try {
+            updateChildSaleBalance(frm, cdt, cdn);
+            await syncParentPaymentAmount(frm);
+            await callUpdateSummary(frm);
+        } finally {
+            frm.__syncing_manual_child_amounts = false;
+        }
     },
     async write_off_amount(frm, cdt, cdn) {
-        const row = locals[cdt][cdn];
-        const saleBalance = Math.max(flt(row.sale_balance), 0);
-        const writeOffAmount = Math.min(
-            Math.max(flt(row.write_off_amount), 0),
-            saleBalance
-        );
+        if (frm.__syncing_manual_child_amounts) return;
+        frm.__syncing_manual_child_amounts = true;
+        try {
+            const row = locals[cdt][cdn];
+            const saleBalance = Math.max(flt(row.sale_balance), 0);
+            const writeOffAmount = Math.min(
+                Math.max(flt(row.write_off_amount), 0),
+                saleBalance
+            );
 
-        row.write_off_amount = writeOffAmount;
-        if (writeOffAmount > 0) {
-            row.payment_amount = saleBalance - writeOffAmount;
-            row.balance = 0;
-        } else {
-            updateChildSaleBalance(frm, cdt, cdn);
+            row.write_off_amount = writeOffAmount;
+            if (writeOffAmount > 0) {
+                row.payment_amount = saleBalance - writeOffAmount;
+                row.balance = 0;
+            } else {
+                updateChildSaleBalance(frm, cdt, cdn);
+            }
+
+            frm.refresh_field("sales");
+            updateWriteOffPaymentLock(
+                frm.get_field("sales")?.grid?.grid_rows_by_docname?.[cdn]
+            );
+            await syncParentPaymentAmount(frm);
+            await callUpdateSummary(frm);
+        } finally {
+            frm.__syncing_manual_child_amounts = false;
         }
-
-        frm.refresh_field("sales");
-        updateWriteOffPaymentLock(
-            frm.get_field("sales")?.grid?.grid_rows_by_docname?.[cdn]
-        );
-        await callUpdateSummary(frm);
     },
 });
 
@@ -193,6 +307,11 @@ async function openSaleInvoiceDialog(frm) {
                 frappe.msgprint(__("Please select at least one Sale Invoice."));
                 return;
             }
+
+            frm.doc.sales = (frm.doc.sales || []).filter(row => row.sale);
+            frm.doc.sales.forEach((row, index) => {
+                row.idx = index + 1;
+            });
 
             selected.forEach(sale => {
                 const row = frm.add_child("sales");
@@ -289,11 +408,46 @@ function scheduleAllocatePaymentAmount(frm) {
     }, 150);
 }
 
+function scheduleAllocationAfterRowRemoval(frm) {
+    clearTimeout(frm.__allocate_payment_timer);
+    frm.__allocate_payment_timer = setTimeout(async () => {
+        frm.__allocate_payment_timer = null;
+        await syncParentPaymentAmount(frm);
+        await callAllocatePaymentAmount(frm);
+    }, 150);
+}
+
 function updateChildSaleBalance(frm, cdt, cdn) {
     const row = locals[cdt][cdn];
     row.balance = flt(row.sale_balance) - flt(row.payment_amount) - flt(row.write_off_amount);
     frm.refresh_field("sales");
 }
+
+async function syncParentPaymentAmount(frm) {
+    const paymentAmount = (frm.doc.sales || []).reduce(
+        (total, row) => total + flt(row.payment_amount),
+        0
+    );
+    const defaultCurrency = await getDefaultCurrency(frm);
+    const paymentCurrency = frm.doc.currency || defaultCurrency;
+    const exchangeRate = flt(frm.doc.exchange_rate);
+
+    if (!frm.doc.payment_type || !paymentCurrency) {
+        frappe.throw(__("Please select a Payment Type before entering payment amounts."));
+    }
+    if (paymentCurrency !== defaultCurrency && exchangeRate <= 0) {
+        frappe.throw(__("A valid Exchange Rate is required for {0}.", [paymentCurrency]));
+    }
+
+    frm.doc.payment_amount = paymentAmount;
+    frm.doc.input_amount = paymentCurrency === defaultCurrency
+        ? paymentAmount
+        : paymentAmount * exchangeRate;
+    frm.refresh_field("payment_amount");
+    frm.refresh_field("input_amount");
+    renderSalePaymentSummary(frm);
+}
+
 
 function hideSalesGridRowActions(frm) {
     const wrapper = frm.get_field("sales")?.$wrapper;
@@ -412,14 +566,7 @@ async function renderAmountToPayDisplay(frm) {
     const field = frm.get_field("html_amount_to_pay");
     if (!field) return;
 
-    if (!frm.__default_currency_promise) {
-        frm.__default_currency_promise = frappe.db.get_single_value(
-            "Business Information",
-            "default_currency"
-        );
-    }
-
-    const defaultCurrency = await frm.__default_currency_promise;
+    const defaultCurrency = await getDefaultCurrency(frm);
     const paymentCurrency = frm.doc.currency || defaultCurrency;
     const defaultAmount = flt(frm.doc.amount_to_pay);
     const exchangeRate = flt(frm.doc.exchange_rate) || 1;
@@ -458,6 +605,16 @@ async function renderAmountToPayDisplay(frm) {
     }).join("");
 
     field.$wrapper.html(`<div class="row">${html}</div>`);
+}
+
+async function getDefaultCurrency(frm) {
+    if (!frm.__default_currency_promise) {
+        frm.__default_currency_promise = frappe.db.get_single_value(
+            "Business Information",
+            "default_currency"
+        );
+    }
+    return frm.__default_currency_promise;
 }
 
 async function getCurrencyPrecision(frm, currency) {

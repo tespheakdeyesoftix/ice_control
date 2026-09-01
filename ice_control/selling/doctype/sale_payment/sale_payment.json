@@ -17,6 +17,7 @@
   "column_break_gvuo",
   "payment_type",
   "currency",
+  "account_code",
   "exchange_rate",
   "exchange_rate_display",
   "section_break_ewim",
@@ -99,7 +100,6 @@
    "description": "We use this field to identify that this payment transaction is a single sale payment, this field value is auto assign by Route Option when user click add payment from Sale Detail Form",
    "fieldname": "sale",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Sale",
    "options": "Sale",
    "search_index": 1
@@ -157,6 +157,7 @@
    "fetch_from": "customer.customer_name",
    "fieldname": "customer_name",
    "fieldtype": "Data",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Customer Name"
   },
@@ -177,7 +178,7 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:doc.enable_multiple_payment_type ==0",
+   "depends_on": "eval:doc.exchange_rate !=1 ",
    "fieldname": "payment_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -293,6 +294,13 @@
    "fieldname": "html_amount_to_pay",
    "fieldtype": "HTML",
    "label": "HTML Amount to Pay"
+  },
+  {
+   "fieldname": "account_code",
+   "fieldtype": "Link",
+   "label": "Payment to Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"=\",\"Cash\"]]",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
@@ -300,7 +308,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-31 11:13:37.356347",
+ "modified": "2026-08-31 22:00:47.703264",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

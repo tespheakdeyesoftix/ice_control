@@ -13,7 +13,9 @@
   "is_default",
   "column_break_eapr",
   "sort_order",
-  "currency"
+  "currency",
+  "accounting_tab",
+  "default_account"
  ],
  "fields": [
   {
@@ -59,12 +61,23 @@
    "in_list_view": 1,
    "label": "Currency",
    "options": "Currency"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_account",
+   "fieldtype": "Table",
+   "label": "Default Account",
+   "options": "Has Default Account"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-28 09:00:16.311330",
+ "modified": "2026-08-31 20:50:44.229548",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Payment Type",

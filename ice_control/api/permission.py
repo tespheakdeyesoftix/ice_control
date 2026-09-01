@@ -12,6 +12,10 @@ def module_def_has_permission(user:str):
     
     return query
 
+def currency_has_permission(user:str):
+    query = f"""(`tabCurrency`.`name`  in ('USD','KHR'))"""
+    return query
+
 def role_has_permission(user:str):
     if not user:
         user = frappe.session.user
