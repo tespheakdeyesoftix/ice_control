@@ -1,4 +1,4 @@
-
+ 
 <table class="table table-striped" style="margin:0px">
     <thead>
 		 <th class="text-left">{{__("Receipt #")}}</th>
@@ -16,7 +16,7 @@
            <tr>
 
             <td><a href="/app/sale-payment/{{d.receipt_number}}">{{d.receipt_number}}</a></td>
-			<td>{{ frappe.format(d.payment_date,{"fieldtype":"Date"})}}</td>
+			<td>{{ frappe.format(d.posting_date,{"fieldtype":"Date"})}}</td>
             <td>{{frappe.format(d.payment_amount,{"fieldtype":"Currency"})}}</td>
             <td>{{frappe.format(d.write_off_amount,{"fieldtype":"Currency"})}}</td>
             <td>{{d.created_by}}</td>

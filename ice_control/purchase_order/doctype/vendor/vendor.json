@@ -2,11 +2,13 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
- "autoname": "field:vendor_name",
+ "autoname": "naming_series:",
  "creation": "2026-08-14 14:26:27.533834",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
+  "vendor_code",
   "vendor_name",
   "vendor_group",
   "phone_number_1",
@@ -22,8 +24,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Vendor Name",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "fieldname": "vendor_group",
@@ -64,16 +65,28 @@
    "fieldtype": "Table",
    "label": "Product Price",
    "options": "Vendor Product Price"
+  },
+  {
+   "fieldname": "vendor_code",
+   "fieldtype": "Data",
+   "label": "Vendor Code",
+   "unique": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "V.####"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-15 15:23:05.622302",
+ "modified": "2026-09-01 09:13:12.765569",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Vendor",
- "naming_rule": "By fieldname",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

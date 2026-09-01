@@ -277,7 +277,7 @@ function addCustomButton(frm) {
     }
 
     // delete button
-    if (!frm.is_new() && frm.doc.sale_status != "Deleted" && frm.doc.status !="Paid" && frm.doc.status !="Partially Paid") {
+    if (!frm.is_new() && frm.doc.sale_status != "Deleted") {
         const deleteLabel = __("\u179b\u17bb\u1794\u1794\u17bb\u1784");
 
         frm.page.set_secondary_action(deleteLabel, () => {
@@ -340,13 +340,6 @@ function setSaleFormReadOnly(frm) {
 
 
 function openEditOrderDialog(frm) {
-    if (
-        frm.doc.total_payment > 0
-        || ["Paid", "Partially Paid"].includes(frm.doc.status)
-    ) {
-        frappe.throw(__("Cannot edit this bill because it has already been paid."));
-    }
-
     const dialog = new frappe.ui.Dialog({
         title: __("Edit Order"),
         fields: [

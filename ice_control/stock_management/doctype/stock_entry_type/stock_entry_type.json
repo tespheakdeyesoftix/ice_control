@@ -2,53 +2,53 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
- "autoname": "field:bank_name",
- "creation": "2026-08-25 10:52:44.882012",
+ "autoname": "field:stock_entry_type",
+ "creation": "2026-09-01 08:56:48.796602",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "bank_name",
-  "bank_number",
-  "is_default",
-  "enabled",
-  "column_break_ubak"
+  "stock_entry_type",
+  "multiplier",
+  "title",
+  "allow_change_cost",
+  "column_break_vimz"
  ],
  "fields": [
   {
-   "fieldname": "bank_name",
+   "fieldname": "stock_entry_type",
    "fieldtype": "Data",
-   "label": "Bank Name",
+   "label": "Stock Entry Type",
    "unique": 1
   },
   {
-   "fieldname": "bank_number",
+   "fieldname": "multiplier",
+   "fieldtype": "Int",
+   "label": "Multiplier",
+   "options": "1"
+  },
+  {
+   "fieldname": "title",
    "fieldtype": "Data",
-   "label": "Bank Number"
+   "label": "Title"
   },
   {
    "default": "0",
-   "fieldname": "is_default",
+   "fieldname": "allow_change_cost",
    "fieldtype": "Check",
-   "label": "Is Default"
+   "label": "Allow Change Cost"
   },
   {
-   "default": "1",
-   "fieldname": "enabled",
-   "fieldtype": "Check",
-   "label": "Enabled"
-  },
-  {
-   "fieldname": "column_break_ubak",
+   "fieldname": "column_break_vimz",
    "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-01 08:43:11.794876",
+ "modified": "2026-09-01 09:01:46.012805",
  "modified_by": "Administrator",
- "module": "Selling",
- "name": "Banks",
+ "module": "Stock Management",
+ "name": "Stock Entry Type",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
@@ -67,10 +67,7 @@
  ],
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
- "search_fields": "bank_name",
- "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": [],
- "title_field": "bank_name"
+ "states": []
 }

@@ -1,0 +1,133 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-09-01 09:33:33.744814",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "transfer_date",
+  "from_stock_location",
+  "to_stock_location",
+  "column_break_fopg",
+  "status",
+  "section_break_isim",
+  "stock_transfer_product_items",
+  "section_break_nbbf",
+  "note",
+  "column_break_glhu",
+  "requested_by",
+  "approved_by",
+  "approved_at"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "ST.YYYY.-.####"
+  },
+  {
+   "fieldname": "transfer_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Transfer Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "From Stock Location",
+   "options": "Stock Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "To Stock Location",
+   "options": "Stock Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_fopg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nPending\nApproved\nCompleted\nCancelled"
+  },
+  {
+   "fieldname": "section_break_isim",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "stock_transfer_product_items",
+   "fieldtype": "Table",
+   "label": "Stock Transfer Product Items",
+   "options": "Stock Transfer Products"
+  },
+  {
+   "fieldname": "section_break_nbbf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "column_break_glhu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "requested_by",
+   "fieldtype": "Link",
+   "label": "Requested By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approved_at",
+   "fieldtype": "Date",
+   "label": "Approved At"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-01 12:10:20.704847",
+ "modified_by": "Administrator",
+ "module": "Stock Management",
+ "name": "Stock Transfer",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

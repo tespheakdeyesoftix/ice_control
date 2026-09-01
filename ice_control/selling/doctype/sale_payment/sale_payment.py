@@ -4,8 +4,8 @@
 import frappe
 from frappe.model.document import Document
 from frappe import _
-from frappe.utils import escape_html, flt, fmt_money, formatdate
-from ice_control.api.utils import get_default_outlet,money_to_word,get_exchange_rate,get_current_employee_outlets
+from frappe.utils import escape_html, flt, fmt_money, formatdate, getdate, today
+from ice_control.api.utils import get_default_outlet,money_to_word,get_exchange_rate,get_current_employee_outlets,validate_close_date
 from ice_control.api.accounting import get_customer_credit_balance as _get_customer_credit_balance
 from ice_control.selling.doctype.sale_payment.accounting import submit_to_gl_entry
 
@@ -52,14 +52,14 @@ class SalePayment(Document):
 
 
 	def validate(self):
+		if self.posting_date and getdate(self.posting_date) > getdate(today()):
+			frappe.throw(_("Posting Date cannot be later than today."))
+
+		validate_close_date(self.posting_date, self.creation, self.outlet)
 		if self.is_new():
 			self.created_by = frappe.get_cached_value("User",frappe.session.user,"full_name")
 
 	def before_submit(self):
-		self.validate_sale_invoices()
-
-		if self.amount_to_pay < self.payment_amount:
-			frappe.throw("ទឹកប្រាក់បង់មិនអាចធំជាងទឹកប្រាក់ត្រូវបង់ទេ")
 		# validate account_code
 		payment_type_doc = frappe.get_cached_doc("Payment Type", self.payment_type)
 		default_account_record = next((x for x in payment_type_doc.default_account if x.get("outlet") == self.outlet), None)
@@ -67,6 +67,15 @@ class SalePayment(Document):
 			self.account_code = default_account_record.default_sale_payment_account
 		else:
 			frappe.throw("សូមជ្រើសរើសលេខកូដគនណី")
+		# we validate this from sale auto post to sale payment
+		if   self.flags.ingore_validation:
+			return
+
+		self.validate_sale_invoices()
+		if self.payment_amount>self.amount_to_pay:
+			frappe.throw("ទឹកប្រាក់បង់មិនអាចលើសទឹកប្រាក់ត្រូវបង់បានទេ")	
+
+		
 			
 	def on_submit(self):
 		submit_to_gl_entry(self)
@@ -89,6 +98,7 @@ class SalePayment(Document):
 			)
 
 	def on_cancel(self):
+		validate_close_date(self.posting_date, frappe.utils.now(),self.outlet)
 		frappe.db.sql(
 			"""
 			DELETE FROM `tabGL Entry`
@@ -181,7 +191,7 @@ class SalePayment(Document):
 				continue
 
 			content = _(
-				"Payment received {0} on {1}. Write-off amount: {2}. Payment receipt number: {3}."
+				"បានទទួលប្រាក់ចំនួន {0} នៅថ្ងៃទី {1}. កាត់ចោល: {2}. លេខបង្កាន់ដៃបង់ប្រាក់: {3}."
 			).format(
 				frappe.bold(fmt_money(payment_amount, currency=currency)),
 				frappe.bold(payment_date),
@@ -189,8 +199,8 @@ class SalePayment(Document):
 				frappe.bold(escape_html(self.name)),
 			)
 			if note:
-				content += " " + _("Note: {0}.").format(note)
-			content += " " + _("Received by: {0}.").format(frappe.bold(received_by))
+				content += " " + _("ចំណាំ: {0}.").format(note)
+			content += " " + _("ទទួលដោយ: {0}.").format(frappe.bold(received_by))
 			content += f"<!-- {marker} -->"
 
 			frappe.get_doc("Sale", row.sale).add_comment("Comment", content)
@@ -272,9 +282,10 @@ class SalePayment(Document):
 	@frappe.whitelist(methods=["POST"])
 	def update_summary(self):
 		sales = [x for x in self.sales if x.get("sale")] or []
+		exchange_rate = flt(self.exchange_rate) or 1
 		self.total_sales_invoice = len(sales)
 		self.amount_to_pay = sum([x.get("sale_balance") or 0 for x in sales])
-		self.payment_amount = sum([flt(x.get("payment_amount")) for x in sales])
+		self.payment_amount = max(flt(self.input_amount) / exchange_rate, 0)
 		self.payment_amount_in_word =money_to_word(self.payment_amount or 0)
 		self.write_off_amount = sum([x.get("write_off_amount") or 0 for x in sales])
 		self.balance =  sum([x.get("balance") or 0 for x in sales])

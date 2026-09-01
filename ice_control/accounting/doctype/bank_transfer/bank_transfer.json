@@ -12,16 +12,22 @@
   "transfer_type",
   "posting_date",
   "outlet",
-  "currency",
-  "exchange_rate",
   "column_break_iccg",
   "input_amount",
   "amount",
-  "withdraw_by",
-  "amended_from",
   "bank",
+  "bank_number",
+  "section_break_slhe",
+  "withdraw_by",
+  "column_break_lune",
+  "withdraw_by_name",
+  "section_break_fkcg",
+  "currency",
+  "column_break_tjzq",
+  "exchange_rate",
   "section_break_xdsj",
-  "note"
+  "note",
+  "amended_from"
  ],
  "fields": [
   {
@@ -81,6 +87,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "0",
    "fieldname": "input_amount",
    "fieldtype": "Float",
    "label": "Input Amount"
@@ -122,13 +129,44 @@
    "fieldtype": "Link",
    "label": "Bank",
    "options": "Banks"
+  },
+  {
+   "fieldname": "section_break_fkcg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_tjzq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "bank.bank_number",
+   "fieldname": "bank_number",
+   "fieldtype": "Data",
+   "label": "Bank Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_slhe",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_lune",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "withdraw_by.full_name",
+   "fetch_if_empty": 1,
+   "fieldname": "withdraw_by_name",
+   "fieldtype": "Data",
+   "label": "Withdraw By Name",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-31 17:06:31.546525",
+ "modified": "2026-09-01 08:47:43.938109",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Bank Transfer",

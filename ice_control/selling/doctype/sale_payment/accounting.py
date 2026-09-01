@@ -44,9 +44,16 @@ def submit_to_gl_entry(self):
         "voucher_no": self.name,
         "reference_doctype": "Sale Payment",
         "reference_docname": self.name,
-        "remark": self.note or _("Payment received from {0}").format(
-            self.customer_name
-        ),
+       "remark":self.note or _(
+                                "បានទទួលប្រាក់ពី {0}. លេខវិក្កយបត្រ: {1}"
+                            ).format(
+                                self.customer_name,
+                                ", ".join(
+                                    f"{row.sale}: {frappe.format(row.payment_amount,{'fieldtype':'Currency'})}"
+                                    for row in self.sales
+                                    if row.payment_amount > 0
+                                ),
+                            ),
     }
     entries = []
 
@@ -63,7 +70,6 @@ def submit_to_gl_entry(self):
                 },
                 {
                     **base_entry,
-                    "transaction_type": "Payment",
                     "account": receivable_account,
                     "account_type": get_account_type(receivable_account),
                     "credit_amount": payment_amount,
@@ -71,11 +77,19 @@ def submit_to_gl_entry(self):
                     "party_type": "Customer",
                     "party": self.customer,
                     "party_name": self.customer_name,
+                    "transaction_type":"Receivable",
+                    
                 },
             ]
         )
 
     if write_off_amount > 0:
+        write_off_sales = [x for x in self.sales if (x.write_off_amount or 0)>0]
+
+        remark = "កាត់ចោលពីបុង " + ", ".join(
+            f"{x.sale}: {frappe.format(x.write_off_amount,{'fieldtype':'Currency'})}"
+            for x in write_off_sales
+        )
         entries.append(
             {
                 **base_entry,
@@ -87,6 +101,9 @@ def submit_to_gl_entry(self):
                 "party_type": "Customer",
                 "party": self.customer,
                 "party_name": self.customer_name,
+                "remark":remark
+
+
             }
         )
 

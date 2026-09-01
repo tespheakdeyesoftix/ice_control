@@ -14,7 +14,7 @@ class JournalEntry(Document):
 
 	if TYPE_CHECKING:
 		from frappe.types import DF
-		from ice_control.selling.doctype.journal_entry_account.journal_entry_account import JournalEntryAccount
+		from ice_control.accounting.doctype.journal_entry_account.journal_entry_account import JournalEntryAccount
 
 		account_entries: DF.Table[JournalEntryAccount]
 		amended_from: DF.Link | None
@@ -35,6 +35,7 @@ class JournalEntry(Document):
 	_DOCTYPE_NAME = "Journal Entry"
 
 	def validate(self):
+		validate_account_debit_credit(self)
 		self.total_debit = sum(d.debit for d in self.get("account_entries"))
 		self.total_credit = sum(d.credit for d in self.get("account_entries"))
 
@@ -71,6 +72,15 @@ class JournalEntry(Document):
 	def on_cancel(self):
 		self.flags.ignore_links = 1
 		cancel_general_ledger_entery("Journal Entry", self.name)
+
+def validate_account_debit_credit(self):
+	msg = ""
+	for a in self.account_entries:
+		if a.debit > 0 and a.credit > 0:
+			msg += "<b>Row {0}</b>: You cannot credit and debit same account at the same time.".format(a.idx)
+	if msg:
+		frappe.throw(msg)
+
 
 def get_party_name_field(party_type):
 	if party_type:

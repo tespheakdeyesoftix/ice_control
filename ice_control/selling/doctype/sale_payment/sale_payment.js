@@ -26,8 +26,10 @@ frappe.ui.form.on("Sale Payment", {
       refresh(frm) {
          frm.__previous_customer = frm.doc.customer;
          frm.__previous_outlet = frm.doc.outlet;
+         frm.__previous_posting_date = frm.doc.posting_date;
          refreshSalePaymentIndicators(frm);
          updateExchangeRateDisplay(frm);
+         styleInputAmountField(frm);
          renderSalePaymentSummary(frm);
          hideSalesGridRowActions(frm);
          setTimeout(() => {
@@ -45,8 +47,7 @@ frappe.ui.form.on("Sale Payment", {
          }
       },
       posting_date(frm) {
-
-         frm.call("get_customer_credit_balance")
+         handlePostingDateChange(frm)
       },
       outlet(frm) {
          handleSaleContextChange(frm, "outlet")
@@ -199,6 +200,56 @@ function handleSaleContextChange(frm, fieldname) {
             frm.__reverting_sale_context = true;
             await frm.set_value(fieldname, previousValue);
             frm.__reverting_sale_context = false;
+        }
+    );
+}
+
+function handlePostingDateChange(frm) {
+    if (frm.__reverting_posting_date) return;
+
+    const previousDate = frm.__previous_posting_date;
+    const postingDate = frm.doc.posting_date;
+    const laterSales = (frm.doc.sales || []).filter(row => (
+        row.sale
+        && row.posting_date
+        && postingDate
+        && row.posting_date > postingDate
+    ));
+
+    if (!laterSales.length || previousDate === postingDate) {
+        frm.__previous_posting_date = postingDate;
+        getCustomerCreditBalance(frm);
+        return;
+    }
+
+    const saleList = laterSales.map(row => {
+        const sale = frappe.utils.escape_html(row.sale);
+        const salePostingDate = frappe.datetime.str_to_user(row.posting_date);
+        return `<li><strong>${sale}</strong> (${salePostingDate})</li>`;
+    }).join("");
+
+    frappe.confirm(
+        __("The following Sale Invoice(s) have a Posting Date later than the Payment Posting Date and will be removed:")
+            + `<ul class="mt-2">${saleList}</ul>`
+            + __("Do you want to continue?"),
+        async () => {
+            frm.__previous_posting_date = postingDate;
+            frm.doc.sales = (frm.doc.sales || []).filter(row => !laterSales.includes(row));
+            frm.doc.sales.forEach((row, index) => {
+                row.idx = index + 1;
+            });
+            frm.refresh_field("sales");
+            await callAllocatePaymentAmount(frm);
+            getCustomerCreditBalance(frm);
+        },
+        async () => {
+            frm.__reverting_posting_date = true;
+            try {
+                await frm.set_value("posting_date", previousDate);
+            } finally {
+                frm.__reverting_posting_date = false;
+            }
+            getCustomerCreditBalance(frm);
         }
     );
 }
@@ -655,6 +706,12 @@ function updateExchangeRateDisplay(frm) {
             </div>
         `)
         .show();
+}
+
+function styleInputAmountField(frm) {
+    frm.get_field("input_amount")?.$wrapper.addClass(
+        "sale-payment-input-amount-card"
+    );
 }
 
 function getCustomerCreditBalance(frm){

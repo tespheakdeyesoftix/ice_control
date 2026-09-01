@@ -196,14 +196,7 @@ def _get_transactions(
 				gle.voucher_no,
 				gle.account,
 				coalesce(gle.debit_amount, 0) as debit_amount,
-				case when coalesce(gle.transaction_type, '') != 'Write Off'
-					then coalesce(gle.credit_amount, 0)
-					else 0
-				end as credit_amount,
-				case when gle.transaction_type = 'Write Off'
-					then coalesce(gle.credit_amount, 0)
-					else 0
-				end as write_off_amount,
+				coalesce(gle.credit_amount, 0) as credit_amount,
 				gle.remark
 			from `tabGL Entry` gle
 			where {where_clause}
@@ -221,13 +214,9 @@ def _get_transactions(
 	for row in transactions:
 		row["debit_amount"] = flt(row.get("debit_amount"))
 		row["credit_amount"] = flt(row.get("credit_amount"))
-		row["write_off_amount"] = flt(row.get("write_off_amount"))
-		running_balance += (
-			row["debit_amount"] - row["credit_amount"] - row["write_off_amount"]
-		)
+		running_balance += row["debit_amount"] - row["credit_amount"]
 		row["running_balance"] = running_balance
 		row["age"] = max(date_diff(end_date, row.get("posting_date")), 0)
-		row["aging_bucket"] = _get_aging_bucket(row["age"])
 
 	return transactions, transaction_count
 
@@ -312,17 +301,3 @@ def _get_aging_breakdown(
 		{"label": _("91-120 Days"), "value": bucket_values["120"]},
 		{"label": _("120+ Days"), "value": bucket_values["over_120"]},
 	]
-
-
-def _get_aging_bucket(age: int) -> str:
-	if age <= 0:
-		return _("Current")
-	if age <= 30:
-		return _("1-30 Days")
-	if age <= 60:
-		return _("31-60 Days")
-	if age <= 90:
-		return _("61-90 Days")
-	if age <= 120:
-		return _("91-120 Days")
-	return _("120+ Days")

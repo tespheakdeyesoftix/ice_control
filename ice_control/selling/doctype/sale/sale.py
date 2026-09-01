@@ -233,9 +233,20 @@ class Sale(Document):
 
 	@frappe.whitelist()
 	def get_payment_history(self):
-		sql = "select payment_date,parent as receipt_number,name,payment_amount,write_off_amount, note, owner as created_by, creation as created_date from `tabSale Payment Invoices` where sale = %(sale)s and docstatus = 1"
+		sql = """
+		select 
+			p.posting_date,
+			s.parent as receipt_number,
+			s.payment_amount,
+			s.write_off_amount, 
+			s.note, 
+			p.created_by,
+			p.creation as created_date 
+			from `tabSale Payment Invoices` s
+			join `tabSale Payment` p on p.name = s.parent
+			 where s.sale = %(sale)s and p.docstatus = 1"""
 		data  = frappe.db.sql(sql, {"sale":self.name},as_dict = 1)
-		return data
+		return   data
 
 	def on_update(self):
 		if self.flags.get("ignore_update"):
@@ -251,8 +262,8 @@ class Sale(Document):
 				update_split_quantity_to_parent_bill(self.parent_bill_number)
 			if self.payments:
 				add_pos_payment_to_sale_payment(self)
-				
 				# frappe.enqueue("ice_control.selling.doctype.sale.sale.add_pos_payment_to_sale_payment",queue="short",self=self)
+
 			# update to borrow product
 			frappe.enqueue("ice_control.selling.doctype.sale.sale.update_borrow_product",queue="short",old_doc=self.get_doc_before_save() ,new_doc=self)
 			# update_borrow_product(self.get_doc_before_save() ,self)
@@ -723,12 +734,25 @@ def add_pos_payment_to_sale_payment(self):
 			]
 		})
 		doc.insert(ignore_permissions=True)
+
+		doc.flags.ingore_validation = True
 		doc.submit()
 		amount_to_pay = amount_to_pay - p.payment_amount
 
 @frappe.whitelist()
 def get_payment_history(name):
-	sql = "select payment_date,parent as receipt_number,payment_amount,write_off_amount, note, owner as created_by, creation as created_date from `tabSale Payment Invoices` where sale = %(sale)s and docstatus = 1"
+	sql = """
+		select 
+			p.posting_date,
+			s.parent as receipt_number,
+			s.payment_amount,s.
+			write_off_amount, 
+			s.note, 
+			p.creation_by
+			p.creation as created_date 
+			from `tabSale Payment Invoices` s
+			join `tabSale Payment` p on p.name = s.parent
+			 where s.sale = %(sale)s and p.docstatus = 1"""
 	data  = frappe.db.sql(sql, {"sale":name},as_dict = 1)
 	return data
 

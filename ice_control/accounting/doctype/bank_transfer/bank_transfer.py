@@ -17,6 +17,7 @@ class BankTransfer(Document):
 		amended_from: DF.Link | None
 		amount: DF.Currency
 		bank: DF.Link | None
+		bank_number: DF.Data | None
 		currency: DF.Link
 		exchange_rate: DF.Float
 		input_amount: DF.Float
@@ -26,6 +27,7 @@ class BankTransfer(Document):
 		posting_date: DF.Date
 		transfer_type: DF.Literal["Bank Transfer", "Direct Transfer"]
 		withdraw_by: DF.Link | None
+		withdraw_by_name: DF.Data | None
 	# end: auto-generated types
 
 	_DOCTYPE_NAME = "Bank Transfer"
@@ -33,12 +35,3 @@ class BankTransfer(Document):
 	def validate(self):
 		if self.amount<=0:
 			frappe.throw("Transfer amount cannot be zero")
-
-	@frappe.whitelist()
-	def get_currency_exchange_rate(self):
-		main_currency = frappe.get_doc("System Settings")
-		exchange_rate = frappe.db.sql("select currency_exchange_rate from `tabExchange Rate` where from_currency = '{0}' and to_currency = '{1}' order by posting_date desc limit 1".format(main_currency.currency,self.currency),as_dict=1)
-		if len(exchange_rate)>0:
-			return exchange_rate[0]["currency_exchange_rate"]
-		else:
-			return 1

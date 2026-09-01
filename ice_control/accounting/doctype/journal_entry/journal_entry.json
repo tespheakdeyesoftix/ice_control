@@ -8,14 +8,12 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_pvz5",
-  "amended_from",
+  "naming_series",
   "outlet",
   "posting_date",
-  "party",
-  "note",
-  "column_break_gquo",
-  "naming_series",
   "party_type",
+  "column_break_gquo",
+  "party",
   "party_name",
   "reference",
   "photo",
@@ -23,10 +21,12 @@
   "account_entries",
   "section_break_pzky",
   "column_break_npqr",
+  "note",
   "column_break_hhfj",
-  "total_credit",
   "total_debit",
-  "balance"
+  "total_credit",
+  "balance",
+  "amended_from"
  ],
  "fields": [
   {
@@ -160,7 +160,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-29 16:50:47.184937",
+ "modified": "2026-09-01 09:44:17.864420",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Journal Entry",

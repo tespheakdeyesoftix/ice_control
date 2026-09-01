@@ -241,19 +241,17 @@ frappe.query_reports["Account Receivable"] = {
 						voucher
 					);
 				}
+				const voucher_title = escape(transaction.voucher_type);
 
 				return `
 					<tr>
 						<td>${escape(date(transaction.posting_date))}</td>
-						<td>${escape(transaction.voucher_type)}</td>
-						<td>${voucher}</td>
+						<td><span title="${voucher_title}">${voucher}</span></td>
 						<td>${escape(transaction.account)}</td>
 						<td class="text-right">${money(transaction.debit_amount)}</td>
 						<td class="text-right">${money(transaction.credit_amount)}</td>
-						<td class="text-right">${money(transaction.write_off_amount)}</td>
 						<td class="text-right">${money(transaction.running_balance)}</td>
 						<td class="text-center">${escape(transaction.age)}</td>
-						<td>${escape(transaction.aging_bucket)}</td>
 						<td>${escape(transaction.remark)}</td>
 					</tr>`;
 			})
@@ -292,22 +290,19 @@ frappe.query_reports["Account Receivable"] = {
 					<thead style="position: sticky; top: 0; background: var(--card-bg); z-index: 1;">
 						<tr>
 							<th>${__("Posting Date")}</th>
-							<th>${__("Voucher Type")}</th>
 							<th>${__("Voucher No")}</th>
 							<th>${__("Account")}</th>
 							<th class="text-right">${__("Debit")}</th>
 							<th class="text-right">${__("Credit")}</th>
 							<th class="text-right">${__("Running Balance")}</th>
-							<th class="text-right">${__("Write Off")}</th>
 							<th class="text-center">${__("Age")}</th>
-							<th>${__("Aging Bucket")}</th>
 							<th>${__("Remark")}</th>
 						</tr>
 					</thead>
 					<tbody>
 						${
 							transaction_rows ||
-							`<tr><td colspan="11" class="text-center text-muted">${__(
+							`<tr><td colspan="8" class="text-center text-muted">${__(
 								"No transactions found."
 							)}</td></tr>`
 						}

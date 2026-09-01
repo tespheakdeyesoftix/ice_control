@@ -1,19 +1,21 @@
-// Copyright (c) 2026, Tes Pheakdey and contributors
-// For license information, please see license.txt
-
-// frappe.ui.form.on("Bank Transfer", {
-// 	refresh(frm) {
-
-// 	},
-// });
-// Copyright (c) 2025, Tes Pheakdey and contributors
-// For license information, please see license.txt
-
 frappe.ui.form.on("Bank Transfer", {
+    onload: function(frm) {
+        if(frm.doc.bank == undefined || frm.doc.bank == ""){
+            frappe.call({
+                method: 'ice_control.api.api.get_default_bank',
+                callback: function (r) {
+                    frm.set_value("bank",r.message.name)
+                    frm.refresh_field('bank');
+                },
+            });
+        }
+    },
 	currency(frm) {
          frappe.call({
-            method: "get_currency_exchange_rate",
-            doc: frm.doc,
+            method: 'ice_control.api.api.get_exchange_rate',
+            args:{
+                currency:frm.doc.currency
+            },
             callback: function (r) {
 				frm.set_value("exchange_rate",r.message)
                 frm.refresh_field('exchange_rate');
@@ -27,7 +29,6 @@ frappe.ui.form.on("Bank Transfer", {
         update_amount(frm)
     }
 });
-
 function update_amount(frm){
       frm.set_value("amount",frm.doc.input_amount/frm.doc.exchange_rate)
         frm.refresh_field('amount');

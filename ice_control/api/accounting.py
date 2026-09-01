@@ -24,7 +24,7 @@ def submit_general_ledger_entry(docs:list[dict],run_commit:bool = True):
                         doc.credit_amount = abs(doc.amount)
                     else:
                         doc.debit_amount = abs(doc.amount)
-            doc.name  =make_autoname("hash")
+            doc.name = make_autoname("hash")
             yield doc
     if run_commit:
         frappe.db.commit()
@@ -32,14 +32,13 @@ def submit_general_ledger_entry(docs:list[dict],run_commit:bool = True):
     bulk_insert("GL Entry", get_general_ledger_entry_record(docs=docs) , chunk_size=10000)
 
 def cancel_general_ledger_entery(doctype,docname):
+    outlet = frappe.get_cached_value(doctype,docname,"outlet") or ""
     filters = "where voucher_type='{}' and voucher_no='{}'".format(doctype,docname)
     if doctype == "Sale":
         sale_id = frappe.db.get_value(doctype, docname, 'id')
         filters = "where sale_id='{}'".format(sale_id)
-
     frappe.db.sql("update `tabGL Entry` set is_cancelled=1 {0}".format(filters))
     frappe.db.commit()
-
     sql = "select * from `tabGL Entry` {0}".format(filters)
     data = frappe.db.sql(sql,as_dict=1)
     docs = []
@@ -59,6 +58,7 @@ def cancel_general_ledger_entery(doctype,docname):
                 "party_type": r["party_type"],
                 "party": r["party"],
                 "is_cancelled":1,
+                "outlet":outlet
             }
         docs.append(doc)
     submit_general_ledger_entry(docs)

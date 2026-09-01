@@ -50,7 +50,6 @@ def money_to_word(amount :float=7569556,currency :str="KHR"):
     
 @frappe.whitelist()
 def number_to_word(amount :float=7569556):
-    
     khmer_digit = ["","មួយ","ពីរ","បី","បួន","ប្រាំ","ប្រាំមួយ","ប្រាំពីរ","ប្រាំបី","ប្រាំបួន"]
     khmer_unit = ["","ដប់","រយ","ពាន់","ម៉ឺន","សែន","លាន"]
     tens_words = ['', 'ដប់', 'ម្ភៃ', 'សាមសិប', 'សែសិប', 'ហាសិប', 'ហុកសិប', 'ចិតសិប', 'ប៉ែតសិប', 'កៅសិប']
@@ -65,7 +64,6 @@ def number_to_word(amount :float=7569556):
             
         if w !="0" and n>1:
             khmer_number = khmer_number + khmer_unit[n]
-
     return khmer_number
 
 @frappe.whitelist()
@@ -99,3 +97,11 @@ def get_products_by_outlet(doctype:str, txt:str, searchfield:str, start:int, pag
             "page_len": page_len,
         },
     )
+
+@frappe.whitelist()
+def get_default_bank():
+    data = frappe.db.sql("select name,bank_number from `tabBanks` where is_default = 1 and enabled = 1 limit 1",as_dict=1)
+    if data:
+        return {"name":data[0].get("name"),"bank_number":data[0].get("bank_number")}
+    else:
+        return {"name":"","bank_number":""}

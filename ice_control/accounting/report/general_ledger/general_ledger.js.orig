@@ -2,16 +2,6 @@
 // For license information, please see license.txt
 
 frappe.query_reports["General Ledger"] = {
-	onload(query_report) {
-		query_report.page.add_inner_button(__("Preview Report"), () => {
-			frappe.query_reports["General Ledger"].preview_report(query_report);
-		});
-	},
-
-	preview_report(query_report) {
-		query_report.refresh();
-	},
-
 	formatter(value, row, column, data, default_formatter) {
 		const formatted_value = default_formatter(value, row, column, data);
 
@@ -71,6 +61,10 @@ frappe.query_reports["General Ledger"] = {
 			label: __("Party"),
 			fieldtype: "Dynamic Link",
 			options: "party_type",
+			get_query() {
+				const party_type = frappe.query_report.get_filter_value("party_type");
+				return party_type ? { doctype: party_type } : {};
+			},
 		},
 	],
 };
