@@ -322,6 +322,22 @@
    "indent": 0,
    "is_default_module": 1,
    "keep_closed": 0,
+   "label": "\u1785\u17c6\u178e\u17b6\u1799",
+   "link_to": "Sale",
+   "link_type": "DocType",
+   "open_in_new_tab": 1,
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "added": 0,
+   "child": 1,
+   "collapsible": 1,
+   "hidden": 0,
+   "icon": "chevron-right",
+   "indent": 0,
+   "is_default_module": 1,
+   "keep_closed": 0,
    "label": "\u1794\u17b7\u1791\u1794\u1789\u17d2\u1787\u17b8\u179a\u1794\u17d2\u179a\u1785\u17b6\u17c6\u1790\u17d2\u1784\u17c3",
    "link_to": "Closed Selling Date",
    "link_type": "DocType",
@@ -601,7 +617,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-01 09:15:30.338310",
+ "modified": "2026-09-02 10:26:51.083241",
  "modified_by": "Administrator",
  "module": "ice_control",
  "name": "ice_control",

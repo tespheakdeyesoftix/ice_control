@@ -5,7 +5,7 @@
 from frappe.model.document import Document
 
 
-class PurchaseOrderProducts(Document):
+class ProductCategoryDefaultAccounts(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -14,23 +14,14 @@ class PurchaseOrderProducts(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		base_unit: DF.Link | None
-		cost: DF.Currency
+		default_adjustment_account: DF.Link | None
 		default_expense_account: DF.Link | None
+		default_income_account: DF.Link | None
 		default_stock_account: DF.Link | None
-		is_inventory_product: DF.Check
-		multiplier: DF.Float
-		note: DF.SmallText | None
+		outlet: DF.Link | None
 		parent: DF.Data
 		parentfield: DF.Data
 		parenttype: DF.Data
-		product_category: DF.Data | None
-		product_code: DF.Link
-		product_name: DF.Data | None
-		quantity: DF.Float
-		sub_total: DF.Currency
-		total_cost: DF.Currency
-		unit: DF.Link | None
 	# end: auto-generated types
 
-	_DOCTYPE_NAME = "Purchase Order Products"
+	_DOCTYPE_NAME = "Product Category Default Accounts"

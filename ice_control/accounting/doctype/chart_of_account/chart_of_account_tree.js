@@ -11,10 +11,6 @@ frappe.treeview_settings['Chart of Account'] = {
             label: 'Account Name', reqd: true
         },
         {
-            fieldtype: 'Data', fieldname: 'account_name_kh',
-            label: 'Account Name (KH)', reqd: true
-        },
-        {
             fieldtype:'Select',
             fieldname:'root_type',
             label:__('Root Type'),

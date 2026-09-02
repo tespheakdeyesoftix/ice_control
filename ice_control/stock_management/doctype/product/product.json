@@ -42,7 +42,9 @@
   "purchase_tab",
   "purchasing_section",
   "allow_purchase",
-  "purchase_price"
+  "purchase_price",
+  "accounting_tab",
+  "table_dhso"
  ],
  "fields": [
   {
@@ -271,6 +273,16 @@
    "fieldtype": "Table",
    "label": "Product Materials",
    "options": "Product Materials"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "table_dhso",
+   "fieldtype": "Table",
+   "options": "Product Default Accounts"
   }
  ],
  "grid_page_length": 50,
@@ -282,7 +294,7 @@
    "link_fieldname": "product_code"
   }
  ],
- "modified": "2026-08-26 11:24:31.939525",
+ "modified": "2026-09-02 09:43:25.280565",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Product",

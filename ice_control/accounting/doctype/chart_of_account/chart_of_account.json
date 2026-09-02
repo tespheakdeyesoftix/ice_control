@@ -13,6 +13,7 @@
   "account_type",
   "root_type",
   "is_group",
+  "outlet",
   "section_break_lvlt",
   "descriptions",
   "section_break_snju",
@@ -60,7 +61,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Account Type",
-   "options": "\nReceivable\nPayable\nCash\nBank\nIncome\nExpense\nTemporary\nStock Asset\nFixed Asset"
+   "options": "\nReceivable\nPayable\nCash\nBank\nIncome\nExpense\nEquity\nOwner Withdraw\nTemporary\nStock Asset\nFixed Asset"
   },
   {
    "fieldname": "root_type",
@@ -110,12 +111,18 @@
    "fieldname": "descriptions",
    "fieldtype": "Small Text",
    "label": "Descriptions"
+  },
+  {
+   "description": "We use this field to filter by outlet in other transaction operation",
+   "fieldname": "outlet",
+   "fieldtype": "Data",
+   "label": "Outlet"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-01 14:34:25.950453",
+ "modified": "2026-09-02 07:24:13.259036",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Chart of Account",

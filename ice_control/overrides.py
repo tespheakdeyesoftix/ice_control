@@ -7,36 +7,15 @@ def test():
 
 
 
-# def custom_get_sidebar_items(*args, **kwargs):
+def custom_get_module_items(*args, **kwargs):
+    frappe.msgprint("u run me")
+    sidebars = frappe.boot.get_module_sidebars()
+    return sidebars
 
-
-
-#     sidebar_items = _original_get_sidebar_items()
-
-
-
-#     user_outlet = list(set(get_user_permission_outlet()) & set(get_user_outlets(frappe.session.user)))
-#     for k in sidebar_items.keys():
-#         if sidebar_items[k].get("app") == "ice_control":
-#             if k=="reports":
-
-
-#                 sidebar_items[k]["items"] =  get_sidebar_items(
-#                                                 items = sidebar_items[k]["items"],
-#                                                 outlets = user_outlet
-#                                             ) +  get_report_sidebar_items()
-
-#             else:
-#                 sidebar_items[k]["items"] = get_sidebar_items(
-#                     items = sidebar_items[k]["items"],
-#                     outlets = user_outlet
-#                 )
-
-#     return sidebar_items
-
+    
 # # this is special for override method
 
-# frappe.boot.get_sidebar_items = custom_get_sidebar_items
+frappe.boot.get_module_sidebars = custom_get_module_items
 
 
 # def get_sidebar_items(items:list[dict], outlets:list[str])->list[dict]:

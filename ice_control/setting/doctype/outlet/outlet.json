@@ -14,7 +14,12 @@
   "accounting_tab",
   "default_receivable_account",
   "default_income_account",
-  "default_payable_account"
+  "default_payable_account",
+  "default_purchase_write_off_account",
+  "column_break_jnmi",
+  "default_cost_of_goods_sold_account",
+  "default_stock_adjustment_account",
+  "default_stock_account"
  ],
  "fields": [
   {
@@ -69,12 +74,40 @@
    "label": "Default Payable Account",
    "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"=\",\"Payable\"]]",
    "options": "Chart of Account"
+  },
+  {
+   "fieldname": "column_break_jnmi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_stock_account",
+   "fieldtype": "Link",
+   "label": "Default Stock Account",
+   "options": "Chart of Account"
+  },
+  {
+   "fieldname": "default_cost_of_goods_sold_account",
+   "fieldtype": "Link",
+   "label": "Default Cost Of Goods Sold Account",
+   "options": "Chart of Account"
+  },
+  {
+   "fieldname": "default_stock_adjustment_account",
+   "fieldtype": "Link",
+   "label": "Default Adjustment Account",
+   "options": "Chart of Account"
+  },
+  {
+   "fieldname": "default_purchase_write_off_account",
+   "fieldtype": "Link",
+   "label": "Default Purchase Write Off Account",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-01 14:31:51.425400",
+ "modified": "2026-09-02 10:22:50.084435",
  "modified_by": "Administrator",
  "module": "Setting",
  "name": "Outlet",

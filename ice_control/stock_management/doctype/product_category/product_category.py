@@ -13,11 +13,13 @@ class ProductCategory(Document):
 
 	if TYPE_CHECKING:
 		from frappe.types import DF
+		from ice_control.stock_management.doctype.product_category_default_accounts.product_category_default_accounts import ProductCategoryDefaultAccounts
 
 		category_name: DF.Data
 		enabled: DF.Check
 		product_prefix: DF.Data | None
 		revenue_group: DF.Link | None
+		table_gdwo: DF.Table[ProductCategoryDefaultAccounts]
 	# end: auto-generated types
 
 	_DOCTYPE_NAME = "Product Category"

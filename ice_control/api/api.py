@@ -105,3 +105,38 @@ def get_default_bank():
         return {"name":data[0].get("name"),"bank_number":data[0].get("bank_number")}
     else:
         return {"name":"","bank_number":""}
+
+@frappe.whitelist()
+def get_product_default_account(product_code:str,outlet:str):
+    category = frappe.db.get_value("Product", product_code, "product_category")
+    default_income_account = frappe.db.get_value("Product Default Accounts", {"parent":product_code,"outlet":outlet}, "default_income_account")
+    if not default_income_account:
+        default_income_account = frappe.db.get_value("Product Category Default Accounts", {"parent":category,"outlet":outlet}, "default_income_account")
+    if not default_income_account:
+        default_income_account = frappe.db.get_value("Outlet", outlet, "default_income_account")
+    default_expense_account = frappe.db.get_value("Product Default Accounts", {"parent":product_code,"outlet":outlet}, "default_expense_account")
+    if not default_expense_account:
+        default_expense_account = frappe.db.get_value("Product Category Default Accounts", {"parent":category,"outlet":outlet}, "default_expense_account")
+    if not default_expense_account:
+        default_expense_account = frappe.db.get_value("Outlet", outlet, "default_cost_of_goods_sold_account")
+    default_adjustment_account = frappe.db.get_value("Product Default Accounts", {"parent":product_code,"outlet":outlet}, "default_adjustment_account")
+    if not default_adjustment_account:
+        default_adjustment_account = frappe.db.get_value("Product Category Default Accounts", {"parent":category,"outlet":outlet}, "default_adjustment_account")
+    if not default_adjustment_account:
+        default_adjustment_account = frappe.db.get_value("Outlet", outlet, "default_stock_adjustment_account")
+    default_stock_account = frappe.db.get_value("Product Default Accounts", {"parent":product_code,"outlet":outlet}, "default_stock_account")
+    if not default_stock_account:
+        default_stock_account = frappe.db.get_value("Product Category Default Accounts", {"parent":category,"outlet":outlet}, "default_stock_account")
+    if not default_stock_account:
+        default_stock_account = frappe.db.get_value("Outlet", outlet, "default_stock_account")
+    return {
+        "default_income_account":default_income_account,
+        "default_expense_account":default_expense_account,
+        "default_adjustment_account":default_adjustment_account,
+        "default_stock_account":default_stock_account
+    }
+
+@frappe.whitelist()
+def get_payment_type_default_account(payment_type:str):
+    default_account = frappe.db.get_value("Has Default Account", {"parent":payment_type}, "default_sale_payment_account")
+    return {"default_account":default_account}

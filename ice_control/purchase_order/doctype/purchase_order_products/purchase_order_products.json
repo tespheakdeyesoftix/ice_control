@@ -18,6 +18,10 @@
   "sub_total",
   "total_cost",
   "product_category",
+  "account_section",
+  "default_stock_account",
+  "column_break_wtsm",
+  "default_expense_account",
   "section_break_rnez",
   "note"
  ],
@@ -120,13 +124,35 @@
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "account_section",
+   "fieldtype": "Section Break",
+   "label": "Account"
+  },
+  {
+   "fieldname": "default_stock_account",
+   "fieldtype": "Link",
+   "label": "Default Stock Account",
+   "options": "Chart of Account"
+  },
+  {
+   "fieldname": "column_break_wtsm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Expense Account",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-01 09:22:35.625259",
+ "modified": "2026-09-02 10:08:02.072860",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Order Products",

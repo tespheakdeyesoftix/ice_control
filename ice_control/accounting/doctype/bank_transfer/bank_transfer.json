@@ -9,22 +9,26 @@
  "field_order": [
   "section_break_2exb",
   "naming_series",
-  "transfer_type",
   "posting_date",
+  "transfer_type",
   "outlet",
   "column_break_iccg",
-  "input_amount",
-  "amount",
+  "currency",
+  "exchange_rate",
+  "html_exchange_rate_display",
+  "section_break_fkcg",
+  "transfer_from",
+  "transfer_to",
+  "transfer_to_account_type",
   "bank",
   "bank_number",
-  "section_break_slhe",
   "withdraw_by",
-  "column_break_lune",
   "withdraw_by_name",
-  "section_break_fkcg",
-  "currency",
   "column_break_tjzq",
-  "exchange_rate",
+  "html_available_amount_to_transfer",
+  "available_amount_to_transfer",
+  "input_amount",
+  "amount",
   "section_break_xdsj",
   "note",
   "amended_from"
@@ -54,8 +58,10 @@
    "fieldname": "transfer_type",
    "fieldtype": "Select",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Transfer Type",
-   "options": "Bank Transfer\nDirect Transfer"
+   "options": "Bank Transfer\nCash Transfer\nOwner Withdrawal",
+   "translatable": 1
   },
   {
    "default": "Today",
@@ -70,6 +76,7 @@
    "fieldname": "outlet",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Outlet",
    "options": "Outlet",
    "reqd": 1
@@ -78,6 +85,7 @@
    "default": "1",
    "fieldname": "exchange_rate",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Exchange Rate",
    "precision": "9",
    "read_only": 1
@@ -88,20 +96,21 @@
   },
   {
    "default": "0",
+   "description": "\u179f\u17bc\u1798\u1794\u1789\u17d2\u1787\u17bc\u179b\u1791\u17b9\u1780\u1794\u17d2\u179a\u17b6\u1780\u17cb\u178f\u17d2\u179a\u17bc\u179c\u1795\u17d2\u1791\u17c1\u179a\u1793\u17c5\u1791\u17b8\u1793\u17c1\u17c7",
    "fieldname": "input_amount",
    "fieldtype": "Float",
-   "label": "Input Amount"
+   "label": "\u1791\u17b9\u1780\u1794\u17d2\u179a\u17b6\u1780\u17cb\u178f\u17d2\u179a\u17bc\u179c\u1795\u17d2\u1791\u17c1\u179a"
   },
   {
    "default": "0",
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Amount",
+   "label": "\u1785\u17c6\u1793\u17bd\u1793\u1791\u17b9\u1780\u1794\u17d2\u179a\u17b6\u1780\u17cb\u1795\u17d2\u1791\u17c1\u179a\u1787\u17b6\u179a\u17bc\u1794\u17b7\u1799\u1794\u17d0\u178e\u17d2\u178e\u1782\u17c4\u179b",
    "read_only": 1
   },
   {
-   "depends_on": "eval:doc.transfer_type == \"Direct Transfer\"",
+   "depends_on": "eval:doc.transfer_to_account_type != \"Bank\"",
    "fieldname": "withdraw_by",
    "fieldtype": "Link",
    "label": "Withdraw by",
@@ -114,7 +123,7 @@
   },
   {
    "fieldname": "note",
-   "fieldtype": "Long Text",
+   "fieldtype": "Small Text",
    "label": "Note"
   },
   {
@@ -125,6 +134,7 @@
    "reqd": 1
   },
   {
+   "depends_on": "eval:doc.transfer_to_account_type === \"Bank\"",
    "fieldname": "bank",
    "fieldtype": "Link",
    "label": "Bank",
@@ -132,13 +142,15 @@
   },
   {
    "fieldname": "section_break_fkcg",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Transfer Detail"
   },
   {
    "fieldname": "column_break_tjzq",
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:doc.transfer_to_account_type === \"Bank\"",
    "fetch_from": "bank.bank_number",
    "fieldname": "bank_number",
    "fieldtype": "Data",
@@ -146,27 +158,64 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_slhe",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_lune",
-   "fieldtype": "Column Break"
-  },
-  {
    "fetch_from": "withdraw_by.employee_name",
    "fetch_if_empty": 1,
    "fieldname": "withdraw_by_name",
    "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
    "label": "Withdraw By Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "transfer_from",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Transfer From",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"in\",[\"Cash\",\"Bank\"]]]",
+   "options": "Chart of Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "transfer_to",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Transfer To",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"in\",[\"Cash\",\"Bank\",\"Owner Withdraw\"]]]",
+   "options": "Chart of Account",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "transfer_to.account_type",
+   "fieldname": "transfer_to_account_type",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Transfer Account Type"
+  },
+  {
+   "fieldname": "html_exchange_rate_display",
+   "fieldtype": "HTML",
+   "label": "Exchange Rate Display"
+  },
+  {
+   "fieldname": "html_available_amount_to_transfer",
+   "fieldtype": "HTML",
+   "label": "Available Amount to Transfer"
+  },
+  {
+   "fieldname": "available_amount_to_transfer",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Available Amount to Transfer"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-01 12:28:22.608908",
+ "modified": "2026-09-02 11:04:04.524660",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Bank Transfer",

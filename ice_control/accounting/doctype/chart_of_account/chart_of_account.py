@@ -18,11 +18,12 @@ class ChartofAccount(Document):
 
 		account_code: DF.Data | None
 		account_name: DF.Data
-		account_type: DF.Literal["", "Receivable", "Payable", "Cash", "Bank", "Income", "Expense", "Temporary", "Stock Asset", "Fixed Asset"]
+		account_type: DF.Literal["", "Receivable", "Payable", "Cash", "Bank", "Income", "Expense", "Equity", "Owner Withdraw", "Temporary", "Stock Asset", "Fixed Asset"]
 		descriptions: DF.SmallText | None
 		is_group: DF.Check
 		lft: DF.Int
 		old_parent: DF.Link | None
+		outlet: DF.Data | None
 		parent_chart_of_account: DF.Link | None
 		rgt: DF.Int
 		root_type: DF.Literal["Asset", "Liabilities", "Equity", "Income", "Expenses"]

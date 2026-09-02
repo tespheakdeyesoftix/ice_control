@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "field:expense_item_code",
+ "creation": "2026-09-02 11:02:39.513758",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "expense_item_code",
+  "expense_item_name",
+  "price",
+  "column_break_xipr",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "expense_item_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Expense Item Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "expense_item_name",
+   "fieldtype": "Data",
+   "label": " Expense Item Name",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "price",
+   "fieldtype": "Float",
+   "label": "Price"
+  },
+  {
+   "fieldname": "column_break_xipr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-02 11:10:40.784349",
+ "modified_by": "Administrator",
+ "module": "Accounting",
+ "name": "Expense Item",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

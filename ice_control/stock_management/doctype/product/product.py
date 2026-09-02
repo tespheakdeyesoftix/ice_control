@@ -24,6 +24,7 @@ class Product(Document):
 		from frappe.types import DF
 		from ice_control.customer_management.doctype.product_outlet.product_outlet import ProductOutlet
 		from ice_control.customer_management.doctype.product_units.product_units import ProductUnits
+		from ice_control.stock_management.doctype.product_default_accounts.product_default_accounts import ProductDefaultAccounts
 		from ice_control.stock_management.doctype.product_materials.product_materials import ProductMaterials
 
 		allow_change_price: DF.Check
@@ -53,6 +54,7 @@ class Product(Document):
 		revenue_group: DF.Link | None
 		show_in_customer_product_price: DF.Check
 		sort_order: DF.Int
+		table_dhso: DF.Table[ProductDefaultAccounts]
 		unit: DF.Link
 	# end: auto-generated types
 

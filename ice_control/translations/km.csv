@@ -1141,6 +1141,24 @@ No,ទេ
 Yes,យល់ព្រម
 Bank Transfer,ការផ្ទេរប្រាក់តាមធនាគារ
 Transfer Type,ប្រភេទការផ្ទេរ
+"System Manager","អ្នកគ្រប់គ្រងប្រព័ន្ធ"
+"Cash Transfer","ការផ្ទេរសាច់ប្រាក់"
+"Owner Withdrawal","ការដកប្រាក់របស់ម្ចាស់"
+"Withdraw by","ដកប្រាក់ដោយ"
+"Transfer Detail","ព័ត៌មានលម្អិតនៃការផ្ទេរ"
+"Bank Number","លេខគណនីធនាគារ"
+"Withdraw By Name","ឈ្មោះអ្នកដកប្រាក់"
+"Transfer From","ផ្ទេរពី"
+"Transfer To","ផ្ទេរទៅ"
+"Transfer Account Type","ប្រភេទគណនីផ្ទេរ"
+"Available Amount to Transfer","ចំនួនទឹកប្រាក់ដែលអាចផ្ទេរបាន"
+"Amount in Transfer Currency","ចំនួនទឹកប្រាក់ជារូបិយប័ណ្ណផ្ទេរ"
+"Transfer amount must be greater than zero.","ចំនួនទឹកប្រាក់ផ្ទេរត្រូវតែធំជាងសូន្យ។"
+"Transfer From account is required.","តម្រូវឱ្យមានគណនីផ្ទេរពី។"
+"Transfer To account is required.","តម្រូវឱ្យមានគណនីផ្ទេរទៅ។"
+"Transfer From and Transfer To accounts must be different.","គណនីផ្ទេរពី និងគណនីផ្ទេរទៅ ត្រូវតែខុសគ្នា។"
+"ផ្ទេរប្រាក់ពី {0} to {1}.","ផ្ទេរប្រាក់ពី {0} ទៅ {1}។"
+"ផ្ទេរប្រាក់ទៅ {0} from {1}.","ផ្ទេរប្រាក់ទៅ {0} ពី {1}។"
 No split bills found.,មិនទាន់មានបុងបំបែកទេ
 Add Split Bill,បញ្ជូលបុងបំបែក
 Edit Order,កែបុង

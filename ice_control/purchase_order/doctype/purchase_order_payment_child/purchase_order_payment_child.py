@@ -15,6 +15,7 @@ class PurchaseOrderPaymentChild(Document):
 		from frappe.types import DF
 
 		currency: DF.Data | None
+		default_account: DF.Link | None
 		exchange_rate: DF.Float
 		input_amount: DF.Float
 		note: DF.LongText | None

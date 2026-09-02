@@ -27,6 +27,7 @@ frappe.ui.form.on("Purchase Order Products", {
   product_code:function (frm, cdt, cdn){    
     let row = locals[cdt][cdn];
     get_init_purchase_cost(frm,row)
+    get_product_default_account(frm,row)
   } ,
   quantity: function (frm, cdt, cdn) {
     calculate_total_cost(frm, cdt, cdn);
@@ -48,42 +49,11 @@ frappe.ui.form.on("Purchase Order Payment Child", {
     },
     payments_add: function (frm, cdt, cdn) {
       if(frm.doc.balance == frm.doc.total_cost){
-        let row = locals[cdt][cdn];
-        frappe.call({
-        method: 'ice_control.api.api.get_default_payment_type',
-        callback: (r) => {
-            row.payment_type = r.message.payment_type
-            row.exchange_rate = r.message.exchange_rate
-            row.currency = r.message.currency
-            row.input_amount = frm.doc.total_cost/r.message.exchange_rate
-            row.payment_amount = frm.doc.total_cost/r.message.exchange_rate
-        }
-        }).then((r)=>{
-            update_summary(frm);
-        })
+        get_default_payment_type(frm,cdt,cdn);
       }
     },
     payment_type: function (frm, cdt, cdn) {
-        let row = locals[cdt][cdn];
-        frappe.call({
-        method: 'ice_control.api.api.get_exchange_rate',
-        args:{
-          currency:row.currency
-        },
-        callback: (r) => {
-            let payment_amount = 0;
-            let write_off_amount = 0;
-            (frm.doc.payments || []).forEach((a) => {
-              if(a.name != row.name)
-              payment_amount += a.payment_amount || 0;
-              write_off_amount += ((a.write_off_amount || 0)/(a.exchange_rate || 1));
-            });
-            frappe.model.set_value(cdt, cdn, "exchange_rate", (r.message));
-            frappe.model.set_value(cdt, cdn, "input_amount", ((frm.doc.total_cost-(payment_amount+write_off_amount))*r.message));
-        }
-        }).then((r)=>{
-            update_summary(frm);
-        })
+        get_payment_type_exchange_rate(frm,cdt,cdn);
         calculate_payment_amount(frm, cdt, cdn);
     },
     input_amount: function (frm, cdt, cdn) {
@@ -93,6 +63,46 @@ frappe.ui.form.on("Purchase Order Payment Child", {
         calculate_payment_amount(frm, cdt, cdn);
     }
 });
+
+async function get_payment_type_exchange_rate(frm,cdt,cdn){
+    let row = locals[cdt][cdn];
+    frappe.call({
+    method: 'ice_control.api.api.get_exchange_rate',
+    args:{
+      currency:row.currency
+    },
+    callback: (r) => {
+        let payment_amount = 0;
+        let write_off_amount = 0;
+        (frm.doc.payments || []).forEach((a) => {
+          if(a.name != row.name)
+          payment_amount += a.payment_amount || 0;
+          write_off_amount += ((a.write_off_amount || 0)/(a.exchange_rate || 1));
+        });
+        frappe.model.set_value(cdt, cdn, "exchange_rate", (r.message));
+        frappe.model.set_value(cdt, cdn, "input_amount", ((frm.doc.total_cost-(payment_amount+write_off_amount))*r.message));
+    }
+    }).then((r)=>{
+        update_summary(frm);
+    })
+}
+
+async function get_default_payment_type(frm,cdt,cdn){
+    let row = locals[cdt][cdn];
+    frappe.call({
+    method: 'ice_control.api.api.get_default_payment_type',
+    callback: (r) => {
+        row.payment_type = r.message.payment_type
+        row.exchange_rate = r.message.exchange_rate
+        row.currency = r.message.currency
+        row.input_amount = frm.doc.total_cost/r.message.exchange_rate
+        row.payment_amount = frm.doc.total_cost/r.message.exchange_rate
+    }
+    }).then((r)=>{
+        get_payment_type_default_account(row.payment_type,cdt,cdn);
+        update_summary(frm);
+    })
+}
 
 async function filter_product(frm){
   frm.set_query("product_code", "purchase_products", function(doc, cdt, cdn) {
@@ -118,6 +128,33 @@ async function get_init_purchase_cost(frm, product){
       callback: (r) => {
         frappe.model.set_value(product.doctype, product.name, "cost", (r.message.cost || 0));
         frappe.model.set_value(product.doctype, product.name, "multiplier", (r.message.multiplier || 0));
+      }
+      })
+    frm.refresh_field("purchase_products");
+}
+async function get_product_default_account(frm, product){
+    frappe.call({
+      method: 'ice_control.api.api.get_product_default_account',
+      args: {
+          "product_code": product.product_code,
+          "outlet": frm.doc.outlet
+      },
+      callback: (r) => {
+        frappe.model.set_value(product.doctype, product.name, "default_stock_account", r.message.default_stock_account);
+        frappe.model.set_value(product.doctype, product.name, "default_expense_account", r.message.default_expense_account);
+      }
+      })
+    frm.refresh_field("purchase_products");
+}
+
+async function get_payment_type_default_account(payment_type,cdt,cdn){
+    frappe.call({
+      method: 'ice_control.api.api.get_payment_type_default_account',
+      args: {
+          "payment_type": payment_type
+      },
+      callback: (r) => {
+        frappe.model.set_value(cdt, cdn, "default_account", r.message.default_account);
       }
       })
     frm.refresh_field("purchase_products");

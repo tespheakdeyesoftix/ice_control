@@ -5,6 +5,7 @@ from frappe import _
 from frappe.model.document import bulk_insert
 from frappe.model.naming import make_autoname
 from frappe.translate import print_language
+from frappe.utils import flt, getdate, today
 import frappe
 
 def submit_general_ledger_entry(docs:list[dict],run_commit:bool = True):
@@ -81,3 +82,41 @@ def get_customer_credit_balance(customer:str, outlet:str , date:str|date)->float
     data = frappe.db.sql(sql, {"customer":customer,"outlet":outlet, "date":date},as_dict =1)
     
     return data[0].get("total") or 0
+
+
+@frappe.whitelist()
+def get_account_balance(
+    account_code: str,
+    outlet: str | None = None,
+    date: str | None = None,
+) -> float:
+    if not account_code:
+        return 0
+
+   
+    values = {
+        "account_code": account_code,
+        "date": getdate(date or today()),
+    }
+    outlet_condition = ""
+    if outlet:
+        outlet_condition = "AND outlet = %(outlet)s"
+        values["outlet"] = outlet
+
+    result = frappe.db.sql(
+        f"""
+        SELECT COALESCE(
+            SUM(COALESCE(debit_amount, 0) - COALESCE(credit_amount, 0)),
+            0
+        ) AS balance
+        FROM `tabGL Entry`
+        WHERE account = %(account_code)s
+            AND posting_date <= %(date)s
+            AND COALESCE(is_cancelled, 0) = 0
+            {outlet_condition}
+        """,
+        values,
+        as_dict=True,
+    )
+
+    return flt(result[0].balance) if result else 0

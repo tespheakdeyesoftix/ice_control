@@ -14,9 +14,13 @@ class Outlet(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		default_cost_of_goods_sold_account: DF.Link | None
 		default_income_account: DF.Link | None
 		default_payable_account: DF.Link | None
+		default_purchase_write_off_account: DF.Link | None
 		default_receivable_account: DF.Link | None
+		default_stock_account: DF.Link | None
+		default_stock_adjustment_account: DF.Link | None
 		default_stock_location: DF.Link | None
 		default_unit: DF.Link | None
 		enabled: DF.Check

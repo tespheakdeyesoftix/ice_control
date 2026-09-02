@@ -5,7 +5,7 @@
 from frappe.model.document import Document
 
 
-class StockLocation(Document):
+class ExpenseItem(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -14,9 +14,10 @@ class StockLocation(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		default_stock_account: DF.Link | None
-		enabled: DF.Check
-		stock_location_name: DF.Data | None
+		description: DF.SmallText | None
+		expense_item_code: DF.Data
+		expense_item_name: DF.Data
+		price: DF.Float
 	# end: auto-generated types
 
-	_DOCTYPE_NAME = "Stock Location"
+	_DOCTYPE_NAME = "Expense Item"

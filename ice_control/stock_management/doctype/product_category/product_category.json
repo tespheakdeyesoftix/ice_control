@@ -11,7 +11,9 @@
   "category_name",
   "revenue_group",
   "enabled",
-  "column_break_qbqp"
+  "column_break_qbqp",
+  "accounting_tab",
+  "table_gdwo"
  ],
  "fields": [
   {
@@ -45,12 +47,22 @@
   {
    "fieldname": "column_break_qbqp",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "table_gdwo",
+   "fieldtype": "Table",
+   "options": "Product Category Default Accounts"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-28 15:58:51.009077",
+ "modified": "2026-09-02 09:47:22.518871",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Product Category",

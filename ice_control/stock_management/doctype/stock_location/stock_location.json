@@ -8,7 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "enabled",
-  "stock_location_name"
+  "stock_location_name",
+  "default_stock_account"
  ],
  "fields": [
   {
@@ -22,12 +23,19 @@
    "fieldtype": "Data",
    "label": "Stock Location Name",
    "unique": 1
+  },
+  {
+   "fieldname": "default_stock_account",
+   "fieldtype": "Link",
+   "label": "Default Stock Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"=\",\"Stock Asset\"]]",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-13 17:34:35.951372",
+ "modified": "2026-09-02 06:49:58.090442",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Stock Location",
