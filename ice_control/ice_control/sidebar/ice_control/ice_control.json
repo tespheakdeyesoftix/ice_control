@@ -225,6 +225,22 @@
    "indent": 0,
    "is_default_module": 1,
    "keep_closed": 0,
+   "label": "\u1795\u17d2\u1791\u17b6\u17c6\u1784\u1782\u17d2\u179a\u1794\u17cb\u1782\u17d2\u179a\u1784\u1782\u178e\u1793\u17b8",
+   "link_to": "account-dashboard",
+   "link_type": "Page",
+   "open_in_new_tab": 1,
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "added": 0,
+   "child": 1,
+   "collapsible": 1,
+   "hidden": 0,
+   "icon": "chevron-right",
+   "indent": 0,
+   "is_default_module": 1,
+   "keep_closed": 0,
    "label": "\u17a2\u178f\u17b7\u1790\u17b7\u1787\u1793\u1794\u1784\u17cb\u1794\u17d2\u179a\u17b6\u1780\u17cb",
    "link_to": "Sale Payment",
    "link_type": "DocType",
@@ -649,7 +665,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-03 06:47:41.214142",
+ "modified": "2026-09-03 09:02:33.782124",
  "modified_by": "Administrator",
  "module": "ice_control",
  "name": "ice_control",

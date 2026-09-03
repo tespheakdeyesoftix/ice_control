@@ -19,10 +19,10 @@ class PurchaseOrders(Document):
 
 		amended_from: DF.Link | None
 		balance: DF.Currency
-		default_expense_account: DF.Link | None
-		default_payable_account: DF.Link | None
-		default_stock_account: DF.Link | None
-		default_write_off_account: DF.Link | None
+		default_expense_account: DF.Link
+		default_payable_account: DF.Link
+		default_stock_account: DF.Link
+		default_write_off_account: DF.Link
 		employee: DF.Link | None
 		employee_name: DF.Data | None
 		naming_series: DF.Literal["PO.YYYY.-.####"]
@@ -47,6 +47,7 @@ class PurchaseOrders(Document):
 
 	def validate(self):
 		self.validate_product_unit()
+		validate_accounts(self)
 		for p in self.purchase_products:
 			p.sub_total = p.quantity * p.cost
 			p.total_cost = p.sub_total
@@ -65,7 +66,7 @@ class PurchaseOrders(Document):
 		update_stock_product(self)
 		update_status(self)
 		submit_to_GL_entry(self)
-	
+
 	def on_cancel(self):
 		update_status(self)
 		data = [
@@ -105,6 +106,29 @@ class PurchaseOrders(Document):
 		else:
 			self.phone_number = frappe.get_cached_value(self.party_type, self.party,"phone_number")
 
+	@frappe.whitelist()
+	def get_payment_history(self):
+		return frappe.db.sql(
+			"""
+			SELECT
+				p.name AS payment_number,
+				p.posting_date AS payment_date,
+				i.payment_amount,
+				i.write_off_amount,
+				COALESCE(NULLIF(TRIM(p.created_by), ''), p.owner) AS created_by,
+				p.creation
+			FROM `tabPurchase Order Payment Invoices` i
+			INNER JOIN `tabPurchase Order Payment` p
+				ON p.name = i.parent
+			WHERE i.purchase_order = %(purchase_order)s
+				AND i.docstatus = 1
+				AND p.docstatus = 1
+			ORDER BY p.posting_date DESC, p.creation DESC
+			""",
+			{"purchase_order": self.name},
+			as_dict=True,
+		)
+
 def update_status(self):
 	status = ""
 	if self.docstatus == 0:
@@ -119,6 +143,17 @@ def update_status(self):
 	elif self.docstatus == 2:
 		status = "Cancelled"
 	self.status = status
+
+def validate_accounts(self):
+	from ice_control.api.api import get_product_default_account,get_payment_type_default_account
+	for a in self.purchase_products:
+		if not a.default_stock_account:
+			a.default_stock_account = get_product_default_account(a.product_code, self.outlet).get("default_stock_account")
+		if not a.default_expense_account:
+			a.default_expense_account = get_product_default_account(a.product_code, self.outlet).get("default_expense_account")
+	for a in self.payments:
+		if not a.default_account:
+			a.default_account = get_payment_type_default_account(a.payment_type, self.outlet).get("default_account")
 			
 def update_stock_product(self):
 	data = [
@@ -273,6 +308,3 @@ def submit_to_GL_entry(self):
 		}
 		docs.append(doc)
 	submit_general_ledger_entry(docs=docs)
-
-
-	

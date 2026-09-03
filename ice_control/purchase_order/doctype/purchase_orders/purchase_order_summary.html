@@ -1,0 +1,39 @@
+<div
+	class="container"
+	style="background: #f5f3f5; border-radius: 6px; padding: 10px; margin-right: 0"
+>
+	<div class="row" style="margin-top: 10px; font-size: 14px; font-weight: bold">
+		<div class="col">{{ __("Total Quantity") }}</div>
+		<div class="col text-right">
+			{{ frappe.format(doc.total_quantity || 0, { "fieldtype": "Float" }) }}
+		</div>
+	</div>
+
+	<div class="row" style="margin-top: 10px; font-size: 14px; font-weight: bold">
+		<div class="col">{{ __("Total Cost") }}</div>
+		<div class="col text-right">
+			{{ frappe.format(doc.total_cost || 0, { "fieldtype": "Currency" }) }}
+		</div>
+	</div>
+
+	<div class="row" style="margin-top: 10px; font-size: 14px; font-weight: bold">
+		<div class="col">{{ __("Total Payment") }}</div>
+		<div class="col text-right">
+			{{ frappe.format(doc.total_payment || 0, { "fieldtype": "Currency" }) }}
+		</div>
+	</div>
+
+	<div class="row" style="margin-top: 10px; font-size: 14px; font-weight: bold">
+		<div class="col">{{ __("Write Off") }}</div>
+		<div class="col text-right">
+			{{ frappe.format(doc.write_off || 0, { "fieldtype": "Currency" }) }}
+		</div>
+	</div>
+
+	<div class="row" style="margin-top: 10px; font-size: 14px; font-weight: bold">
+		<div class="col">{{ __("Balance") }}</div>
+		<div class="col text-right">
+			{{ frappe.format(doc.balance || 0, { "fieldtype": "Currency" }) }}
+		</div>
+	</div>
+</div>

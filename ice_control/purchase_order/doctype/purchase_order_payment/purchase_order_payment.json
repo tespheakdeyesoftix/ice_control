@@ -9,6 +9,7 @@
   "section_break_w5a7",
   "naming_series",
   "posting_date",
+  "reference_number",
   "outlet",
   "photo",
   "column_break_ycnn",
@@ -17,7 +18,11 @@
   "exchange_rate",
   "html_exchange_rate_display",
   "from_purchase_orders",
-  "payment_from_account",
+  "section_break_quuw",
+  "account_paid_from",
+  "default_write_off_account",
+  "column_break_gbvn",
+  "account_paid_to",
   "payment_from_section",
   "party_type",
   "party",
@@ -35,6 +40,7 @@
   "purchase_orders",
   "summary_section",
   "note",
+  "created_by",
   "column_break_ymkj",
   "html_payment_summary",
   "total_invoices",
@@ -258,11 +264,48 @@
    "read_only": 1
   },
   {
-   "fieldname": "payment_from_account",
+   "allow_on_submit": 1,
+   "fieldname": "reference_number",
+   "fieldtype": "Data",
+   "label": "Reference Number"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_quuw",
+   "fieldtype": "Section Break",
+   "label": "Accounts"
+  },
+  {
+   "fieldname": "account_paid_from",
    "fieldtype": "Link",
-   "label": "Payment from Account",
-   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"in\",[\"Bank\",\"Cash\"]]]",
-   "options": "Chart of Account"
+   "label": "Account Paid From",
+   "options": "Chart of Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_gbvn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "outlet.default_payable_account",
+   "fieldname": "account_paid_to",
+   "fieldtype": "Link",
+   "label": "Account Paid To",
+   "options": "Chart of Account",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "outlet.default_purchase_write_off_account",
+   "fieldname": "default_write_off_account",
+   "fieldtype": "Link",
+   "label": "Default Write Off Account",
+   "options": "Chart of Account",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
@@ -270,7 +313,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-02 16:03:45.877921",
+ "modified": "2026-09-03 09:12:14.374676",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Order Payment",

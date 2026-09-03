@@ -2,7 +2,9 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Purchase Order Payment", {
-     onload(frm) {         
+     async onload(frm) {
+        rememberPurchaseOrderContextValues(frm);
+
         frm.set_query("purchase_order", "purchase_orders", function (doc, cdt, cdn) {
             const selectedPurchaseOrders = (doc.purchase_orders || [])
                 .filter(row => row.name !== cdn && row.purchase_order)
@@ -35,13 +37,15 @@ frappe.ui.form.on("Purchase Order Payment", {
                 "filters": purchase_order_filter,
             };
         });
+
+        await addPurchaseOrderFromRoute(frm);
     },
     posting_date(frm){
-        update_allocated_payment_date(frm)
-        getPartyAccountPayableBalance(frm)
+        confirmPurchaseOrderRemovalOnPostingDateChange(frm)
     },
 	refresh(frm) {
 		updateExchangeRateDisplay(frm)
+        stylePurchaseOrderPaymentInputAmountField(frm)
         renderPurchaseOrderPaymentSummary(frm)
         hidePurchaseOrderGridDuplicateAction(frm)
         setTimeout(() => {
@@ -59,18 +63,14 @@ frappe.ui.form.on("Purchase Order Payment", {
         frm.refresh_field("party")
     },
     party(frm) {
-        frm.clear_table("purchase_orders")
-        frm.refresh_field("purchase_orders")
-        calculate_totals(frm)
-        getPartyAccountPayableBalance(frm)
+        confirmPurchaseOrderClearOnContextChange(frm, "party")
     },
     outlet(frm) {
-        frm.clear_table("purchase_orders")
-        frm.refresh_field("purchase_orders")
-        calculate_totals(frm)
-        getPartyAccountPayableBalance(frm)
+        get_payment_type_default_account(frm)
+        confirmPurchaseOrderClearOnContextChange(frm, "outlet")
     },
     payment_type(frm) {
+        get_payment_type_default_account(frm)
         frappe.call({
         method: 'ice_control.api.api.get_exchange_rate',
         args: {
@@ -108,6 +108,175 @@ frappe.ui.form.on("Purchase Order Payment", {
         await callAllocatePaymentAmount(frm);
     },
 });
+
+function rememberPurchaseOrderContextValues(frm) {
+    frm.__purchase_order_context_values = {
+        party: frm.doc.party || "",
+        outlet: frm.doc.outlet || "",
+        posting_date: frm.doc.posting_date || "",
+    };
+}
+
+function confirmPurchaseOrderClearOnContextChange(frm, fieldname) {
+    if (frm.__reverting_purchase_order_context) return;
+
+    frm.__purchase_order_context_values ||= {};
+    const previousValue = frm.__purchase_order_context_values[fieldname] || "";
+    const currentValue = frm.doc[fieldname] || "";
+
+    if (previousValue === currentValue) {
+        getPartyAccountPayableBalance(frm);
+        return;
+    }
+
+    const clearPurchaseOrders = () => {
+        frm.__purchase_order_context_values[fieldname] = currentValue;
+        frm.clear_table("purchase_orders");
+        frm.refresh_field("purchase_orders");
+        calculate_totals(frm);
+        getPartyAccountPayableBalance(frm);
+    };
+    const hasPurchaseOrders = (frm.doc.purchase_orders || []).some(
+        row => row.purchase_order
+    );
+
+    if (!hasPurchaseOrders) {
+        clearPurchaseOrders();
+        return;
+    }
+
+    const fieldLabel = frm.get_field(fieldname)?.df.label || fieldname;
+    frappe.confirm(
+        __("Changing {0} will clear the Purchase Orders table. Do you want to continue?", [__(fieldLabel)]),
+        clearPurchaseOrders,
+        () => {
+            frm.__reverting_purchase_order_context = true;
+            Promise.resolve(frm.set_value(fieldname, previousValue)).finally(() => {
+                frm.__reverting_purchase_order_context = false;
+            });
+        }
+    );
+}
+
+function confirmPurchaseOrderRemovalOnPostingDateChange(frm) {
+    if (frm.__reverting_purchase_order_context) return;
+
+    frm.__purchase_order_context_values ||= {};
+    const previousValue = frm.__purchase_order_context_values.posting_date || "";
+    const currentValue = frm.doc.posting_date || "";
+
+    if (previousValue === currentValue) {
+        getPartyAccountPayableBalance(frm);
+        return;
+    }
+
+    const invalidPurchaseOrders = (frm.doc.purchase_orders || []).filter(row => (
+        row.purchase_order
+        && row.posting_date
+        && currentValue
+        && frappe.datetime.get_diff(row.posting_date, currentValue) > 0
+    ));
+    const applyPostingDateChange = async () => {
+        frm.__purchase_order_context_values.posting_date = currentValue;
+
+        invalidPurchaseOrders.forEach(row => {
+            frappe.model.clear_doc(row.doctype, row.name);
+        });
+        if (invalidPurchaseOrders.length) {
+            frm.dirty();
+            frm.refresh_field("purchase_orders");
+        }
+
+        update_allocated_payment_date(frm);
+        if (invalidPurchaseOrders.length && flt(frm.doc.input_amount) > 0) {
+            await callAllocatePaymentAmount(frm);
+        } else if (invalidPurchaseOrders.length) {
+            calculate_totals(frm);
+        }
+        getPartyAccountPayableBalance(frm);
+    };
+
+    if (!invalidPurchaseOrders.length) {
+        applyPostingDateChange();
+        return;
+    }
+
+    frappe.confirm(
+        __(
+            "The new Posting Date is earlier than {0} Purchase Order(s). "
+                + "Those rows will be removed from the Purchase Orders table. Do you want to continue?",
+            [invalidPurchaseOrders.length]
+        ),
+        applyPostingDateChange,
+        () => {
+            frm.__reverting_purchase_order_context = true;
+            Promise.resolve(frm.set_value("posting_date", previousValue)).finally(() => {
+                frm.__reverting_purchase_order_context = false;
+            });
+        }
+    );
+}
+
+async function addPurchaseOrderFromRoute(frm) {
+    if (!frm.is_new() || frm.__purchase_order_route_prefill_started) return;
+
+    const query = new URLSearchParams(window.location.search);
+    const purchaseOrderName = query.get("purchase_order")
+        || frappe.route_options?.purchase_order;
+
+    if (!purchaseOrderName) return;
+    frm.__purchase_order_route_prefill_started = true;
+
+    const alreadyAdded = (frm.doc.purchase_orders || []).some(
+        row => row.purchase_order === purchaseOrderName
+    );
+    if (alreadyAdded) return;
+
+    const result = await frappe.db.get_value("Purchase Orders", purchaseOrderName, [
+        "name",
+        "docstatus",
+        "posting_date",
+        "party_type",
+        "party",
+        "outlet",
+        "total_cost",
+        "total_payment",
+        "balance",
+    ]);
+    const purchaseOrder = result.message;
+
+    if (!purchaseOrder?.name) {
+        frappe.msgprint(__("Purchase Order {0} was not found.", [purchaseOrderName]));
+        return;
+    }
+    if (cint(purchaseOrder.docstatus) !== 1) {
+        frappe.msgprint(__("Purchase Order {0} must be submitted before payment.", [purchaseOrderName]));
+        return;
+    }
+
+    await frm.set_value("party_type", purchaseOrder.party_type);
+    await frm.set_value("outlet", purchaseOrder.outlet);
+    await frm.set_value("party", purchaseOrder.party);
+
+    const row = frm.add_child("purchase_orders");
+    Object.assign(row, {
+        purchase_order: purchaseOrder.name,
+        party_type: purchaseOrder.party_type,
+        party: purchaseOrder.party,
+        outlet: purchaseOrder.outlet,
+        payment_date: frm.doc.posting_date,
+        posting_date: purchaseOrder.posting_date,
+        purchase_amount: purchaseOrder.total_cost,
+        paid_amount: purchaseOrder.total_payment,
+        purchase_order_balance: purchaseOrder.balance,
+        balance: purchaseOrder.balance,
+        exchange_rate: frm.doc.exchange_rate,
+    });
+
+    frm.refresh_field("purchase_orders");
+    calculate_totals(frm);
+    getPartyAccountPayableBalance(frm);
+}
 
 async function openPurchaseOrderDialog(frm) {
     if (!frm.doc.posting_date || !frm.doc.outlet || !frm.doc.party_type || !frm.doc.party) {
@@ -456,6 +625,12 @@ function updateExchangeRateDisplay(frm) {
         .show();
 }
 
+function stylePurchaseOrderPaymentInputAmountField(frm) {
+    frm.get_field("input_amount")?.$wrapper.addClass(
+        "sale-payment-input-amount-card"
+    );
+}
+
 function hidePurchaseOrderGridDuplicateAction(frm) {
     const wrapper = frm.get_field("purchase_orders")?.$wrapper;
     if (!wrapper) return;
@@ -648,3 +823,18 @@ function update_allocated_payment_date(frm) {
     }
 }
 
+async function get_payment_type_default_account(frm){
+    if(frm.doc.payment_type && frm.doc.outlet){
+        frappe.call({
+            method: 'ice_control.api.api.get_payment_type_default_account',
+            args: {
+                "payment_type": frm.doc.payment_type,
+                "outlet": frm.doc.outlet
+            },
+            callback: (r) => {
+                frm.set_value("account_paid_from", r.message.default_account);
+                frm.refresh_field("purchase_products");
+            }
+        })
+    }
+}

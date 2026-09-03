@@ -9,11 +9,12 @@
   "payment_type",
   "currency",
   "exchange_rate",
-  "default_account",
   "column_break_pyaz",
   "input_amount",
   "write_off_amount",
   "payment_amount",
+  "accounts_section",
+  "default_account",
   "section_break_bnms",
   "note"
  ],
@@ -82,13 +83,19 @@
    "fieldtype": "Link",
    "label": "Default Account",
    "options": "Chart of Account"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Accounts"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-02 10:09:00.327470",
+ "modified": "2026-09-03 08:49:34.164684",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Order Payment Child",

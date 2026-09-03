@@ -26,10 +26,14 @@ class PurchaseOrderPayment(Document):
 		from frappe.types import DF
 		from ice_control.purchase_order.doctype.purchase_order_payment_invoices.purchase_order_payment_invoices import PurchaseOrderPaymentInvoices
 
+		account_paid_from: DF.Link
+		account_paid_to: DF.Link
 		amended_from: DF.Link | None
 		amount_to_pay: DF.Currency
 		balance: DF.Currency
+		created_by: DF.Data | None
 		currency: DF.Link | None
+		default_write_off_account: DF.Link
 		exchange_rate: DF.Data | None
 		from_purchase_orders: DF.Check
 		input_amount: DF.Float
@@ -42,16 +46,20 @@ class PurchaseOrderPayment(Document):
 		party_type: DF.Literal["Vendor", "Employee", "Customer"]
 		payment_amount: DF.Currency
 		payment_amount_in_word: DF.Data | None
-		payment_from_account: DF.Link | None
 		payment_type: DF.Link
 		photo: DF.AttachImage | None
 		posting_date: DF.Date
 		purchase_orders: DF.Table[PurchaseOrderPaymentInvoices]
+		reference_number: DF.Data | None
 		total_invoices: DF.Int
 		total_write_off_amount: DF.Currency
 	# end: auto-generated types
 
 	def validate(self):
+		if self.is_new():
+			self.created_by  = frappe.get_cached_value("User",frappe.session.user,"full_name")
+		validate_payment_amount()
+		validate_accounts(self)
 		validate_close_date(self.posting_date, self.creation, self.outlet)
 
 		self.payment_amount_in_word = money_to_word(int(self.payment_amount))
@@ -60,21 +68,6 @@ class PurchaseOrderPayment(Document):
 		
 
 	def before_submit(self):
-		if flt(self.payment_amount) <= 0:
-			frappe.throw(_("Payment Amount must be greater than zero."))
-
-		self.validate_payment_amount()
-
-		# validate account_code
-		payment_type_doc = frappe.get_cached_doc("Payment Type", self.payment_type)
-		default_account_record = next((x for x in payment_type_doc.default_account if x.get("outlet") == self.outlet), None)
-		if default_account_record:
-			self.payment_from_account = default_account_record.default_purchase_payment_account
-		else:
-			frappe.throw("សូមជ្រើសរើសលេខកូដគនណី")
-
-
-
 		self.purchase_orders = [d for d in self.purchase_orders if (d.payment_amount or 0)>0  or (d.write_off_amount or 0)>0]
 		# update to amount to pay
 		self.amount_to_pay = sum([d.get("purchase_order_balance") or 0 for d in self.purchase_orders])
@@ -99,12 +92,7 @@ class PurchaseOrderPayment(Document):
 				s.purchase_order_balance = frappe.db.get_value("Purchase Orders",s.purchase_order,["balance"])
 				s.balance = (s.purchase_order_balance or 0) - ((s.payment_amount or 0) + (s.write_off_amount or 0))
 				s.payment_type = self.payment_type
-	
-	def validate_payment_amount(self):
-	 
-		if self.balance<0:
-			frappe.throw(_("Payment amount cannot greater than amount to pay"))
-	
+
 	@frappe.whitelist(methods=["POST"])
 	def allocate_payment_amount(self):
 		exchange_rate = flt(self.exchange_rate) or 1
@@ -238,4 +226,17 @@ def update_status(name):
 	elif doc.docstatus == 2:
 		status = "Cancelled"
 	frappe.db.set_value("Purchase Orders", name, "status", status, update_modified=False)
+	
+def validate_payment_amount(self):
+	if self.balance<0:
+		frappe.throw(_("ទឹកប្រាក់ទូទាត់មិនអាចធំជាងទឹកប្រាក់ត្រូវបង់បានទេ"))
 
+def validate_accounts(self):
+	payment_amount = flt(self.payment_amount)
+	write_off_amount = flt(self.total_write_off_amount)
+	if payment_amount > 0:
+		if self.account_paid_from == self.account_paid_to:
+			frappe.throw(_("Payment from Account and Payable Account must be different."))
+	if write_off_amount > 0:
+		if self.default_write_off_account == self.account_paid_to:
+			frappe.throw(_("Purchase Write Off Account and Payable Account must be different."))

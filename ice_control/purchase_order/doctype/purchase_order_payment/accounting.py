@@ -3,10 +3,7 @@ from frappe import _
 from frappe.utils import flt
 
 from ice_control.api.accounting import get_account_type, submit_general_ledger_entry
-
-
 VOUCHER_TYPE = "Purchase Order Payment"
-
 
 def delete_gl_entries(self):
 	frappe.db.sql(
@@ -29,35 +26,8 @@ def submit_to_gl_entry(self):
 
 	outlet = frappe.get_cached_doc("Outlet", self.outlet)
 	payable_account = outlet.default_payable_account
-	payment_account = self.payment_from_account
+	payment_account = self.account_paid_from
 	write_off_account = outlet.default_purchase_write_off_account
-
-	if not payable_account:
-		frappe.throw(
-			_("Please set Default Payable Account for Outlet {0}.").format(
-				frappe.bold(self.outlet)
-			)
-		)
-
-	if payment_amount > 0:
-		if not payment_account:
-			frappe.throw(_("Payment from Account is required."))
-		if payment_account == payable_account:
-			frappe.throw(
-				_("Payment from Account and Payable Account must be different.")
-			)
-
-	if write_off_amount > 0:
-		if not write_off_account:
-			frappe.throw(
-				_("Please set Default Purchase Write Off Account for Outlet {0}.").format(
-					frappe.bold(self.outlet)
-				)
-			)
-		if write_off_account == payable_account:
-			frappe.throw(
-				_("Purchase Write Off Account and Payable Account must be different.")
-			)
 
 	purchase_order_rows = [
 		row
@@ -142,4 +112,3 @@ def submit_to_gl_entry(self):
 		)
 
 	submit_general_ledger_entry(entries, run_commit=False)
-

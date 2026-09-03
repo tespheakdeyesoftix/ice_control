@@ -108,6 +108,8 @@ def get_default_bank():
 
 @frappe.whitelist()
 def get_product_default_account(product_code:str,outlet:str):
+    if not outlet:
+        frappe.throw("Please select outlet first")
     category = frappe.db.get_value("Product", product_code, "product_category")
     default_income_account = frappe.db.get_value("Product Default Accounts", {"parent":product_code,"outlet":outlet}, "default_income_account")
     if not default_income_account:
@@ -137,6 +139,8 @@ def get_product_default_account(product_code:str,outlet:str):
     }
 
 @frappe.whitelist()
-def get_payment_type_default_account(payment_type:str):
-    default_account = frappe.db.get_value("Has Default Account", {"parent":payment_type}, "default_sale_payment_account")
+def get_payment_type_default_account(payment_type:str,outlet:str):
+    if not outlet:
+        frappe.throw("Please select outlet first")
+    default_account = frappe.db.get_value("Has Default Account", {"outlet":outlet,"parent":payment_type}, "default_sale_payment_account")
     return {"default_account":default_account}

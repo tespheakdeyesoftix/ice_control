@@ -3,7 +3,6 @@
 
 frappe.ui.form.on("Purchase Orders", {
   refresh: function (frm) {
-    render_purchase_order_indicators(frm);
     render_purchase_order_summary(frm);
     render_purchase_order_payment_history(frm);
     add_purchase_order_custom_buttons(frm);
@@ -108,7 +107,7 @@ async function get_default_payment_type(frm,cdt,cdn){
         row.payment_amount = frm.doc.total_cost/r.message.exchange_rate
     }
     }).then((r)=>{
-        get_payment_type_default_account(frm,row.payment_type,cdt,cdn);
+        get_payment_type_default_account(row.payment_type,cdt,cdn);
         update_summary(frm);
     })
 }
@@ -156,12 +155,11 @@ async function get_product_default_account(frm, product){
     frm.refresh_field("purchase_products");
 }
 
-async function get_payment_type_default_account(frm,payment_type,cdt,cdn){
+async function get_payment_type_default_account(payment_type,cdt,cdn){
     frappe.call({
       method: 'ice_control.api.api.get_payment_type_default_account',
       args: {
-          "payment_type": payment_type,
-          "outlet": frm.doc.outlet
+          "payment_type": payment_type
       },
       callback: (r) => {
         frappe.model.set_value(cdt, cdn, "default_account", r.message.default_account);
@@ -222,40 +220,6 @@ function render_purchase_order_summary(frm) {
       frappe.render_template("purchase_order_summary", { doc: frm.doc })
     );
   }
-}
-
-function render_purchase_order_indicators(frm) {
-  frm.dashboard.clear_headline();
-
-  if (frm.doc.docstatus !== 1) {
-    return;
-  }
-
-  const format_float = (value) =>
-    frappe.format(value || 0, { fieldtype: "Float" });
-  const format_currency = (value) =>
-    frappe.format(value || 0, { fieldtype: "Currency" });
-
-  frm.dashboard.add_indicator(
-    __("Total Quantity: {0}", [format_float(frm.doc.total_quantity)]),
-    "blue"
-  );
-  frm.dashboard.add_indicator(
-    __("Total Cost: {0}", [format_currency(frm.doc.total_cost)]),
-    "blue"
-  );
-  frm.dashboard.add_indicator(
-    __("Total Payment: {0}", [format_currency(frm.doc.total_payment)]),
-    "green"
-  );
-  frm.dashboard.add_indicator(
-    __("Write Off: {0}", [format_currency(frm.doc.write_off)]),
-    "red"
-  );
-  frm.dashboard.add_indicator(
-    __("Balance: {0}", [format_currency(frm.doc.balance)]),
-    "blue"
-  );
 }
 
 function render_purchase_order_payment_history(frm) {

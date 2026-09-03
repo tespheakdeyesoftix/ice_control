@@ -1,0 +1,32 @@
+{
+ "content": null,
+ "creation": "2026-09-03 09:01:10.344064",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-09-03 09:01:10.344064",
+ "modified_by": "Administrator",
+ "module": "Accounting",
+ "name": "account-dashboard",
+ "owner": "Administrator",
+ "page_name": "account-dashboard",
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Administrator"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "Account Dashboard"
+}
