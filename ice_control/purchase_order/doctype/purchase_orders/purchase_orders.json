@@ -252,19 +252,19 @@
   },
   {
    "fetch_from": "outlet.default_stock_account",
+   "fetch_if_empty": 1,
    "fieldname": "default_stock_account",
    "fieldtype": "Link",
    "label": "Default Stock Account",
-   "options": "Chart of Account",
-   "reqd": 1
+   "options": "Chart of Account"
   },
   {
    "fetch_from": "outlet.default_cost_of_goods_sold_account",
+   "fetch_if_empty": 1,
    "fieldname": "default_expense_account",
    "fieldtype": "Link",
    "label": "Default Expense Account",
-   "options": "Chart of Account",
-   "reqd": 1
+   "options": "Chart of Account"
   },
   {
    "fieldname": "column_break_alqj",
@@ -272,19 +272,19 @@
   },
   {
    "fetch_from": "outlet.default_payable_account",
+   "fetch_if_empty": 1,
    "fieldname": "default_payable_account",
    "fieldtype": "Link",
    "label": "Default Payable Account",
-   "options": "Chart of Account",
-   "reqd": 1
+   "options": "Chart of Account"
   },
   {
    "fetch_from": "outlet.default_purchase_write_off_account",
+   "fetch_if_empty": 1,
    "fieldname": "default_write_off_account",
    "fieldtype": "Link",
    "label": "Default Write Off Account",
-   "options": "Chart of Account",
-   "reqd": 1
+   "options": "Chart of Account"
   },
   {
    "fieldname": "html_purchase_order_summary",
@@ -307,7 +307,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-03 08:36:23.625047",
+ "modified": "2026-09-03 09:36:37.462189",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Orders",

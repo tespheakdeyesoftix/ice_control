@@ -19,10 +19,10 @@ class PurchaseOrders(Document):
 
 		amended_from: DF.Link | None
 		balance: DF.Currency
-		default_expense_account: DF.Link
-		default_payable_account: DF.Link
-		default_stock_account: DF.Link
-		default_write_off_account: DF.Link
+		default_expense_account: DF.Link | None
+		default_payable_account: DF.Link | None
+		default_stock_account: DF.Link | None
+		default_write_off_account: DF.Link | None
 		employee: DF.Link | None
 		employee_name: DF.Data | None
 		naming_series: DF.Literal["PO.YYYY.-.####"]
@@ -145,15 +145,40 @@ def update_status(self):
 	self.status = status
 
 def validate_accounts(self):
-	from ice_control.api.api import get_product_default_account,get_payment_type_default_account
+	from ice_control.api.api import get_product_default_account,get_payment_type_default_account,get_outlet_default_accounts
+	outlet = get_outlet_default_accounts(self.payment_type,self.outlet)
+	self.default_payable_account = self.default_payable_account or outlet.get("default_payable_account")
+	self.default_expense_account = self.default_expense_account or outlet.get("default_cost_of_goods_sold_account")
+	self.default_stock_account = self.default_stock_account or outlet.get("default_stock_account")
+	self.default_write_off_account = self.default_write_off_account or outlet.get("default_purchase_write_off_account")
+
 	for a in self.purchase_products:
+		product = get_product_default_account(a.product_code, self.outlet)
 		if not a.default_stock_account:
-			a.default_stock_account = get_product_default_account(a.product_code, self.outlet).get("default_stock_account")
+			a.default_stock_account = product.get("default_stock_account")
 		if not a.default_expense_account:
-			a.default_expense_account = get_product_default_account(a.product_code, self.outlet).get("default_expense_account")
+			a.default_expense_account = product.get("default_expense_account")
 	for a in self.payments:
+		payment = get_payment_type_default_account(a.payment_type, self.outlet)
 		if not a.default_account:
-			a.default_account = get_payment_type_default_account(a.payment_type, self.outlet).get("default_account")
+			a.default_account = payment.get("default_account")
+
+	if not self.default_payable_account:
+		frappe.throw(_("Please select payable account"))
+	if not self.default_expense_account:
+		frappe.throw(_("Please select expense account"))
+	if not self.default_stock_account:
+		frappe.throw(_("Please select stock account"))
+	if not self.default_write_off_account:
+		frappe.throw(_("Please select write off account"))
+	
+	account_field = ["default_expense_account","default_payable_account","default_stock_account","default_write_off_account"]
+	accounts = []
+	for a in account_field:
+		if self.get(a) in accounts:
+			frappe.throw(_("<b>Account {0}</b> Is Already Selected.").format(self.get(a)))
+		else:
+			accounts.append(self.get(a))
 			
 def update_stock_product(self):
 	data = [
@@ -235,8 +260,6 @@ def submit_to_GL_entry(self):
 			"party_name": self.party_name,
 		}
 		docs.append(doc)
-
-	# add payment account
 	for acc in set([d.default_account for d in self.payments]):
 		if not acc:
 				frappe.throw(_("Please enter payment account code in payment list"))
@@ -259,7 +282,6 @@ def submit_to_GL_entry(self):
 			"party_name": self.party_name
 		}
 		docs.append(doc)
-
 	if self.write_off:
 		if not self.default_write_off_account:
 			frappe.throw(_('Please select write off account'))
@@ -276,13 +298,11 @@ def submit_to_GL_entry(self):
 			"party_type": self.party_type,
 			"party":self.party,
 			"party_name":self.party_name,
-			"remark":"កាត់ចេញពីបញ្ជាទិញលេខ {0} នៅថ្ងៃទី {1}។ ចំនួនទឹកប្រាក់ {2}".format(
-				self.name,
+			"remark":"កាត់ចេញពីបញ្ជាទិញលេខ {0} នៅថ្ងៃទី {1}។ ចំនួនទឹកប្រាក់ {2}".format(self.name,
 				frappe.format(self.posting_date,{"fieldtype":"Date"}),
 				frappe.format(self.write_off or 0,{"fieldtype":"Currency"}))
 		}
 		docs.append(doc)
-
 	if self.balance:
 		if not self.default_payable_account:
 			frappe.throw(_('Please select payable account'))
@@ -300,11 +320,10 @@ def submit_to_GL_entry(self):
 			"party":self.party,
 			"party_name":self.party_name,
 			"remark":"បញ្ជាទិញពី {0} នៅថ្ងៃទី {1}។ សរុបទឹកប្រាក់ {2}។ ជំពាក់ {3}".format(
-				self.party + "-" + self.party_name ,
-				frappe.format(self.posting_date,{"fieldtype":"Date"}),
-				frappe.format(sum([d.total_cost for d in self.purchase_products if d.default_stock_account == acc]),{"fieldtype":"Currency"}),
-																				frappe.format(self.balance or 0,{"fieldtype":"Currency"})
-																				),
+				self.party + "-" + self.party_name ,frappe.format(self.posting_date,{"fieldtype":"Date"}),
+				frappe.format(
+				sum([d.total_cost for d in self.purchase_products if d.default_stock_account == acc]),
+				{"fieldtype":"Currency"}),frappe.format(self.balance or 0,{"fieldtype":"Currency"})),
 		}
 		docs.append(doc)
 	submit_general_ledger_entry(docs=docs)

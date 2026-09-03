@@ -139,6 +139,20 @@ def get_product_default_account(product_code:str,outlet:str):
     }
 
 @frappe.whitelist()
+def get_outlet_default_accounts(outlet:str):
+    doc = frappe.get_cached_doc("Outlet", outlet)
+    return{
+        "default_receivable_account":doc.default_receivable_account,
+        "default_income_account":doc.default_income_account,
+        "default_payable_account":doc.default_payable_account,
+        "default_purchase_write_off_account":doc.default_purchase_write_off_account,
+        "default_cost_of_goods_sold_account":doc.default_cost_of_goods_sold_account,
+        "default_stock_adjustment_account":doc.default_stock_adjustment_account,
+        "default_stock_account":doc.default_stock_account
+    }
+
+
+@frappe.whitelist()
 def get_payment_type_default_account(payment_type:str,outlet:str):
     if not outlet:
         frappe.throw("Please select outlet first")

@@ -281,11 +281,11 @@
    "label": "Accounts"
   },
   {
+   "fetch_if_empty": 1,
    "fieldname": "account_paid_from",
    "fieldtype": "Link",
    "label": "Account Paid From",
-   "options": "Chart of Account",
-   "reqd": 1
+   "options": "Chart of Account"
   },
   {
    "fieldname": "column_break_gbvn",
@@ -293,19 +293,19 @@
   },
   {
    "fetch_from": "outlet.default_payable_account",
+   "fetch_if_empty": 1,
    "fieldname": "account_paid_to",
    "fieldtype": "Link",
    "label": "Account Paid To",
-   "options": "Chart of Account",
-   "reqd": 1
+   "options": "Chart of Account"
   },
   {
    "fetch_from": "outlet.default_purchase_write_off_account",
+   "fetch_if_empty": 1,
    "fieldname": "default_write_off_account",
    "fieldtype": "Link",
    "label": "Default Write Off Account",
-   "options": "Chart of Account",
-   "reqd": 1
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
@@ -313,7 +313,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-03 09:12:14.374676",
+ "modified": "2026-09-03 09:29:43.254738",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Order Payment",

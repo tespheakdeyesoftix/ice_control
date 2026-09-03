@@ -26,14 +26,14 @@ class PurchaseOrderPayment(Document):
 		from frappe.types import DF
 		from ice_control.purchase_order.doctype.purchase_order_payment_invoices.purchase_order_payment_invoices import PurchaseOrderPaymentInvoices
 
-		account_paid_from: DF.Link
-		account_paid_to: DF.Link
+		account_paid_from: DF.Link | None
+		account_paid_to: DF.Link | None
 		amended_from: DF.Link | None
 		amount_to_pay: DF.Currency
 		balance: DF.Currency
 		created_by: DF.Data | None
 		currency: DF.Link | None
-		default_write_off_account: DF.Link
+		default_write_off_account: DF.Link | None
 		exchange_rate: DF.Data | None
 		from_purchase_orders: DF.Check
 		input_amount: DF.Float
@@ -58,10 +58,9 @@ class PurchaseOrderPayment(Document):
 	def validate(self):
 		if self.is_new():
 			self.created_by  = frappe.get_cached_value("User",frappe.session.user,"full_name")
-		validate_payment_amount()
+		validate_payment_amount(self)
 		validate_accounts(self)
 		validate_close_date(self.posting_date, self.creation, self.outlet)
-
 		self.payment_amount_in_word = money_to_word(int(self.payment_amount))
 		self.validate_purchase_order_payment_invoices()
 		update_totals(self)
@@ -73,10 +72,9 @@ class PurchaseOrderPayment(Document):
 		self.amount_to_pay = sum([d.get("purchase_order_balance") or 0 for d in self.purchase_orders])
 
 	def on_submit(self):
-		submit_to_gl_entry(self)
-
 		if self.from_purchase_orders == 0:
 			update_purchase_order(self.name)
+			submit_to_gl_entry(self)
 
 	def on_cancel(self):
 		self.flags.ignore_links = True
@@ -226,17 +224,30 @@ def update_status(name):
 	elif doc.docstatus == 2:
 		status = "Cancelled"
 	frappe.db.set_value("Purchase Orders", name, "status", status, update_modified=False)
-	
+
 def validate_payment_amount(self):
 	if self.balance<0:
 		frappe.throw(_("ទឹកប្រាក់ទូទាត់មិនអាចធំជាងទឹកប្រាក់ត្រូវបង់បានទេ"))
 
 def validate_accounts(self):
-	payment_amount = flt(self.payment_amount)
-	write_off_amount = flt(self.total_write_off_amount)
-	if payment_amount > 0:
-		if self.account_paid_from == self.account_paid_to:
-			frappe.throw(_("Payment from Account and Payable Account must be different."))
-	if write_off_amount > 0:
-		if self.default_write_off_account == self.account_paid_to:
-			frappe.throw(_("Purchase Write Off Account and Payable Account must be different."))
+	from ice_control.api.api import get_outlet_default_accounts,get_payment_type_default_account
+	payment_type = get_payment_type_default_account(self.payment_type,self.outlet).get("default_account")
+	outlet = get_outlet_default_accounts(self.outlet).get("default_payable_account")
+	self.account_paid_from = self.account_paid_from or payment_type.get("default_account")
+	self.account_paid_to = self.account_paid_to or outlet.get("default_payable_account")
+	self.default_write_off_account = self.default_write_off_account or outlet.get("default_purchase_write_off_account")
+
+	if not self.account_paid_from:
+		frappe.throw(_("Please select account paid from"))
+	if not self.account_paid_to:
+		frappe.throw(_("Please select account paid to"))
+	if not self.default_write_off_account:
+		frappe.throw(_("Please select default write off account"))
+
+	account_field = ["account_paid_from","account_paid_to","default_write_off_account"]
+	accounts = []
+	for a in account_field:
+		if self.get(a) in accounts:
+			frappe.throw(_("<b>Account {0}</b> Is Already Selected.").format(self.get(a)))
+		else:
+			accounts.append(self.get(a))
