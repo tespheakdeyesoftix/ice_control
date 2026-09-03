@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_bulk_edit": 1,
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "naming_series:",
  "creation": "2026-09-02 11:08:35.555480",
@@ -8,14 +9,21 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "reference_number",
   "posting_date",
   "outlet",
   "column_break_gbbx",
   "vendor",
   "expense_by_employee",
+  "photo",
   "section_break_rheq",
   "expense_items",
-  "total_expense"
+  "section_break_vgyq",
+  "html",
+  "description",
+  "column_break_qcae",
+  "total_expense",
+  "amended_from"
  ],
  "fields": [
   {
@@ -60,8 +68,7 @@
   },
   {
    "fieldname": "section_break_rheq",
-   "fieldtype": "Section Break",
-   "label": "Expense"
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "total_expense",
@@ -81,12 +88,57 @@
    "fieldtype": "Table",
    "label": "Expense On",
    "options": "Expense Items"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Expense",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "reference_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Reference Number"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "section_break_vgyq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_qcae",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "html",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
   }
  ],
  "grid_page_length": 50,
+ "image_field": "photo",
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2026-09-03 11:46:46.751065",
+ "make_attachments_public": 1,
+ "modified": "2026-09-03 16:12:15.074040",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Expense",

@@ -87,13 +87,9 @@ class ClosedSellingDate(Document):
 		for section in sections:
 			for item in section["items"]:
 				existing = existing_rows.get((section["title"], item["title"]))
-				actual_value = existing.get("actual_value") if existing else None
+				actual_value = _get_actual_value(existing, item["value"])
 				note = existing.get("note") if existing else None
-				difference = (
-					flt(actual_value) - flt(item["value"])
-					if actual_value is not None and actual_value != ""
-					else None
-				)
+				difference = flt(actual_value) - flt(item["value"])
 				self.append("closed_selling_date_items", {
 					"category": section["title"],
 					"title": item["title"],
@@ -336,20 +332,21 @@ def _add_reconciliation_values(sections, closing_items):
 	for section in sections:
 		for item in section["items"]:
 			row = saved_rows.get((section["title"], item["title"]))
-			actual_value = row.get("actual_value") if row else None
+			actual_value = _get_actual_value(row, item["value"])
 			note = row.get("note") if row else None
-			has_actual_value = actual_value is not None and actual_value != ""
-			difference = flt(actual_value) - flt(item["value"]) if has_actual_value else None
+			difference = flt(actual_value) - flt(item["value"])
 			item.update({
-				"actual_value": actual_value if has_actual_value else "",
+				"actual_value": actual_value,
 				"note": note or "",
-				"difference": difference if has_actual_value else "",
-				"difference_display": (
-					_format_metric_value(difference, item["fieldtype"], item["currency"])
-					if has_actual_value else "—"
-				),
-				"has_difference": has_actual_value and abs(flt(difference)) > 0.005,
+				"difference": difference,
+				"difference_display": _format_metric_value(difference, item["fieldtype"], item["currency"]),
+				"has_difference": abs(flt(difference)) > 0.005,
 			})
+
+
+def _get_actual_value(row, system_value):
+	actual_value = row.get("actual_value") if row else None
+	return system_value if actual_value is None or actual_value == "" else actual_value
 
 
 def _metric(title, value, fieldtype, currency, emphasized=False):

@@ -182,32 +182,20 @@ def update_totals(self):
 	self.payment_amount_in_word = money_to_word(int(self.payment_amount or 0))
 
 def update_purchase_order(name):
-	doc = frappe.get_doc("Purchase Order Payment",name)
-	if doc.docstatus == 1:
-		for p in doc.purchase_orders:
-			write_off,total_payment,balance = frappe.db.get_value("Purchase Orders",p.purchase_order,['write_off', 'total_payment','balance'])
-			frappe.db.set_value("Purchase Orders",p.purchase_order,{
-				'write_off': write_off + p.write_off_amount,
-				'total_payment': total_payment + p.payment_amount,
-				'balance' : balance - (p.payment_amount+p.write_off_amount)
-			})
-			update_status(p.purchase_order)
-	elif doc.docstatus == 2:
-		for p in doc.purchase_orders:
-			write_off,total_payment,balance = frappe.db.get_value("Purchase Orders",p.purchase_order,['write_off', 'total_payment','balance'])
-			frappe.db.set_value("Purchase Orders",p.purchase_order,{
-				'write_off': write_off - p.write_off_amount,
-				'total_payment': total_payment - (p.payment_amount),
-				'balance' : balance + (p.payment_amount+p.write_off_amount)
-			})
-			if doc.from_purchase_orders == 1:
-				payment_amount,write_off_amount = frappe.db.get_value("Purchase Order Payment Child",doc.payment_name,[ 'payment_amount','write_off_amount'])
-				frappe.db.set_value("Purchase Order Payment Child",doc.payment_name,{
-				'input_amount': input_amount - doc.input_amount,
-				'payment_amount': payment_amount - doc.payment_amount,
-				'write_off_amount' : write_off_amount - doc.total_write_off_amount
-			})
-			update_status(p.purchase_order)
+	frappe.db.sql(
+		"""
+			with a as (
+				select 
+					p.purchase_order,	
+					COALESCE(SUM(p.payment_amount), 0) AS total_payment,
+					COALESCE(SUM(p.write_off_amount), 0) AS write_off_amount 
+
+			)
+			update `tabPurchase Order` 
+		""",
+		{"payment_name": name},
+	)
+	update_status(name)
 
 def update_status(name):
 	doc = frappe.get_doc("Purchase Orders", name)

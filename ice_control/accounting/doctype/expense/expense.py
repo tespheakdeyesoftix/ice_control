@@ -15,11 +15,15 @@ class Expense(Document):
 		from frappe.types import DF
 		from ice_control.accounting.doctype.expense_items.expense_items import ExpenseItems
 
+		amended_from: DF.Link | None
+		description: DF.SmallText | None
 		expense_by_employee: DF.Link
 		expense_items: DF.Table[ExpenseItems]
 		naming_series: DF.Literal["EXP.YYYY.-.####"]
 		outlet: DF.Link
+		photo: DF.AttachImage | None
 		posting_date: DF.Date
+		reference_number: DF.Data | None
 		total_expense: DF.Currency
 		vendor: DF.Link
 	# end: auto-generated types

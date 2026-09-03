@@ -36,20 +36,6 @@ def get_customer_product_prices(customer:str)->list[dict]:
     return frappe.db.sql(sql,{"customer":customer},as_dict=1)
 
 
-@frappe.whitelist()
-def get_customer_dashboard_data(customer: str ="", start_date:str = None, end_date:str=None, outlet:str="")->dict:
- 
-
-    if not start_date:
-        start_date =  getdate(today()).replace(day=1)
-    if not end_date:
-        end_date = today()
-
-    return {
-        "account_recivable": {},
-        "ar_aging":{}
-    }
-  
 
 
 @frappe.whitelist()

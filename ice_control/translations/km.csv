@@ -199,6 +199,7 @@ Disabled,អសកម្ម,
 Customer Group En,ក្រុមអតិថិជន (En)
 Not Saved,មិនបានរក្សាទុក
 User Permission,សិទ្ធិអ្នកប្រើ
+User Permissions,សិទ្ធិអ្នកប្រើ
 Role Permissions Manager,កម្មវិធីគ្រប់គ្រងសិទ្ធតាមតួនាទី
 Customize,ប្ដូរតាមបំណង
 Toggle Sidebar,បិទ/បើករបារចំហៀង
@@ -1274,3 +1275,4 @@ Reference #,លេខយោង
 "{0} sale(s) are still in Draft status and need to be closed.","ការលក់ចំនួន {0} នៅតែស្ថិតក្នុងស្ថានភាពព្រាង ហើយត្រូវការបិទ។"
 "{0} voucher(s) have unequal debit and credit totals.","ប័ណ្ណចំនួន {0} មានសរុបឥណពន្ធ និងឥណទានមិនស្មើគ្នា។"
 "View Report","មើលរបាយការណ៍"
+created,បានបង្កើត

@@ -26,16 +26,15 @@ frappe.ui.form.on("Expense Items", {
         alert("u add me")
     },
 
-     quantity(frm, cdt, cdn) {
-        return
+    quantity(frm, cdt, cdn) {
         const row = frappe.get_doc(cdt, cdn);
 
-        calculeteExpenseItemRow(frm, row)
+        calculateExpenseItemRow(frm, row)
     },
     price(frm, cdt, cdn) {
         const row = frappe.get_doc(cdt, cdn);
 
-        calculeteExpenseItemRow(frm, row)
+        calculateExpenseItemRow(frm, row)
     },
 
 
@@ -53,7 +52,7 @@ function summaryTotal(frm){
 
         frm.refresh_field("total_expense");
 }
-function calculeteExpenseItemRow(frm,row){
+function calculateExpenseItemRow(frm,row){
             row.total_amount = (row.quantity ?? 0) * (row.price ?? 0)
             summaryTotal(frm)
         frm.refresh_field("expense_items");

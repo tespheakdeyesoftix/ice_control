@@ -35,15 +35,14 @@ frappe.ui.form.on("Customer", {
 function setIndicator(frm) {
     if (frm.is_new()) return;
     frappe.call({
-        method: 'ice_control.api.customer.get_customer_dashboard_data',
+        method: 'ice_control.customer_management.doctype.customer.customer.get_customer_ar_info',
         args: {
             customer: frm.doc.name
         },
         callback: function (r) {
             if (!r.message) return;
-            data = r.message.account_recivable
-            // example: r.message.total_quantity
-              frm.dashboard.add_indicator(
+            const data = r.message;
+            frm.dashboard.add_indicator(
                 __("Opening: {0}", [fmt_money(data.opening || 0)]),
                 "blue"
             );
@@ -63,7 +62,7 @@ function setIndicator(frm) {
                 "red"
             );
             frm.dashboard.add_indicator(
-                __("Balance: {0}", [fmt_money(data.balance)]),
+                __("Ending Balance: {0}", [fmt_money(data.ending_balance || 0)]),
                 "green"
             );
         }

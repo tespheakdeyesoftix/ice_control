@@ -156,11 +156,10 @@ function update_preview_difference($row) {
 }
 
 function format_preview_value(value, fieldtype, currency) {
-	if (fieldtype === "Currency") {
-		return format_currency(value, currency);
-	}
-
-	return format_number(value, undefined, fieldtype === "Int" ? 0 : 2);
+	return frappe.format(value, {
+		fieldtype,
+		options: fieldtype === "Currency" ? currency : undefined,
+	});
 }
 
 function calculate_child_difference(frm, cdt, cdn) {
