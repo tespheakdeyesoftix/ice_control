@@ -8,8 +8,8 @@
  "field_order": [
   "naming_series",
   "posting_date",
-  "outlet",
   "reference_number",
+  "outlet",
   "stock_location",
   "photo",
   "status",
@@ -37,6 +37,7 @@
   "amended_from",
   "column_break_xniw",
   "write_off",
+  "html_purchase_order_summary",
   "total_payment",
   "balance",
   "section_break_qlnh",
@@ -62,6 +63,8 @@
   {
    "fieldname": "outlet",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Outlet",
    "options": "Outlet"
   },
@@ -277,6 +280,11 @@
    "fieldtype": "Link",
    "label": "Default Write Off Account",
    "options": "Chart of Account"
+  },
+  {
+   "fieldname": "html_purchase_order_summary",
+   "fieldtype": "HTML",
+   "label": "HTML Purchase Order Summary"
   }
  ],
  "grid_page_length": 50,
@@ -284,7 +292,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-02 10:26:07.663496",
+ "modified": "2026-09-03 07:07:58.666693",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Orders",

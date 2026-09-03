@@ -9,6 +9,7 @@
   "parent_chart_of_account",
   "account_code",
   "account_name",
+  "price",
   "column_break_rwal",
   "account_type",
   "root_type",
@@ -117,12 +118,18 @@
    "fieldname": "outlet",
    "fieldtype": "Data",
    "label": "Outlet"
+  },
+  {
+   "description": "We use this price to set default price use in expense.",
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-02 07:24:13.259036",
+ "modified": "2026-09-02 17:33:28.008480",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Chart of Account",

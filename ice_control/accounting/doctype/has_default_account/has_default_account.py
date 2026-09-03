@@ -14,6 +14,7 @@ class HasDefaultAccount(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		default_purchase_payment_account: DF.Link | None
 		default_sale_payment_account: DF.Link | None
 		outlet: DF.Link | None
 		parent: DF.Data

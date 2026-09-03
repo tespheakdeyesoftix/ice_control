@@ -5,7 +5,7 @@
 from frappe.model.document import Document
 
 
-class ExpenseCategory(Document):
+class ExpensePayment(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -14,9 +14,8 @@ class ExpenseCategory(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		description: DF.SmallText | None
-		expense_category: DF.Data
-		is_enable: DF.Check
+		expense: DF.Link | None
+		total_expense: DF.Currency
 	# end: auto-generated types
 
-	_DOCTYPE_NAME = "Expense Category"
+	_DOCTYPE_NAME = "Expense Payment"

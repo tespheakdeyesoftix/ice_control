@@ -8,7 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "outlet",
-  "default_sale_payment_account"
+  "default_sale_payment_account",
+  "default_purchase_payment_account"
  ],
  "fields": [
   {
@@ -25,13 +26,21 @@
    "label": "Default Sale Payment Account",
    "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"in\",[\"Cash\",\"Bank\"]]]",
    "options": "Chart of Account"
+  },
+  {
+   "fieldname": "default_purchase_payment_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Default Purchase Payment Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"in\",[\"Cash\",\"Bank\"]]]",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-08-31 11:37:35.243118",
+ "modified": "2026-09-02 15:03:23.588984",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Has Default Account",

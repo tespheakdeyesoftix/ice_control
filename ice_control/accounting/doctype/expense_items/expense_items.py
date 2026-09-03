@@ -5,7 +5,7 @@
 from frappe.model.document import Document
 
 
-class ExpenseItem(Document):
+class ExpenseItems(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -14,10 +14,14 @@ class ExpenseItem(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		description: DF.SmallText | None
-		expense_item_code: DF.Data
-		expense_item_name: DF.Data
-		price: DF.Float
+		description: DF.Data | None
+		expense_code: DF.Link | None
+		parent: DF.Data
+		parentfield: DF.Data
+		parenttype: DF.Data
+		price: DF.Currency
+		quantity: DF.Float
+		total_amount: DF.Currency
 	# end: auto-generated types
 
-	_DOCTYPE_NAME = "Expense Item"
+	_DOCTYPE_NAME = "Expense Items"

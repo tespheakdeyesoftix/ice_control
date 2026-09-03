@@ -56,9 +56,12 @@ class Employee(Document):
 			self.password = ""
 
 	def on_update(self):
+
+
+		
 		if self.allow_login:
 			email = "{}@mail.com".format(self.username.strip().lower().replace(" ", "_"))
-
+		 
 			if not self.user_id:
 				if frappe.db.exists("User", email):
 					user_doc = frappe.get_doc("User", email)
@@ -92,7 +95,9 @@ class Employee(Document):
 					update_password(user=user_doc.name, pwd=self.get_password("_password"), logout_all_sessions=True)
 
 			else:
+				 
 				if check_user_field_changed(self, ["username", "employee_name", "language", "_password", "allow_login", "role_profile"]):
+
 					user_doc = frappe.get_doc("User", self.user_id)
 					user_doc.username = self.username
 					user_doc.first_name = self.employee_name
@@ -112,6 +117,7 @@ class Employee(Document):
 					if self._password:
 						update_password(user=user_doc.name, pwd=self.get_password("_password"), logout_all_sessions=True)
 					user_doc.save(ignore_permissions=True)
+ 
 
 		else:
 			if self.user_id:

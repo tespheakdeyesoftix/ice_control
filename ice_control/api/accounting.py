@@ -6,7 +6,8 @@ from frappe.model.document import bulk_insert
 from frappe.model.naming import make_autoname
 from frappe.translate import print_language
 from frappe.utils import flt, getdate, today
-import frappe
+
+
 
 def submit_general_ledger_entry(docs:list[dict],run_commit:bool = True):
     def get_general_ledger_entry_record(docs:list[dict]):
@@ -80,6 +81,24 @@ def get_customer_credit_balance(customer:str, outlet:str , date:str|date)->float
             posting_date <= %(date)s
     """
     data = frappe.db.sql(sql, {"customer":customer,"outlet":outlet, "date":date},as_dict =1)
+    
+    return data[0].get("total") or 0
+
+
+def get_party_account_payable_balance(party_type:str, party:str, outlet:str , date:str|date)->float:
+    # get credit from database
+    sql = """
+        select  
+            sum(debit_amount - credit_amount) as total 
+        from `tabGL Entry` 
+        where 
+            account_type = 'Payable' and 
+            party_type = %(party_type)s and 
+            party = %(party)s and 
+            outlet = %(outlet)s and 
+            posting_date <= %(date)s
+    """
+    data = frappe.db.sql(sql, {"party":party,"party_type":party_type,"outlet":outlet, "date":date},as_dict =1)
     
     return data[0].get("total") or 0
 

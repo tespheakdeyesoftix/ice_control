@@ -1,0 +1,398 @@
+# Copyright (c) 2026, Tes Pheakdey and contributors
+# For license information, please see license.txt
+
+from collections import defaultdict
+
+import frappe
+from frappe import _
+from frappe.utils import cint, flt, getdate
+
+from ice_control.api.utils import get_current_employee_outlets
+
+
+INCOME_ROOT_TYPE = "Income"
+EXPENSE_ROOT_TYPE = "Expenses"
+
+
+def execute(filters: dict | None = None):
+	filters = frappe._dict(filters or {})
+	validate_filters(filters)
+
+	data, totals = get_data(filters)
+	chart = get_chart(totals) if data else None
+
+	return get_columns(), data, None, chart, get_report_summary(totals)
+
+
+def validate_filters(filters: frappe._dict) -> None:
+	if not filters.get("start_date") or not filters.get("end_date"):
+		frappe.throw(_("Start Date and End Date are required."))
+
+	filters.start_date = getdate(filters.start_date)
+	filters.end_date = getdate(filters.end_date)
+
+	if filters.start_date > filters.end_date:
+		frappe.throw(_("Start Date cannot be after End Date."))
+
+
+def get_columns() -> list[dict]:
+	return [
+		{
+			"label": _("Account Code"),
+			"fieldname": "account_code",
+			"fieldtype": "Data",
+			"width": 220,
+		},
+		{
+			"label": _("Account Name"),
+			"fieldname": "account_name",
+			"fieldtype": "Data",
+			"width": 280,
+		},
+		{
+			"label": _("Account Type"),
+			"fieldname": "account_type",
+			"fieldtype": "Data",
+			"width": 125,
+		},
+		{
+			"label": _("Debit"),
+			"fieldname": "debit_amount",
+			"fieldtype": "Currency",
+			"width": 140,
+		},
+		{
+			"label": _("Credit"),
+			"fieldname": "credit_amount",
+			"fieldtype": "Currency",
+			"width": 140,
+		},
+		{
+			"label": _("Amount"),
+			"fieldname": "amount",
+			"fieldtype": "Currency",
+			"width": 160,
+		},
+	]
+
+
+def get_data(filters: frappe._dict) -> tuple[list[dict], dict]:
+	allowed_outlets = sorted({outlet for outlet in get_current_employee_outlets() if outlet})
+	if not allowed_outlets:
+		return [], get_totals({})
+
+	if filters.get("outlet") and filters.outlet not in allowed_outlets:
+		frappe.throw(
+			_("You do not have permission to access Outlet {0}.").format(
+				frappe.bold(filters.outlet)
+			),
+			frappe.PermissionError,
+		)
+
+	direct_balances = get_direct_balances(filters, allowed_outlets)
+	accounts = get_accounts(filters, allowed_outlets, set(direct_balances))
+	if not accounts:
+		return [], get_totals({})
+
+	roll_up_balances(accounts, direct_balances)
+
+	show_empty = cint(filters.get("show_accounts_without_transactions"))
+	data = build_rows(accounts, show_empty)
+	totals = get_totals(direct_balances)
+
+	return data, totals
+
+
+def get_accounts(
+	filters: frappe._dict, allowed_outlets: list[str], active_account_names: set[str]
+) -> list[dict]:
+	"""Return permitted P&L accounts plus any ancestors needed for the tree."""
+	accounts = frappe.db.sql(
+		"""
+			select
+				name,
+				account_code,
+				account_name,
+				account_type,
+				root_type,
+				parent_chart_of_account,
+				coalesce(is_group, 0) as is_group,
+				coalesce(outlet, '') as outlet,
+				coalesce(lft, 0) as lft
+			from `tabChart of Account`
+			where root_type in (%(income_root_type)s, %(expense_root_type)s)
+			order by
+				case when root_type = %(income_root_type)s then 0 else 1 end,
+				lft,
+				account_code,
+				account_name
+		""",
+		{
+			"income_root_type": INCOME_ROOT_TYPE,
+			"expense_root_type": EXPENSE_ROOT_TYPE,
+		},
+		as_dict=True,
+	)
+
+	if not accounts:
+		return []
+
+	accounts_by_name = {account.name: account for account in accounts}
+	visible_outlets = {filters.outlet} if filters.get("outlet") else set(allowed_outlets)
+	included_names = {
+		account.name
+		for account in accounts
+		if not account.outlet or account.outlet in visible_outlets
+	}
+	included_names.update(
+		account_name for account_name in active_account_names if account_name in accounts_by_name
+	)
+
+	# Keep the complete route to each permitted account, even if a parent has
+	# outlet metadata that differs from its child.
+	for account_name in list(included_names):
+		parent_name = accounts_by_name[account_name].parent_chart_of_account
+		visited = set()
+		while parent_name in accounts_by_name and parent_name not in visited:
+			visited.add(parent_name)
+			included_names.add(parent_name)
+			parent_name = accounts_by_name[parent_name].parent_chart_of_account
+
+	return [account for account in accounts if account.name in included_names]
+
+
+def get_direct_balances(filters: frappe._dict, allowed_outlets: list[str]) -> dict[str, dict]:
+	conditions = [
+		"gle.outlet in %(allowed_outlets)s",
+		"coalesce(gle.is_cancelled, 0) = 0",
+		"gle.posting_date between %(start_date)s and %(end_date)s",
+	]
+	query_filters = {
+		"allowed_outlets": tuple(allowed_outlets),
+		"start_date": filters.start_date,
+		"end_date": filters.end_date,
+	}
+
+	if filters.get("outlet"):
+		conditions.append("gle.outlet = %(outlet)s")
+		query_filters["outlet"] = filters.outlet
+
+	rows = frappe.db.sql(
+		f"""
+			select
+				gle.account,
+				coa.root_type,
+				sum(coalesce(gle.debit_amount, 0)) as debit_amount,
+				sum(coalesce(gle.credit_amount, 0)) as credit_amount,
+				count(gle.name) as transaction_count
+			from `tabGL Entry` gle
+			inner join `tabChart of Account` coa on coa.name = gle.account
+			where
+				coa.root_type in (%(income_root_type)s, %(expense_root_type)s)
+				and {' and '.join(conditions)}
+			group by gle.account, coa.root_type
+		""",
+		{
+			**query_filters,
+			"income_root_type": INCOME_ROOT_TYPE,
+			"expense_root_type": EXPENSE_ROOT_TYPE,
+		},
+		as_dict=True,
+	)
+
+	return {
+		row.account: {
+			"root_type": row.root_type,
+			"debit_amount": flt(row.debit_amount),
+			"credit_amount": flt(row.credit_amount),
+			"transaction_count": cint(row.transaction_count),
+		}
+		for row in rows
+	}
+
+
+def roll_up_balances(accounts: list[dict], direct_balances: dict[str, dict]) -> None:
+	accounts_by_name = {account.name: account for account in accounts}
+	children = defaultdict(list)
+
+	for account in accounts:
+		if account.parent_chart_of_account in accounts_by_name:
+			children[account.parent_chart_of_account].append(account.name)
+
+	for child_names in children.values():
+		child_names.sort(key=lambda name: get_account_sort_key(accounts_by_name[name]))
+
+	calculated = set()
+	calculating = set()
+
+	def calculate(account_name: str) -> dict:
+		account = accounts_by_name[account_name]
+		if account_name in calculated:
+			return account
+		if account_name in calculating:
+			# Protect the report from malformed circular account relationships.
+			return account
+
+		calculating.add(account_name)
+		direct = direct_balances.get(account_name, {})
+		account.debit_amount = flt(direct.get("debit_amount"))
+		account.credit_amount = flt(direct.get("credit_amount"))
+		account.transaction_count = cint(direct.get("transaction_count"))
+
+		for child_name in children.get(account_name, []):
+			child = calculate(child_name)
+			account.debit_amount += flt(child.debit_amount)
+			account.credit_amount += flt(child.credit_amount)
+			account.transaction_count += cint(child.transaction_count)
+
+		account.amount = get_normal_balance(
+			account.root_type, account.debit_amount, account.credit_amount
+		)
+		calculating.discard(account_name)
+		calculated.add(account_name)
+		return account
+
+	for account in accounts:
+		calculate(account.name)
+
+
+def build_rows(accounts: list[dict], show_empty: bool) -> list[dict]:
+	accounts_by_name = {account.name: account for account in accounts}
+	children = defaultdict(list)
+	roots = []
+
+	for account in accounts:
+		if account.parent_chart_of_account in accounts_by_name:
+			children[account.parent_chart_of_account].append(account.name)
+		else:
+			roots.append(account.name)
+
+	for child_names in children.values():
+		child_names.sort(key=lambda name: get_account_sort_key(accounts_by_name[name]))
+	roots.sort(key=lambda name: get_account_sort_key(accounts_by_name[name]))
+
+	data = []
+	visited = set()
+
+	def add_account(account_name: str, indent: int) -> None:
+		if account_name in visited:
+			return
+		visited.add(account_name)
+
+		account = accounts_by_name[account_name]
+		if not show_empty and not cint(account.transaction_count):
+			return
+
+		parent = accounts_by_name.get(account.parent_chart_of_account)
+		data.append(
+			{
+				"account": account.name,
+				"account_code": account.account_code or account.name,
+				"account_name": account.account_name,
+				"account_type": account.account_type or account.root_type,
+				"root_type": account.root_type,
+				"parent_account": parent.account_code if parent else None,
+				"debit_amount": flt(account.debit_amount),
+				"credit_amount": flt(account.credit_amount),
+				"amount": flt(account.amount),
+				"indent": indent,
+				"is_group": cint(account.is_group or bool(children.get(account_name))),
+			}
+		)
+
+		for child_name in children.get(account_name, []):
+			add_account(child_name, indent + 1)
+
+	for root_name in roots:
+		add_account(root_name, 0)
+
+	# Include malformed/cyclic orphan records without losing report data.
+	for account in sorted(accounts, key=get_account_sort_key):
+		if account.name not in visited:
+			add_account(account.name, 0)
+
+	return data
+
+
+def get_account_sort_key(account: dict) -> tuple:
+	root_order = 0 if account.root_type == INCOME_ROOT_TYPE else 1
+	lft = cint(account.lft)
+	return (
+		root_order,
+		0 if lft else 1,
+		lft,
+		str(account.account_code or ""),
+		str(account.account_name or ""),
+	)
+
+
+def get_normal_balance(root_type: str, debit_amount: float, credit_amount: float) -> float:
+	if root_type == INCOME_ROOT_TYPE:
+		return flt(credit_amount) - flt(debit_amount)
+	return flt(debit_amount) - flt(credit_amount)
+
+
+def get_totals(direct_balances: dict[str, dict]) -> dict:
+	income = 0.0
+	expense = 0.0
+
+	for balance in direct_balances.values():
+		amount = get_normal_balance(
+			balance.get("root_type"),
+			balance.get("debit_amount"),
+			balance.get("credit_amount"),
+		)
+		if balance.get("root_type") == INCOME_ROOT_TYPE:
+			income += amount
+		elif balance.get("root_type") == EXPENSE_ROOT_TYPE:
+			expense += amount
+
+	return {
+		"income": income,
+		"expense": expense,
+		"profit": income - expense,
+	}
+
+
+def get_report_summary(totals: dict) -> list[dict]:
+	profit = flt(totals.get("profit"))
+
+	return [
+		{
+			"label": _("Income"),
+			"value": flt(totals.get("income")),
+			"datatype": "Currency",
+			"indicator": "Blue",
+		},
+		{"type": "separator", "value": "-"},
+		{
+			"label": _("Expense"),
+			"value": flt(totals.get("expense")),
+			"datatype": "Currency",
+			"indicator": "Red",
+		},
+		{"type": "separator", "value": "=", "color": "blue"},
+		{
+			"label": _("Profit"),
+			"value": profit,
+			"datatype": "Currency",
+			"indicator": "Green" if profit >= 0 else "Red",
+		},
+	]
+
+
+def get_chart(totals: dict) -> dict:
+	return {
+		"data": {
+			"labels": [_("Profit and Loss")],
+			"datasets": [
+				{"name": _("Income"), "values": [flt(totals.get("income"))]},
+				{"name": _("Expense"), "values": [flt(totals.get("expense"))]},
+				{"name": _("Profit"), "values": [flt(totals.get("profit"))]},
+			],
+		},
+		"title": _("Income - Expense = Profit"),
+		"type": "bar",
+		"colors": ["#2490ef", "#e24c4b", "#28a745"],
+		"barOptions": {"stacked": False},
+	}

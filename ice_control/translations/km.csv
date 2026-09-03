@@ -325,7 +325,7 @@ Bank Account,គណនីធនាគារ
 Cash Transfer Account,គណនីផ្ទេរសាច់ប្រាក់
 Receivable Account,គណនីទទួលប្រាក់
 Credit Account,គណនីឥណទាន
-Write Off Account,គណនីលុបចោល
+Write Off Account,គណនីកាត់ចោល
 Inventory Account,គណនីសារពើភ័ណ្ឌ
 Server Report URL,អាសយដ្ឋានរបាយការណ៍ម៉ាស៊ីនមេ (URL)
 Report Service URL,អាសយដ្ឋានសេវារបាយការណ៍ (URL)
@@ -968,7 +968,7 @@ No Data,គ្មានទិន្នន័យ
 Opening,សមតុល្យដើមគ្រា
 Debit Amount: {0},ចំនួនទឹកប្រាក់ឥណពន្ធ: {0}
 Payment Amount: {0},ចំនួនទឹកប្រាក់ទូទាត់: {0}
-Write Off Amount: {0},ទឹកប្រាក់លុបចោល: {0}
+Write Off Amount: {0},ទឹកប្រាក់កាត់ចោល: {0}
 Borrow Reference Name,លេខយោងខ្ចី
 Borrow Duration: {0} Day(s),ចំនួនថ្ងៃខ្ចី {0}
 Borrow Product Balance,ចំនួនជំពាក់ទំនិញ
@@ -1024,7 +1024,7 @@ Filters {0}, តម្រង​ {0},
 Recent Sale,ការលក់ថ្មីៗ
 Recent Payment,ការទូទាត់ថ្មីៗ
 Invoice No,លេខវិក្កយបត្រ
-Write Off Amount,ចំនួនទឹកប្រាក់លុបចោល
+Write Off Amount,ទឹកប្រាក់កាត់ចោល
 Calender,ប្រតិទិន
 Month,ខែ
 month,ខែ
@@ -1080,7 +1080,7 @@ Purchase Order Date,កាលបរិច្ឆេទបញ្ជាទិញ
 Purchase Order Balance,សមតុល្យបញ្ជាទិញ
 Input Write off Amount,បញ្ចូលចំនួនទឹកប្រាក់កាត់ចោល
 Total Invoices,សរុបវិក្កយបត្រ
-Total Write off Amount,សរុបចំនួនទឹកប្រាក់កាត់ចោល
+Total Write off Amount,សរុបទឹកប្រាក់កាត់ចោល
 Inventory Transactions,ប្រតិបត្តិការស្តុក
 In Quantity,ចំនួនចូល
 Out Quantity,ចំនួនចេញ

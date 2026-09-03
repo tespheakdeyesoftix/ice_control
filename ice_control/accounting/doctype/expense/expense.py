@@ -13,8 +13,15 @@ class Expense(Document):
 
 	if TYPE_CHECKING:
 		from frappe.types import DF
+		from ice_control.accounting.doctype.expense_items.expense_items import ExpenseItems
 
-		series_number: DF.Data
+		expense_by_employee: DF.Link
+		naming_series: DF.Literal["EXP.YYYY.-.####"]
+		outlet: DF.Link
+		posting_date: DF.Date
+		table_isch: DF.Table[ExpenseItems]
+		total_expense: DF.Currency
+		vendor: DF.Link
 	# end: auto-generated types
 
 	_DOCTYPE_NAME = "Expense"

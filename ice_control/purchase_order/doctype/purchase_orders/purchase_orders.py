@@ -60,14 +60,11 @@ class PurchaseOrders(Document):
 			frappe.throw(_("Payment amount cannot greater than purchase order amount"))
 		update_status(self)
 
-	def on_cancel(self):
-		from ice_control.api.accounting import cancel_general_ledger_entery
-		cancel_general_ledger_entery("Purchase Order", self.name)
-
 	def on_submit(self):
 		add_payment(self.name)
 		update_stock_product(self)
 		update_status(self)
+		submit_to_GL_entry(self)
 	
 	def on_cancel(self):
 		update_status(self)
@@ -87,6 +84,8 @@ class PurchaseOrders(Document):
 			for p in self.purchase_products if p.is_inventory_product == 1
 		]
 		add_inventory_transaction(data)
+		from ice_control.api.accounting import cancel_general_ledger_entery
+		cancel_general_ledger_entery("Purchase Order", self.name)
 
 	def validate_product_unit(self):
 		from ice_control.api.inventory import get_purchase_cost
@@ -180,7 +179,7 @@ def add_payment(name):
 def submit_to_GL_entry(self):
 	from ice_control.api.accounting import submit_general_ledger_entry
 	docs = []
-	for acc in set([d.inventory_account for d in self.purchase_products]):
+	for acc in set([d.default_stock_account for d in self.purchase_products]):
 		if not acc:
 				frappe.throw(_("Account code in purchase order product is required."))
 		doc = {
@@ -188,14 +187,14 @@ def submit_to_GL_entry(self):
 			"outlet":self.outlet,
 			"posting_date":self.posting_date,
 			"account":acc,
-			"amount":sum([d.total_cost for d in self.purchase_products if d.inventory_account == acc]),
+			"debit_amount":sum([d.total_cost for d in self.purchase_products if d.default_stock_account == acc]),
 			"against":self.party + " - " + self.party_name,
-			"voucher_type":"Purchase Order",
+			"voucher_type":"Purchase Orders",
 			"voucher_no":self.name,
 			"remark":"បញ្ជាទិញពី {0} នៅថ្ងៃទី {1}។ សរុបទឹកប្រាក់ {2}".format(
 				self.party + "-" + self.party_name ,
 				frappe.format(self.posting_date,{"fieldtype":"Date"}),
-				frappe.format(sum([d.total_cost for d in self.purchase_products if d.inventory_account == acc]),{"fieldtype":"Currency"})),
+				frappe.format(sum([d.total_cost for d in self.purchase_products if d.default_stock_account == acc]),{"fieldtype":"Currency"})),
 			"party_type": self.party_type,
 			"party": self.party,
 			"party_name": self.party_name,
@@ -203,7 +202,7 @@ def submit_to_GL_entry(self):
 		docs.append(doc)
 
 	# add payment account
-	for acc in set([d.account for d in self.payments]):
+	for acc in set([d.default_account for d in self.payments]):
 		if not acc:
 				frappe.throw(_("Please enter payment account code in payment list"))
 		doc = {
@@ -211,33 +210,56 @@ def submit_to_GL_entry(self):
 			"outlet":self.outlet,
 			"posting_date":self.posting_date,
 			"account":acc,
-			"amount":sum([d.payment_amount for d in self.payments if d.account == acc]),
+			"credit_amount":sum([d.payment_amount for d in self.payments if d.default_account == acc]),
 			"against":self.name,
-			"voucher_type":"Purchase Order",
+			"voucher_type":"Purchase Orders",
 			"voucher_no":self.name,
 			"remark":"ទូទាត់ទឹកប្រាក់បញ្ជាទិញអោយ {0}, នៅថ្ងៃទី {1}, ចំនួនទឹកប្រាក់​ {2}".format(
 				self.party + "-" + self.party_name,
 				frappe.format(self.posting_date,{"fieldtype":"Date"}),
-				frappe.format(sum([d.payment_amount for d in self.payments if d.account == acc]),{"fieldtype":"Currency"})
+				frappe.format(sum([d.payment_amount for d in self.payments if d.default_account == acc]),{"fieldtype":"Currency"})
 			),
 			"party_type":self.party_type,
 			"party": self.party,
 			"party_name": self.party_name
 		}
 		docs.append(doc)
-	
+
+	if self.write_off:
+		if not self.default_write_off_account:
+			frappe.throw(_('Please select write off account'))
+		doc = {
+			"doctype":"GL Entry",
+			"outlet":self.outlet,
+			"posting_date":self.posting_date,
+			"account":self.default_write_off_account,
+			"credit_amount":self.write_off,
+			"against_voucher_type":"Purchase Orders",
+			"against_voucher_no": self.name,
+			"voucher_type":"Purchase Orders",
+			"voucher_no":self.name,
+			"party_type": self.party_type,
+			"party":self.party,
+			"party_name":self.party_name,
+			"remark":"កាត់ចេញពីបញ្ជាទិញលេខ {0} នៅថ្ងៃទី {1}។ ចំនួនទឹកប្រាក់ {2}".format(
+				self.name,
+				frappe.format(self.posting_date,{"fieldtype":"Date"}),
+				frappe.format(self.write_off or 0,{"fieldtype":"Currency"}))
+		}
+		docs.append(doc)
+
 	if self.balance:
-		if not self.payable_account:
+		if not self.default_payable_account:
 			frappe.throw(_('Please select payable account'))
 		doc = {
 			"doctype":"GL Entry",
 			"outlet":self.outlet,
 			"posting_date":self.posting_date,
-			"account":self.payable_account,
-			"amount":self.balance,
-			"against_voucher_type":"Purchase Order",
+			"account":self.default_payable_account,
+			"credit_amount":self.balance,
+			"against_voucher_type":"Purchase Orders",
 			"against_voucher_no": self.name,
-			"voucher_type":"Purchase Order",
+			"voucher_type":"Purchase Orders",
 			"voucher_no":self.name,
 			"party_type": self.party_type,
 			"party":self.party,
@@ -245,7 +267,7 @@ def submit_to_GL_entry(self):
 			"remark":"បញ្ជាទិញពី {0} នៅថ្ងៃទី {1}។ សរុបទឹកប្រាក់ {2}។ ជំពាក់ {3}".format(
 				self.party + "-" + self.party_name ,
 				frappe.format(self.posting_date,{"fieldtype":"Date"}),
-				frappe.format(sum([d.total_cost for d in self.purchase_products if d.inventory_account == acc]),{"fieldtype":"Currency"}),
+				frappe.format(sum([d.total_cost for d in self.purchase_products if d.default_stock_account == acc]),{"fieldtype":"Currency"}),
 																				frappe.format(self.balance or 0,{"fieldtype":"Currency"})
 																				),
 		}

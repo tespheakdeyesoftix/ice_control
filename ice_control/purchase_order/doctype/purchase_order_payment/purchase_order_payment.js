@@ -4,24 +4,32 @@
 frappe.ui.form.on("Purchase Order Payment", {
      onload(frm) {         
         frm.set_query("purchase_order", "purchase_orders", function (doc, cdt, cdn) {
+            const selectedPurchaseOrders = (doc.purchase_orders || [])
+                .filter(row => row.name !== cdn && row.purchase_order)
+                .map(row => row.purchase_order);
+
              let purchase_order_filter = {}
             if(frm.doc.outlet){
                 purchase_order_filter = {
+                    "party_type": doc.party_type || 'Not Set',
                     "party": doc.party || 'Not Set',
                     "outlet": doc.outlet || 'Not Set',
                     "balance": [">", 0],
+                    "posting_date": ["<=", doc.posting_date],
                     "docstatus": 1
                 };    
             }
             else{
                 purchase_order_filter = {
+                    "party_type": doc.party_type || 'Not Set',
                     "party": doc.party || 'Not Set',
                     "balance": [">", 0],
+                    "posting_date": ["<=", doc.posting_date],
                     "docstatus": 1
                 };    
             } 
-            if (doc.purchase_order){
-                purchase_order_filter.name = doc.purchase_order
+            if (selectedPurchaseOrders.length) {
+                purchase_order_filter.name = ["not in", selectedPurchaseOrders]
             }
             return {
                 "filters": purchase_order_filter,
@@ -30,29 +38,37 @@ frappe.ui.form.on("Purchase Order Payment", {
     },
     posting_date(frm){
         update_allocated_payment_date(frm)
+        getPartyAccountPayableBalance(frm)
     },
 	refresh(frm) {
-    
+		updateExchangeRateDisplay(frm)
+        renderPurchaseOrderPaymentSummary(frm)
+        hidePurchaseOrderGridDuplicateAction(frm)
+        setTimeout(() => {
+            setupPurchaseOrderRowIndicators(frm);
+        }, 500);
+
+        if (frm.doc.docstatus === 0) {
+            frm.add_custom_button(__("Select Purchase Order"), () => {
+                openPurchaseOrderDialog(frm)
+            })
+        }
 	},
     party_type(frm){
         frm.set_value("party", "");
         frm.refresh_field("party")
     },
-    async party(frm) { 
-        await get_unpaid_purchase_orders(frm)
-        if ((frm.doc.input_amount || 0) > 0) {
-            update_allocated_amount(frm)
-        } else {
-            calculate_totals(frm)
-        }  
+    party(frm) {
+        frm.clear_table("purchase_orders")
+        frm.refresh_field("purchase_orders")
+        calculate_totals(frm)
+        getPartyAccountPayableBalance(frm)
     },
-    async outlet(frm) {
-        await get_unpaid_purchase_orders(frm)
-        if ((frm.doc.input_amount || 0) > 0) {
-            update_allocated_amount(frm)
-        } else {
-            calculate_totals(frm)
-        }  
+    outlet(frm) {
+        frm.clear_table("purchase_orders")
+        frm.refresh_field("purchase_orders")
+        calculate_totals(frm)
+        getPartyAccountPayableBalance(frm)
     },
     payment_type(frm) {
         frappe.call({
@@ -60,114 +76,232 @@ frappe.ui.form.on("Purchase Order Payment", {
         args: {
             "currency": frm.doc.currency
         },
-        callback: (r) => {
-            frm.set_value("exchange_rate", r.message);
+        callback: async (r) => {
+            const paymentAmount = flt(frm.doc.payment_amount);
+            await frm.set_value("exchange_rate", r.message);
+            updateExchangeRateDisplay(frm)
+            renderAmountToPayDisplay(frm)
             if ((frm.doc.input_amount || 0) > 0) {
-            let exchange_rate = (frm.doc.exchange_rate || 1);
-            let input_amount = (frm.doc.payment_amount || 0)*exchange_rate;
-            frm.set_value("input_amount",input_amount)
-            frm.set_value("payment_amount",input_amount)
-            frm.doc.purchase_orders.forEach(r => {
-                r.exchange_rate = frm.doc.exchange_rate,
-                r.input_write_off_amount = r.write_off_amount*r.exchange_rate
-            })
-            update_allocated_amount(frm)
-        }
+                const exchangeRate = flt(frm.doc.exchange_rate) || 1;
+                frm.doc.input_amount = paymentAmount * exchangeRate;
+                frm.refresh_field("input_amount");
+                await callAllocatePaymentAmount(frm);
+            }
         }
         })
     },
-    async get_invoices(frm) {
-        if (!frm.doc.outlet) {
-            frappe.throw(__("Please select outlet"))
-            return
-        }
-        if (!frm.doc.party) {
-            frappe.throw(__("Please select Party"))
-            return
-        }
-
-        if (!frm.doc.start_date) {
-            frappe.throw(__("Please select start date"))
-            return
-        }
-        if (!frm.doc.end_date) {
-            frappe.throw(__("Please select end date"))
-            return
-        }
-        await get_unpaid_purchase_orders(frm)
-        calculate_totals(frm)
+    exchange_rate(frm) {
+        updateExchangeRateDisplay(frm)
+        renderAmountToPayDisplay(frm)
     },
-
-    input_amount: function (frm) {
+    currency(frm) {
+        renderAmountToPayDisplay(frm)
+    },
+    amount_to_pay(frm) {
+        renderAmountToPayDisplay(frm)
+    },
+    async input_amount(frm) {
         if (!frm.doc.payment_type) {
             frappe.throw(__("Please select payment type"))
         }
-        const payment_amount = frm.doc.input_amount / (parseFloat(frm.doc.exchange_rate) || 1)
-        if(payment_amount>frm.doc.amount_to_pay){
-            amount_to_pay = frm.doc.amount_to_pay/ (parseFloat(frm.doc.exchange_rate) || 1)
-            frm.set_value("input_amount", amount_to_pay);
-            payment_amount = amount_to_pay
-        }
-        frm.set_value("payment_amount", payment_amount);
-        if (frm._from_set_value) return;      
-        update_allocated_amount(frm);
+        if (frm._from_set_value) return;
+        await callAllocatePaymentAmount(frm);
     },
 });
+
+async function openPurchaseOrderDialog(frm) {
+    if (!frm.doc.posting_date || !frm.doc.outlet || !frm.doc.party_type || !frm.doc.party) {
+        frappe.msgprint(__("Please select Posting Date, Outlet, Party Type, and Party first."));
+        return;
+    }
+
+    const dialog = new frappe.ui.Dialog({
+        title: __("Select Purchase Order"),
+        size: "extra-large",
+        fields: [
+            {
+                fieldname: "start_date",
+                fieldtype: "Date",
+                label: __("Start Date"),
+                onchange: () => loadPurchaseOrders(frm, dialog),
+            },
+            { fieldtype: "Column Break" },
+            {
+                fieldname: "end_date",
+                fieldtype: "Date",
+                label: __("End Date"),
+                default: frm.doc.posting_date,
+                onchange: () => loadPurchaseOrders(frm, dialog),
+            },
+            { fieldtype: "Section Break" },
+            {
+                fieldname: "purchase_orders",
+                fieldtype: "Table",
+                label: __("Purchase Orders"),
+                cannot_add_rows: true,
+                cannot_delete_rows: true,
+                in_place_edit: true,
+                data: [],
+                fields: [
+                    { fieldname: "name", fieldtype: "Link", options: "Purchase Orders", label: __("Purchase Order #"), in_list_view: 1, read_only: 1 },
+                    { fieldname: "posting_date", fieldtype: "Date", label: __("Posting Date"), in_list_view: 1, read_only: 1 },
+                    { fieldname: "total_cost", fieldtype: "Currency", label: __("Total Cost"), in_list_view: 1, read_only: 1 },
+                    { fieldname: "total_payment", fieldtype: "Currency", label: __("Paid Amount"), in_list_view: 1, read_only: 1 },
+                    { fieldname: "balance", fieldtype: "Currency", label: __("Balance"), in_list_view: 1, read_only: 1 },
+                ],
+            },
+        ],
+        primary_action_label: __("Add Selected Purchase Order"),
+        async primary_action() {
+            const selected = dialog.fields_dict.purchase_orders.grid.get_selected_children();
+
+            if (!selected.length) {
+                frappe.msgprint(__("Please select at least one Purchase Order."));
+                return;
+            }
+
+            frm.doc.purchase_orders = (frm.doc.purchase_orders || []).filter(row => row.purchase_order);
+            frm.doc.purchase_orders.forEach((row, index) => {
+                row.idx = index + 1;
+            });
+
+            selected.forEach(purchaseOrder => {
+                const row = frm.add_child("purchase_orders");
+                row.purchase_order = purchaseOrder.name;
+                row.party_type = frm.doc.party_type;
+                row.party = frm.doc.party;
+                row.outlet = frm.doc.outlet;
+                row.payment_date = frm.doc.posting_date;
+                row.posting_date = purchaseOrder.posting_date;
+                row.purchase_amount = purchaseOrder.total_cost;
+                row.paid_amount = purchaseOrder.total_payment;
+                row.purchase_order_balance = purchaseOrder.balance;
+                row.balance = purchaseOrder.balance;
+                row.exchange_rate = frm.doc.exchange_rate;
+            });
+
+            frm.refresh_field("purchase_orders");
+            if ((frm.doc.input_amount || 0) > 0) {
+                await callAllocatePaymentAmount(frm);
+            } else {
+                calculate_totals(frm);
+            }
+            dialog.hide();
+        },
+    });
+
+    dialog.show();
+    await loadPurchaseOrders(frm, dialog);
+}
+
+async function loadPurchaseOrders(frm, dialog) {
+    const startDate = dialog.get_value("start_date");
+    const endDate = dialog.get_value("end_date");
+
+    if (startDate && endDate && startDate > endDate) {
+        frappe.msgprint(__("Start Date cannot be after End Date."));
+        return;
+    }
+
+    const selectedPurchaseOrders = (frm.doc.purchase_orders || [])
+        .filter(row => row.purchase_order)
+        .map(row => row.purchase_order);
+    const filters = [
+        ["Purchase Orders", "docstatus", "=", 1],
+        ["Purchase Orders", "party_type", "=", frm.doc.party_type],
+        ["Purchase Orders", "party", "=", frm.doc.party],
+        ["Purchase Orders", "outlet", "=", frm.doc.outlet],
+        ["Purchase Orders", "posting_date", "<=", frm.doc.posting_date],
+        ["Purchase Orders", "balance", ">", 0],
+    ];
+
+    if (startDate) {
+        filters.push(["Purchase Orders", "posting_date", ">=", startDate]);
+    }
+    if (endDate) {
+        filters.push(["Purchase Orders", "posting_date", "<=", endDate]);
+    }
+    if (selectedPurchaseOrders.length) {
+        filters.push(["Purchase Orders", "name", "not in", selectedPurchaseOrders]);
+    }
+
+    const purchaseOrders = await frappe.db.get_list("Purchase Orders", {
+        fields: ["name", "posting_date", "total_cost", "total_payment", "balance"],
+        filters,
+        order_by: "posting_date",
+        limit: 500,
+    });
+    const table = dialog.fields_dict.purchase_orders;
+    table.df.data = purchaseOrders;
+    table.grid.refresh();
+}
 
 ///child table in purchase order payment
 frappe.ui.form.on("Purchase Order Payment Invoices", {
-    refresh(frm) {
-
+    pay(frm, cdt, cdn) {
+        const row = locals[cdt][cdn];
+        frappe.model.set_value(
+            cdt,
+            cdn,
+            "payment_amount",
+            row.purchase_order_balance || 0
+        );
     },
-    pay: function (frm, cdt, cdn) {
-        let row = locals[cdt][cdn];   
-        frappe.model.set_value(cdt, cdn, "payment_amount", row.purchase_order_balance || 0);
-        calculate_row_purchase_order(frm, cdt, cdn);
-        calculate_totals(frm);
-    },
-    purchase_order: function (frm, cdt, cdn) {
-        calculate_row_purchase_order(frm, cdt, cdn);
-        calculate_totals(frm);
-    },
-    purchase_orders_add: function (frm, cdt, cdn) {
-        let row = locals[cdt][cdn];   
-        row.exchange_rate = frm.doc.exchange_rate
-        calculate_totals(frm)
-    },
-    purchase_orders_remove: function (frm, cdt, cdn) {
-        calculate_totals(frm)
-    },
-    input_amount: function (frm, cdt, cdn) {
-        let row = locals[cdt][cdn];   
-        let payment_amount = (row.input_amount || 0) / (row.exchange_rate || 1);
-        if(payment_amount>row.purchase_order_balance){
-            payment_amount = row.purchase_order_balance
-            frappe.model.set_value(cdt, cdn, "input_amount", payment_amount);
+    purchase_orders_add(frm, cdt, cdn) {
+        if (locals[cdt][cdn].purchase_order) {
+            scheduleAllocatePaymentAmount(frm);
         }
-        frappe.model.set_value(cdt, cdn, "payment_amount", payment_amount);
-        calculate_row_purchase_order(frm, cdt, cdn);
-        const total_payment_amount = frm.doc.purchase_orders.reduce((sum, s) => sum + (s.payment_amount || 0), 0);
-        frm._from_set_value = true;
-        frm.set_value("input_amount",total_payment_amount * parseFloat(frm.doc.exchange_rate || 1)
-        ).then(() => {
-            frm._from_set_value = false;
-            calculate_totals(frm);
-        });
     },
-    input_write_off_amount: function (frm, cdt, cdn) {
-        let row = locals[cdt][cdn];   
-        frappe.model.set_value(cdt, cdn, "write_off_amount", row.input_write_off_amount / row.exchange_rate);
-        calculate_row_purchase_order(frm, cdt, cdn);
-        calculate_totals(frm);
+    purchase_orders_remove(frm) {
+        scheduleAllocationAfterRowRemoval(frm);
+    },
+    purchase_order(frm) {
+        frappe.after_ajax(() => callAllocatePaymentAmount(frm));
+    },
+    async payment_amount(frm, cdt, cdn) {
+        if (frm.__syncing_manual_child_amounts) return;
+        frm.__syncing_manual_child_amounts = true;
+        try {
+            updateChildPurchaseOrderBalance(frm, cdt, cdn);
+            await syncParentPaymentAmount(frm);
+            await callUpdateSummary(frm);
+        } finally {
+            frm.__syncing_manual_child_amounts = false;
+        }
+    },
+    async write_off_amount(frm, cdt, cdn) {
+        if (frm.__syncing_manual_child_amounts) return;
+        frm.__syncing_manual_child_amounts = true;
+        try {
+            const row = locals[cdt][cdn];
+            const purchaseOrderBalance = Math.max(
+                flt(row.purchase_order_balance),
+                0
+            );
+            const writeOffAmount = Math.min(
+                Math.max(flt(row.write_off_amount), 0),
+                purchaseOrderBalance
+            );
+
+            row.write_off_amount = writeOffAmount;
+            if (writeOffAmount > 0) {
+                row.payment_amount = purchaseOrderBalance - writeOffAmount;
+                row.balance = 0;
+            } else {
+                updateChildPurchaseOrderBalance(frm, cdt, cdn);
+            }
+
+            frm.refresh_field("purchase_orders");
+            updatePurchaseOrderWriteOffPaymentLock(
+                frm.get_field("purchase_orders")?.grid?.grid_rows_by_docname?.[cdn]
+            );
+            await syncParentPaymentAmount(frm);
+            await callUpdateSummary(frm);
+        } finally {
+            frm.__syncing_manual_child_amounts = false;
+        }
     },
 });
-
-function calculate_row_purchase_order(frm, cdt, cdn) {
-    let row = locals[cdt][cdn];
-    const payment_amount = row.payment_amount || 0;
-    const write_off_amount = (row.write_off_amount || 0);
-    frappe.model.set_value(cdt, cdn, "balance", (row.purchase_order_balance || 0) - (payment_amount + write_off_amount));
-}
 
 function calculate_totals(frm) {
     const total_amount_to_pay = frm.doc.purchase_orders.reduce((sum, s) => sum + (s.purchase_order_balance || 0), 0);
@@ -180,6 +314,7 @@ function calculate_totals(frm) {
     frm.set_value("amount_to_pay", total_amount_to_pay);
     frm.set_value("total_write_off_amount", total_write_off_amount);
     frm.set_value("balance", balance);
+    renderPurchaseOrderPaymentSummary(frm);
 }
 
 function get_unpaid_purchase_orders(frm) {
@@ -219,23 +354,288 @@ function get_unpaid_purchase_orders(frm) {
     });
 }
 
-function update_allocated_amount(frm) {
-    let paid_amount = frm.doc.payment_amount;
-    if ((frm.doc.purchase_orders || []).length > 0) {
-        frm.doc.purchase_orders.forEach(r => {
-            if (paid_amount < r.purchase_order_balance) {
-                r.input_amount = paid_amount*r.exchange_rate;
-                r.payment_amount = paid_amount;
-            }
-            else {
-                r.input_amount = r.purchase_order_balance*r.exchange_rate;
-                r.payment_amount = r.purchase_order_balance
-            }
-            r.balance = (r.purchase_order_balance || 0) - (r.payment_amount || 0) - (r.write_off_amount || 0)
-            paid_amount = paid_amount - r.payment_amount
+function renderPurchaseOrderPaymentSummary(frm) {
+    const field = frm.get_field("html_payment_summary");
+    if (field) {
+        field.$wrapper.html(frappe.render_template("payment_summary", { doc: frm.doc }));
+    }
+    renderAmountToPayDisplay(frm);
+}
+
+async function renderAmountToPayDisplay(frm) {
+    const field = frm.get_field("html_amount_to_pay");
+    if (!field) return;
+
+    const defaultCurrency = await getDefaultCurrency(frm);
+    const paymentCurrency = frm.doc.currency || defaultCurrency;
+    const defaultAmount = flt(frm.doc.amount_to_pay);
+    const exchangeRate = flt(frm.doc.exchange_rate) || 1;
+    const amounts = [{
+        label: __("Amount to Pay"),
+        currency: defaultCurrency,
+        amount: defaultAmount,
+        accent: "primary",
+    }];
+
+    if (paymentCurrency && paymentCurrency !== defaultCurrency) {
+        amounts.push({
+            label: __("Amount in Payment Currency"),
+            currency: paymentCurrency,
+            amount: defaultAmount * exchangeRate,
+            accent: "success",
         });
-        frm.refresh_field("purchase_orders")
-        calculate_totals(frm);
+    }
+
+    await Promise.all(amounts.map(async item => {
+        item.precision = await getCurrencyPrecision(frm, item.currency);
+    }));
+
+    const columnClass = amounts.length === 1 ? "col-12" : "col-md-6";
+    const html = amounts.map(item => {
+        const currency = frappe.utils.escape_html(item.currency || "");
+        return `<div class="${columnClass} mb-2">
+            <div class="border rounded p-3 h-100 shadow-sm border-${item.accent}">
+                <div class="small text-muted mb-1">${item.label}</div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <strong class="h4 mb-0 text-${item.accent}">${format_currency(item.amount, item.currency, item.precision)}</strong>
+                    <span class="badge badge-light">${currency}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join("");
+
+    field.$wrapper.html(`<div class="row">${html}</div>`);
+}
+
+async function getDefaultCurrency(frm) {
+    if (!frm.__default_currency_promise) {
+        frm.__default_currency_promise = frappe.db.get_single_value(
+            "Business Information",
+            "default_currency"
+        );
+    }
+    return frm.__default_currency_promise;
+}
+
+async function getCurrencyPrecision(frm, currency) {
+    if (!currency) return undefined;
+
+    frm.__currency_precision_promises ||= {};
+    if (!frm.__currency_precision_promises[currency]) {
+        frm.__currency_precision_promises[currency] = frappe.db
+            .get_value("Currency", currency, "custom_precision")
+            .then(result => {
+                const precision = result.message?.custom_precision;
+                return precision === null || precision === undefined || precision === ""
+                    ? undefined
+                    : cint(precision);
+            });
+    }
+
+    return frm.__currency_precision_promises[currency];
+}
+
+function updateExchangeRateDisplay(frm) {
+    const field = frm.get_field("html_exchange_rate_display");
+    const exchangeRate = flt(frm.doc.exchange_rate);
+
+    if (!field || exchangeRate <= 0 || exchangeRate === 1) {
+        field?.$wrapper.empty().hide();
+        return;
+    }
+
+    const displayRate = 1 / exchangeRate;
+
+    field.$wrapper
+        .html(`
+            <div class="alert alert-info mb-2 d-flex justify-content-start align-items-center text-left" role="alert">
+                <strong>${__("Exchange Rate")}:</strong>
+                <span class="ml-1 text-left" style="text-align: left !important;">${frappe.format(displayRate, { fieldtype: "Currency" })}</span>
+            </div>
+        `)
+        .show();
+}
+
+function hidePurchaseOrderGridDuplicateAction(frm) {
+    const wrapper = frm.get_field("purchase_orders")?.$wrapper;
+    if (!wrapper) return;
+
+    wrapper.addClass("purchase-orders-grid-no-duplicate");
+
+    if (!wrapper.children("style[data-purchase-orders-grid-actions]").length) {
+        wrapper.prepend(`
+            <style data-purchase-orders-grid-actions>
+                .purchase-orders-grid-no-duplicate .grid-duplicate-row,
+                .purchase-orders-grid-no-duplicate .grid-duplicate-rows {
+                    display: none !important;
+                }
+                .purchase-orders-grid-no-duplicate .grid-row[data-payment-status="paid"] {
+                    border-left: 4px solid #28a745;
+                }
+                .purchase-orders-grid-no-duplicate .grid-row[data-payment-status="partial"] {
+                    border-left: 4px solid #f0ad4e;
+                }
+                .purchase-orders-grid-no-duplicate .grid-row[data-payment-status="unpaid"] {
+                    border-left: 4px solid #dc3545;
+                }
+                .purchase-orders-grid-no-duplicate .grid-row[data-has-write-off="true"]
+                    .grid-static-col[data-fieldname="write_off_amount"],
+                .purchase-orders-grid-no-duplicate .grid-row[data-has-write-off="true"]
+                    .grid-static-col[data-fieldname="write_off_amount"] .static-area,
+                .purchase-orders-grid-no-duplicate .grid-row[data-has-write-off="true"]
+                    .grid-static-col[data-fieldname="write_off_amount"] input {
+                    color: #dc3545 !important;
+                    font-weight: 600;
+                }
+            </style>
+        `);
+    }
+}
+
+function getPartyAccountPayableBalance(frm) {
+    if (frm.doc.party_type && frm.doc.party && frm.doc.outlet && frm.doc.posting_date) {
+        frm.call("get_party_account_payable_balance")
+    } else {
+        frm.set_value("party_payable_balance", 0);
+    }
+}
+
+async function callAllocatePaymentAmount(frm) {
+    clearTimeout(frm.__allocate_payment_timer);
+    frm.__allocate_payment_timer = null;
+    await frm.call("allocate_payment_amount");
+    frm.refresh_fields();
+    renderPurchaseOrderPaymentSummary(frm);
+    ensurePurchaseOrderGridObserver(frm);
+    refreshPurchaseOrderRowFormatting(frm);
+    setTimeout(() => refreshPurchaseOrderRowFormatting(frm), 300);
+}
+
+async function callUpdateSummary(frm) {
+    clearTimeout(frm.__update_summary_timer);
+    frm.__update_summary_timer = null;
+    await frm.call("update_summary");
+    frm.refresh_fields();
+    renderPurchaseOrderPaymentSummary(frm);
+    ensurePurchaseOrderGridObserver(frm);
+    refreshPurchaseOrderRowFormatting(frm);
+    setTimeout(() => refreshPurchaseOrderRowFormatting(frm), 300);
+}
+
+function scheduleAllocatePaymentAmount(frm) {
+    clearTimeout(frm.__allocate_payment_timer);
+    frm.__allocate_payment_timer = setTimeout(() => {
+        frm.__allocate_payment_timer = null;
+        callAllocatePaymentAmount(frm);
+    }, 150);
+}
+
+function scheduleAllocationAfterRowRemoval(frm) {
+    clearTimeout(frm.__allocate_payment_timer);
+    frm.__allocate_payment_timer = setTimeout(async () => {
+        frm.__allocate_payment_timer = null;
+        await syncParentPaymentAmount(frm);
+        await callAllocatePaymentAmount(frm);
+    }, 150);
+}
+
+function updateChildPurchaseOrderBalance(frm, cdt, cdn) {
+    const row = locals[cdt][cdn];
+    row.balance = flt(row.purchase_order_balance)
+        - flt(row.payment_amount)
+        - flt(row.write_off_amount);
+    frm.refresh_field("purchase_orders");
+}
+
+async function syncParentPaymentAmount(frm) {
+    const paymentAmount = (frm.doc.purchase_orders || []).reduce(
+        (total, row) => total + flt(row.payment_amount),
+        0
+    );
+    const defaultCurrency = await getDefaultCurrency(frm);
+    const paymentCurrency = frm.doc.currency || defaultCurrency;
+    const exchangeRate = flt(frm.doc.exchange_rate);
+
+    if (!frm.doc.payment_type || !paymentCurrency) {
+        frappe.throw(__("Please select a Payment Type before entering payment amounts."));
+    }
+    if (paymentCurrency !== defaultCurrency && exchangeRate <= 0) {
+        frappe.throw(__("A valid Exchange Rate is required for {0}.", [paymentCurrency]));
+    }
+
+    frm.doc.payment_amount = paymentAmount;
+    frm.doc.input_amount = paymentCurrency === defaultCurrency
+        ? paymentAmount
+        : paymentAmount * exchangeRate;
+    frm.refresh_field("payment_amount");
+    frm.refresh_field("input_amount");
+    renderPurchaseOrderPaymentSummary(frm);
+}
+
+function setupPurchaseOrderRowIndicators(frm) {
+    if (!frm.__purchase_order_row_indicator_bound) {
+        frm.__purchase_order_row_indicator_bound = true;
+        $(frm.wrapper).on("grid-row-render.purchase-order-payment-status", (event, gridRow) => {
+            if (gridRow.grid?.df?.fieldname === "purchase_orders") {
+                updatePurchaseOrderRowIndicator(gridRow);
+                updatePurchaseOrderWriteOffPaymentLock(gridRow);
+            }
+        });
+    }
+
+    ensurePurchaseOrderGridObserver(frm);
+    refreshPurchaseOrderRowFormatting(frm);
+    setTimeout(() => refreshPurchaseOrderRowFormatting(frm), 300);
+}
+
+function ensurePurchaseOrderGridObserver(frm) {
+    const wrapper = frm.get_field("purchase_orders")?.$wrapper;
+    if (frm.__purchase_order_grid_observer || !wrapper?.[0]) return;
+
+    frm.__purchase_order_grid_observer = new MutationObserver(() => {
+        clearTimeout(frm.__purchase_order_grid_format_timer);
+        frm.__purchase_order_grid_format_timer = setTimeout(
+            () => refreshPurchaseOrderRowFormatting(frm),
+            50
+        );
+    });
+    frm.__purchase_order_grid_observer.observe(wrapper[0], {
+        childList: true,
+        subtree: true,
+    });
+}
+
+function refreshPurchaseOrderRowFormatting(frm) {
+    const grid = frm.get_field("purchase_orders")?.grid;
+    (grid?.grid_rows || []).forEach(gridRow => {
+        updatePurchaseOrderRowIndicator(gridRow);
+        updatePurchaseOrderWriteOffPaymentLock(gridRow);
+    });
+}
+
+function updatePurchaseOrderRowIndicator(gridRow) {
+    const row = gridRow.doc;
+    const purchaseOrderBalance = flt(row.purchase_order_balance);
+    const allocatedAmount = flt(row.payment_amount) + flt(row.write_off_amount);
+    const balance = flt(row.balance);
+    let status = "unpaid";
+
+    if (row.purchase_order && purchaseOrderBalance > 0 && balance <= 0) {
+        status = "paid";
+    } else if (row.purchase_order && allocatedAmount > 0) {
+        status = "partial";
+    }
+
+    gridRow.wrapper.attr("data-payment-status", row.purchase_order ? status : null);
+}
+
+function updatePurchaseOrderWriteOffPaymentLock(gridRow) {
+    if (!gridRow) return;
+    const hasWriteOff = flt(gridRow.doc.write_off_amount) > 0;
+    gridRow.wrapper.attr("data-has-write-off", hasWriteOff ? "true" : null);
+    const paymentField = gridRow.on_grid_fields_dict?.payment_amount;
+    if (paymentField && cint(paymentField.df.read_only) !== cint(hasWriteOff)) {
+        gridRow.toggle_editable("payment_amount", !hasWriteOff);
     }
 }
 

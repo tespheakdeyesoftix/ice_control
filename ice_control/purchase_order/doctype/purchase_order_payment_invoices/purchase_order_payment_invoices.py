@@ -16,10 +16,9 @@ class PurchaseOrderPaymentInvoices(Document):
 
 		balance: DF.Currency
 		exchange_rate: DF.Float
-		input_amount: DF.Float
-		input_write_off_amount: DF.Float
 		note: DF.SmallText | None
 		outlet: DF.Link | None
+		paid_amount: DF.Currency
 		parent: DF.Data
 		parentfield: DF.Data
 		parenttype: DF.Data
@@ -30,6 +29,7 @@ class PurchaseOrderPaymentInvoices(Document):
 		payment_type: DF.Link | None
 		payment_type_group: DF.Link | None
 		posting_date: DF.Date | None
+		purchase_amount: DF.Currency
 		purchase_order: DF.Link
 		purchase_order_balance: DF.Currency
 		write_off_amount: DF.Float

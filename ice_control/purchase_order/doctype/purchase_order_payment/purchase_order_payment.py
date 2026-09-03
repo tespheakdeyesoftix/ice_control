@@ -4,7 +4,16 @@
 from frappe import _
 import frappe
 from frappe.model.document import Document
+from frappe.utils import flt
+from ice_control.api.accounting import (
+	get_party_account_payable_balance as _get_party_account_payable_balance,
+)
 from ice_control.api.api import money_to_word
+from ice_control.api.utils import validate_close_date
+from ice_control.purchase_order.doctype.purchase_order_payment.accounting import (
+	delete_gl_entries,
+	submit_to_gl_entry,
+)
 
 
 class PurchaseOrderPayment(Document):
@@ -21,43 +30,64 @@ class PurchaseOrderPayment(Document):
 		amount_to_pay: DF.Currency
 		balance: DF.Currency
 		currency: DF.Link | None
-		end_date: DF.Date | None
 		exchange_rate: DF.Data | None
 		from_purchase_orders: DF.Check
 		input_amount: DF.Float
 		naming_series: DF.Literal["POP.YYYY.-.####"]
 		note: DF.SmallText | None
-		outlet: DF.Link | None
+		outlet: DF.Link
 		party: DF.DynamicLink
 		party_name: DF.Data | None
+		party_payable_balance: DF.Currency
 		party_type: DF.Literal["Vendor", "Employee", "Customer"]
 		payment_amount: DF.Currency
 		payment_amount_in_word: DF.Data | None
-		payment_name: DF.Data | None
+		payment_from_account: DF.Link | None
 		payment_type: DF.Link
 		photo: DF.AttachImage | None
 		posting_date: DF.Date
 		purchase_orders: DF.Table[PurchaseOrderPaymentInvoices]
-		start_date: DF.Date | None
 		total_invoices: DF.Int
 		total_write_off_amount: DF.Currency
 	# end: auto-generated types
 
 	def validate(self):
+		validate_close_date(self.posting_date, self.creation, self.outlet)
+
 		self.payment_amount_in_word = money_to_word(int(self.payment_amount))
 		self.validate_purchase_order_payment_invoices()
 		update_totals(self)
-		self.validate_payment_amount()
+		
 
 	def before_submit(self):
+		if flt(self.payment_amount) <= 0:
+			frappe.throw(_("Payment Amount must be greater than zero."))
+
+		self.validate_payment_amount()
+
+		# validate account_code
+		payment_type_doc = frappe.get_cached_doc("Payment Type", self.payment_type)
+		default_account_record = next((x for x in payment_type_doc.default_account if x.get("outlet") == self.outlet), None)
+		if default_account_record:
+			self.payment_from_account = default_account_record.default_purchase_payment_account
+		else:
+			frappe.throw("សូមជ្រើសរើសលេខកូដគនណី")
+
+
+
 		self.purchase_orders = [d for d in self.purchase_orders if (d.payment_amount or 0)>0  or (d.write_off_amount or 0)>0]
+		# update to amount to pay
+		self.amount_to_pay = sum([d.get("purchase_order_balance") or 0 for d in self.purchase_orders])
 
 	def on_submit(self):
+		submit_to_gl_entry(self)
+
 		if self.from_purchase_orders == 0:
 			update_purchase_order(self.name)
 
 	def on_cancel(self):
 		self.flags.ignore_links = True
+		delete_gl_entries(self)
 		update_purchase_order(self.name)
 
 	def validate_purchase_order_payment_invoices(self):
@@ -71,9 +101,49 @@ class PurchaseOrderPayment(Document):
 				s.payment_type = self.payment_type
 	
 	def validate_payment_amount(self):
+	 
 		if self.balance<0:
 			frappe.throw(_("Payment amount cannot greater than amount to pay"))
 	
+	@frappe.whitelist(methods=["POST"])
+	def allocate_payment_amount(self):
+		exchange_rate = flt(self.exchange_rate) or 1
+		payment_to_allocate = max(flt(self.input_amount) / exchange_rate, 0)
+
+		for purchase_order in self.purchase_orders:
+			purchase_order_balance = max(flt(purchase_order.purchase_order_balance), 0)
+			write_off_amount = min(
+				max(flt(purchase_order.write_off_amount), 0),
+				purchase_order_balance,
+			)
+			amount_after_write_off = purchase_order_balance - write_off_amount
+			allocated_amount = (
+				min(payment_to_allocate, amount_after_write_off)
+				if purchase_order.purchase_order
+				else 0
+			)
+
+			purchase_order.exchange_rate = exchange_rate
+			purchase_order.payment_amount = allocated_amount
+			purchase_order.write_off_amount = write_off_amount
+			purchase_order.balance = amount_after_write_off - allocated_amount
+			payment_to_allocate = max(payment_to_allocate - allocated_amount, 0)
+
+		update_totals(self)
+
+	@frappe.whitelist(methods=["POST"])
+	def update_summary(self):
+		update_totals(self)
+
+	@frappe.whitelist(methods=["POST"])
+	def get_party_account_payable_balance(self):
+		self.party_payable_balance = _get_party_account_payable_balance(
+			party_type=self.party_type,
+			party=self.party,
+			outlet=self.outlet,
+			date=self.posting_date,
+		)
+
 	@frappe.whitelist()
 	def get_unpaid_purchase_orders(self):
 		data = []
@@ -117,11 +187,13 @@ class PurchaseOrderPayment(Document):
 		return data or []
 		
 def update_totals(self):
-	self.total_write_off_amount = sum(float(a.write_off_amount or 0) for a in self.purchase_orders)
-	self.amount_to_pay = sum(float(a.purchase_order_balance or 0) for a in self.purchase_orders)
-	self.total_invoice = len([d  for d in self.purchase_orders if (d.payment_amount or 0)> 0 or (d.write_off_amount or 0)>0 ])
-	self.payment_amount = sum([d.payment_amount or 0 for d in self.purchase_orders if (d.payment_amount or 0)> 0 ])
+	purchase_orders = [row for row in self.purchase_orders if row.purchase_order]
+	self.total_write_off_amount = sum(flt(row.write_off_amount) for row in purchase_orders)
+	self.amount_to_pay = sum(flt(row.purchase_order_balance) for row in purchase_orders)
+	self.total_invoices = len(purchase_orders)
+	self.payment_amount = sum(flt(row.payment_amount) for row in purchase_orders)
 	self.balance = self.amount_to_pay - (self.payment_amount + self.total_write_off_amount)
+	self.payment_amount_in_word = money_to_word(int(self.payment_amount or 0))
 
 def update_purchase_order(name):
 	doc = frappe.get_doc("Purchase Order Payment",name)

@@ -225,8 +225,6 @@ permission_query_conditions = {
 # Overriding Methods
 # ------------------------------
 
-from ice_control import overrides
-
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "ice_control.event.get_events"
 # }
@@ -261,6 +259,9 @@ from ice_control import overrides
 
 # User Data Protection
 # --------------------
+
+
+on_session_creation = "ice_control.overrides.on_session_creation"
 
 # user_data_fields = [
 # 	{

@@ -15,36 +15,30 @@
   "payment_type",
   "currency",
   "exchange_rate",
+  "html_exchange_rate_display",
   "from_purchase_orders",
-  "payment_name",
+  "payment_from_account",
   "payment_from_section",
   "party_type",
-  "amended_from",
-  "column_break_wbtz",
   "party",
   "party_name",
-  "payment_information_section",
+  "party_payable_balance",
+  "amended_from",
+  "column_break_wbtz",
+  "html_amount_to_pay",
   "input_amount",
-  "column_break_stxq",
   "payment_amount",
-  "payment_amount_in_word",
-  "column_break_bgsf",
   "amount_to_pay",
-  "column_break_ysfj",
   "balance",
-  "get_purchase_order_invoices_by_date_section",
-  "start_date",
-  "get_invoices",
-  "column_break_fqbv",
-  "end_date",
+  "payment_amount_in_word",
   "purchase_order_invoices_section",
   "purchase_orders",
   "summary_section",
-  "total_invoices",
+  "note",
   "column_break_ymkj",
-  "total_write_off_amount",
-  "section_break_raos",
-  "note"
+  "html_payment_summary",
+  "total_invoices",
+  "total_write_off_amount"
  ],
  "fields": [
   {
@@ -84,6 +78,7 @@
    "in_standard_filter": 1,
    "label": "Outlet",
    "options": "Outlet",
+   "reqd": 1,
    "search_index": 1
   },
   {
@@ -119,6 +114,7 @@
   {
    "fieldname": "exchange_rate",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Exchange Rate"
   },
   {
@@ -151,19 +147,10 @@
    "read_only": 1
   },
   {
-   "depends_on": "eval:doc.docstatus != 1",
-   "fieldname": "payment_information_section",
-   "fieldtype": "Section Break",
-   "label": "Payment Information"
-  },
-  {
+   "description": "\u179f\u17bc\u1798\u1794\u1789\u17d2\u1787\u17bc\u179b\u1791\u17b9\u1780\u1794\u17d2\u179a\u17b6\u1780\u17cb\u178f\u17d2\u179a\u17bc\u179c\u1794\u1784\u17cb\u1793\u17c5\u1791\u17b8\u1793\u17c1\u17c7",
    "fieldname": "input_amount",
    "fieldtype": "Float",
-   "label": "Input Amount"
-  },
-  {
-   "fieldname": "column_break_stxq",
-   "fieldtype": "Column Break"
+   "label": "\u1791\u17b9\u1780\u1794\u17d2\u179a\u17b6\u1780\u17cb\u178f\u17d2\u179a\u17bc\u179c\u1794\u1784\u17cb"
   },
   {
    "default": "0",
@@ -182,46 +169,17 @@
    "report_hide": 1
   },
   {
-   "fieldname": "column_break_bgsf",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "amount_to_pay",
    "fieldtype": "Currency",
-   "label": "Amount to Pay"
-  },
-  {
-   "fieldname": "column_break_ysfj",
-   "fieldtype": "Column Break"
+   "hidden": 1,
+   "label": "Amount to Pay",
+   "read_only": 1
   },
   {
    "fieldname": "balance",
    "fieldtype": "Currency",
-   "label": "Balance"
-  },
-  {
-   "fieldname": "get_purchase_order_invoices_by_date_section",
-   "fieldtype": "Section Break",
-   "label": "Get Purchase Order Invoices by Date"
-  },
-  {
-   "fieldname": "start_date",
-   "fieldtype": "Date",
-   "label": "Start Date"
-  },
-  {
-   "fieldname": "get_invoices",
-   "fieldtype": "Button",
-   "label": "Get Invoices"
-  },
-  {
-   "fieldname": "column_break_fqbv",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "end_date",
-   "fieldtype": "Date",
-   "label": "End Date"
+   "label": "Balance",
+   "read_only": 1
   },
   {
    "fieldname": "purchase_order_invoices_section",
@@ -250,6 +208,7 @@
   {
    "fieldname": "total_invoices",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Total Invoices",
    "print_hide": 1,
    "print_hide_if_no_value": 1,
@@ -260,13 +219,10 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "section_break_raos",
-   "fieldtype": "Section Break"
-  },
-  {
    "default": "0",
    "fieldname": "total_write_off_amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Total Write off Amount",
    "non_negative": 1,
    "print_hide": 1,
@@ -281,11 +237,32 @@
    "read_only": 1
   },
   {
-   "fieldname": "payment_name",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Payment Name",
+   "fieldname": "html_exchange_rate_display",
+   "fieldtype": "HTML",
+   "label": "Exchange Rate Display"
+  },
+  {
+   "fieldname": "html_payment_summary",
+   "fieldtype": "HTML",
+   "label": "Payment Summary"
+  },
+  {
+   "fieldname": "html_amount_to_pay",
+   "fieldtype": "HTML",
+   "label": "HTML Amount to Pay"
+  },
+  {
+   "fieldname": "party_payable_balance",
+   "fieldtype": "Currency",
+   "label": "Party Payable Balance",
    "read_only": 1
+  },
+  {
+   "fieldname": "payment_from_account",
+   "fieldtype": "Link",
+   "label": "Payment from Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"in\",[\"Bank\",\"Cash\"]]]",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
@@ -293,7 +270,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-26 13:56:14.501237",
+ "modified": "2026-09-02 16:03:45.877921",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Order Payment",

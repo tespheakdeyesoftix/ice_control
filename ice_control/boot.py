@@ -1,6 +1,13 @@
 import frappe
 
+
 def boot_session(bootinfo):
+    # Frappe has already built module_sidebars before running boot_session.
+    # Post-process that payload instead of replacing get_module_sidebars.
+    from ice_control.overrides import customize_module_sidebars
+
+    customize_module_sidebars(bootinfo)
+
     user = frappe.session.user
 
     business = frappe.get_cached_doc('Business Information')
@@ -14,6 +21,8 @@ def boot_session(bootinfo):
         'phone_number_1': business.phone_number_1,
         'phone_number_2': business.phone_number_2,
     }
+
+    bootinfo.available_outlets = frappe.db.get_list("Outlet")
 
     # Admin sees everything
     if user == "Administrator":
@@ -38,5 +47,9 @@ def boot_session(bootinfo):
             bootinfo.employee_outlet_type = "tube_ice"
         else:
             bootinfo.employee_outlet_type = "unknown"
+
+
+        
+
     else:
         bootinfo.employee_outlet_type = None

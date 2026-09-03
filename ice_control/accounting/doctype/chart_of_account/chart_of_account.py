@@ -25,6 +25,7 @@ class ChartofAccount(Document):
 		old_parent: DF.Link | None
 		outlet: DF.Data | None
 		parent_chart_of_account: DF.Link | None
+		price: DF.Currency
 		rgt: DF.Int
 		root_type: DF.Literal["Asset", "Liabilities", "Equity", "Income", "Expenses"]
 	# end: auto-generated types

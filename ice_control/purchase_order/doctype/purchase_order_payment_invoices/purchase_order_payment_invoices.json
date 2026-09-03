@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "purchase_order",
+  "posting_date",
   "party_type",
   "party",
   "pay",
@@ -19,12 +20,11 @@
   "column_break_aeem",
   "payment_type_group",
   "section_break_lgra",
-  "posting_date",
+  "purchase_amount",
+  "paid_amount",
   "purchase_order_balance",
-  "input_amount",
   "column_break_qybf",
   "payment_amount",
-  "input_write_off_amount",
   "write_off_amount",
   "balance",
   "section_break_typr",
@@ -142,8 +142,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Payment Amount",
-   "non_negative": 1,
-   "read_only": 1
+   "non_negative": 1
   },
   {
    "fieldname": "balance",
@@ -171,21 +170,26 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "input_amount",
-   "fieldtype": "Float",
-   "label": "Input Amount"
-  },
-  {
-   "fieldname": "input_write_off_amount",
-   "fieldtype": "Float",
+   "fieldname": "write_off_amount",
+   "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Input Write off Amount",
+   "label": "Write Off Amount",
    "non_negative": 1
   },
   {
-   "fieldname": "write_off_amount",
-   "fieldtype": "Float",
-   "label": "Write Off Amount",
+   "fetch_from": "purchase_order.total_cost",
+   "fieldname": "purchase_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Purchase Amount",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "purchase_order.total_payment",
+   "fieldname": "paid_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Paid Amount",
    "read_only": 1
   }
  ],
@@ -193,7 +197,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-08-22 16:38:53.629203",
+ "modified": "2026-09-02 12:37:38.341197",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Order Payment Invoices",
