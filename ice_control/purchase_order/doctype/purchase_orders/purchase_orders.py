@@ -272,8 +272,7 @@ def submit_to_GL_entry(self):
 			"against":self.name,
 			"voucher_type":"Purchase Orders",
 			"voucher_no":self.name,
-			"remark":"ទូទាត់ទឹកប្រាក់បញ្ជាទិញអោយ {0}, នៅថ្ងៃទី {1}, ចំនួនទឹកប្រាក់​ {2}".format(
-				self.party + "-" + self.party_name,
+			"remark":"ទូទាត់ទឹកប្រាក់បញ្ជាទិញអោយ {0}, នៅថ្ងៃទី {1}, ចំនួនទឹកប្រាក់​ {2}".format(self.party + "-" + self.party_name,
 				frappe.format(self.posting_date,{"fieldtype":"Date"}),
 				frappe.format(sum([d.payment_amount for d in self.payments if d.default_account == acc]),{"fieldtype":"Currency"})
 			),
