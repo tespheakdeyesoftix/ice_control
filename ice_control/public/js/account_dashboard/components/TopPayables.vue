@@ -33,7 +33,7 @@ function openReport() {
 			>
 				<span>
 					<strong>{{ row.party_name }}</strong>
-					<small>{{ row.party_type }}</small>
+					<small>{{ __(row.party_type) }}</small>
 				</span>
 				<b>{{ formatMoney(row.balance, currency) }}</b>
 			</button>

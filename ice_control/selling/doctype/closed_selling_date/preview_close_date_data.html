@@ -1,0 +1,242 @@
+<style>
+	.close-date-preview {
+		--close-border: var(--border-color, #d1d8dd);
+		--close-muted: var(--text-muted, #6c7680);
+		color: var(--text-color, #36414c);
+	}
+
+	.close-date-preview__status {
+		border-radius: 8px;
+		font-weight: 600;
+		margin-bottom: 16px;
+		padding: 12px 16px;
+	}
+
+	.close-date-preview__status--ready {
+		background: #eaf7ee;
+		border: 1px solid #249f55;
+		color: #176b39;
+	}
+
+	.close-date-preview__status--blocked {
+		background: #fff4e5;
+		border: 1px solid #e67e22;
+		color: #8a4b08;
+	}
+
+	.close-date-preview__blockers {
+		margin: 8px 0 0 18px;
+		padding: 0;
+	}
+
+	.close-date-preview__table-wrap {
+		background: var(--card-bg, #fff);
+		border: 1px solid var(--close-border);
+		border-radius: 8px;
+		overflow-x: auto;
+	}
+
+	.close-date-preview__table {
+		border-collapse: collapse;
+		font-size: 13px;
+		margin: 0;
+		min-width: 980px;
+		width: 100%;
+	}
+
+	.close-date-preview__table th,
+	.close-date-preview__table td {
+		border-bottom: 1px solid var(--close-border);
+		padding: 8px 12px;
+		vertical-align: middle;
+	}
+
+	.close-date-preview__table thead th {
+		background: var(--subtle-fg, #f7f7f7);
+		color: var(--close-muted);
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.close-date-preview__table thead th:nth-child(2),
+	.close-date-preview__table thead th:nth-child(3),
+	.close-date-preview__table thead th:nth-child(4) {
+		text-align: right;
+		width: 150px;
+	}
+
+	.close-date-preview__table thead th:last-child {
+		width: 260px;
+	}
+
+	.close-date-preview__section-row td {
+		background: var(--subtle-fg, #f3f4f5);
+		border-top: 1px solid var(--close-border);
+		font-size: 14px;
+		font-weight: 700;
+		padding-bottom: 10px;
+		padding-top: 10px;
+	}
+
+	.close-date-preview__table tbody:first-of-type .close-date-preview__section-row td {
+		border-top: 0;
+	}
+
+	.close-date-preview__caret {
+		color: var(--close-muted);
+		display: inline-block;
+		font-size: 10px;
+		margin-right: 8px;
+		text-align: center;
+		width: 12px;
+	}
+
+	.close-date-preview__metric-label {
+		color: var(--text-color, #36414c);
+		padding-left: 29px !important;
+	}
+
+	.close-date-preview__tree-branch {
+		color: var(--close-muted);
+		display: inline-block;
+		font-family: monospace;
+		margin-right: 8px;
+		width: 24px;
+	}
+
+	.close-date-preview__metric-value,
+	.close-date-preview__difference-value {
+		font-variant-numeric: tabular-nums;
+		font-weight: 600;
+		text-align: right;
+		white-space: nowrap;
+	}
+
+	.close-date-preview__metric-value--emphasized {
+		color: var(--primary, #2490ef);
+		font-size: 14px;
+		font-weight: 700;
+	}
+
+	.close-date-preview__difference-value--mismatch {
+		color: var(--red-600, #c92a2a);
+		font-weight: 700;
+	}
+
+	.close-date-preview__input {
+		background: var(--control-bg, #f3f3f3);
+		border: 1px solid transparent;
+		border-radius: 6px;
+		color: var(--text-color, #36414c);
+		min-height: 32px;
+		padding: 5px 8px;
+		width: 100%;
+	}
+
+	.close-date-preview__input:focus {
+		background: var(--card-bg, #fff);
+		border-color: var(--primary, #2490ef);
+		outline: none;
+	}
+
+	.close-date-preview__actual-input {
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+	}
+
+	.close-date-preview__input:disabled {
+		cursor: not-allowed;
+		opacity: 0.7;
+	}
+
+	.close-date-preview__table tbody:last-child tr:last-child td {
+		border-bottom: 0;
+	}
+
+	.close-date-preview__footer {
+		color: var(--close-muted);
+		font-size: 11px;
+		margin-top: 12px;
+		text-align: right;
+	}
+</style>
+
+<div class="close-date-preview" data-currency="{{ currency | e }}">
+	{% if ready_to_close %}
+	<div class="close-date-preview__status close-date-preview__status--ready">
+		{{ _("No draft transactions or ledger difference were found by this preview. You must still verify these figures against the source documents and physical cash before submitting.") }}
+	</div>
+	{% else %}
+	<div class="close-date-preview__status close-date-preview__status--blocked">
+		<div>{{ _("Review these issues before closing:") }}</div>
+		<ul class="close-date-preview__blockers">
+			{% for blocker in blockers %}
+			<li>
+				<strong>{{ blocker.label | e }}{% if blocker.count is not none %}: {{ blocker.count }}{% endif %}</strong>
+				— {{ blocker.message | e }}
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+
+	<div class="close-date-preview__table-wrap">
+		<table class="close-date-preview__table">
+			<thead>
+				<tr>
+					<th>{{ _("Closing data") }}</th>
+					<th>{{ _("System value") }}</th>
+					<th>{{ _("Actual value") }}</th>
+					<th>{{ _("Difference") }}</th>
+					<th>{{ _("Note") }}</th>
+				</tr>
+			</thead>
+			{% for section in sections %}
+			<tbody>
+				<tr class="close-date-preview__section-row">
+					<td colspan="5">
+						<span class="close-date-preview__caret" aria-hidden="true">▼</span>{{ section.title | e }}
+					</td>
+				</tr>
+				{% for item in section["items"] %}
+				<tr class="close-date-preview__metric-row"
+					data-category="{{ section.title | e }}"
+					data-title="{{ item.title | e }}"
+					data-fieldtype="{{ item.fieldtype | e }}"
+					data-system-value="{{ item.value }}">
+					<td class="close-date-preview__metric-label">
+						<span class="close-date-preview__tree-branch" aria-hidden="true">{% if loop.last %}└─{% else %}├─{% endif %}</span>{{ item.title | e }}
+					</td>
+					<td class="close-date-preview__metric-value{% if item.emphasized %} close-date-preview__metric-value--emphasized{% endif %}">
+						{{ item.display_value | e }}
+					</td>
+					<td>
+						<input type="number" step="any"
+							class="close-date-preview__input close-date-preview__actual-input"
+							value="{{ item.actual_value }}"
+							aria-label="{{ _('Actual value for {0}').format(item.title) | e }}"
+							{% if is_submitted %}disabled{% endif %}>
+					</td>
+					<td class="close-date-preview__difference-value{% if item.has_difference %} close-date-preview__difference-value--mismatch{% endif %}">
+						{{ item.difference_display | e }}
+					</td>
+					<td>
+						<input type="text"
+							class="close-date-preview__input close-date-preview__note-input"
+							value="{{ item.note | e }}"
+							aria-label="{{ _('Note for {0}').format(item.title) | e }}"
+							{% if is_submitted %}disabled{% endif %}>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+			{% endfor %}
+		</table>
+	</div>
+
+	<div class="close-date-preview__footer">
+		{{ _("Preview generated") }}: {{ generated_at | e }}
+	</div>
+</div>

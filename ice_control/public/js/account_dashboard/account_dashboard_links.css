@@ -1,0 +1,26 @@
+.compact-metric {
+	width: 100%;
+	color: inherit;
+	font-family: var(--font-stack, inherit);
+	text-align: left;
+}
+
+.compact-metric:disabled {
+	opacity: 1;
+}
+
+.compact-metric--clickable {
+	cursor: pointer;
+	transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.compact-metric--clickable:hover {
+	border-color: #b9c6d8;
+	box-shadow: 0 8px 20px rgb(16 24 40 / 7%);
+	transform: translateY(-1px);
+}
+
+.compact-metric--clickable:focus-visible {
+	outline: 2px solid var(--dashboard-blue);
+	outline-offset: 2px;
+}

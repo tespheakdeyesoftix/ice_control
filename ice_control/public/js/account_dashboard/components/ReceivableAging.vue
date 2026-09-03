@@ -1,20 +1,30 @@
 <script setup>
 import { computed } from "vue";
 
-import { formatMoney, toNumber } from "../dashboard_utils";
+import { formatMoney, navigate, toNumber } from "../dashboard_utils";
 import PanelShell from "./PanelShell.vue";
 
 const props = defineProps({
 	rows: { type: Array, default: () => [] },
 	currency: { type: String, default: "" },
+	routeOptions: { type: Object, default: null },
 });
 
 const maximum = computed(() => Math.max(1, ...props.rows.map((row) => toNumber(row.value))));
-const colors = ["#10b981", "#3b82f6", "#f59e0b", "#f97316", "#ef4444"];
+const colors = ["#10b981", "#3b82f6", "#f59e0b", "#f97316", "#f43f5e", "#dc2626"];
+
+function openReceivableAging() {
+	navigate(["query-report", "Account Receivable Aging"], props.routeOptions);
+}
 </script>
 
 <template>
 	<PanelShell title="Receivable Aging" subtitle="Outstanding customer balances by age">
+		<template #action>
+			<button class="dashboard-text-button" type="button" @click="openReceivableAging">
+				{{ __("View Report") }}
+			</button>
+		</template>
 		<div class="aging-list">
 			<div v-for="(row, index) in rows" :key="row.key" class="aging-row">
 				<span class="aging-row__label">{{ row.label }}</span>

@@ -201,7 +201,7 @@ def update_purchase_order(name):
 				'balance' : balance + (p.payment_amount+p.write_off_amount)
 			})
 			if doc.from_purchase_orders == 1:
-				input_amount,payment_amount,write_off_amount = frappe.db.get_value("Purchase Order Payment Child",doc.payment_name,['input_amount', 'payment_amount','write_off_amount'])
+				payment_amount,write_off_amount = frappe.db.get_value("Purchase Order Payment Child",doc.payment_name,[ 'payment_amount','write_off_amount'])
 				frappe.db.set_value("Purchase Order Payment Child",doc.payment_name,{
 				'input_amount': input_amount - doc.input_amount,
 				'payment_amount': payment_amount - doc.payment_amount,
@@ -231,8 +231,8 @@ def validate_payment_amount(self):
 
 def validate_accounts(self):
 	from ice_control.api.api import get_outlet_default_accounts,get_payment_type_default_account
-	payment_type = get_payment_type_default_account(self.payment_type,self.outlet).get("default_account")
-	outlet = get_outlet_default_accounts(self.outlet).get("default_payable_account")
+	payment_type = get_payment_type_default_account(self.payment_type,self.outlet)
+	outlet = get_outlet_default_accounts(self.outlet)
 	self.account_paid_from = self.account_paid_from or payment_type.get("default_account")
 	self.account_paid_to = self.account_paid_to or outlet.get("default_payable_account")
 	self.default_write_off_account = self.default_write_off_account or outlet.get("default_purchase_write_off_account")

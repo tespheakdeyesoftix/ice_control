@@ -14,7 +14,7 @@
   "vendor",
   "expense_by_employee",
   "section_break_rheq",
-  "table_isch",
+  "expense_items",
   "total_expense"
  ],
  "fields": [
@@ -64,12 +64,6 @@
    "label": "Expense"
   },
   {
-   "fieldname": "table_isch",
-   "fieldtype": "Table",
-   "label": "Expense On",
-   "options": "Expense Items"
-  },
-  {
    "fieldname": "total_expense",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -81,12 +75,18 @@
    "fieldtype": "Select",
    "label": "Naming Series",
    "options": "EXP.YYYY.-.####"
+  },
+  {
+   "fieldname": "expense_items",
+   "fieldtype": "Table",
+   "label": "Expense On",
+   "options": "Expense Items"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-02 16:47:18.881963",
+ "modified": "2026-09-03 11:46:46.751065",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Expense",

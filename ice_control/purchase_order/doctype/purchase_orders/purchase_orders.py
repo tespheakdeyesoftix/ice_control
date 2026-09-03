@@ -146,7 +146,7 @@ def update_status(self):
 
 def validate_accounts(self):
 	from ice_control.api.api import get_product_default_account,get_payment_type_default_account,get_outlet_default_accounts
-	outlet = get_outlet_default_accounts(self.payment_type,self.outlet)
+	outlet = get_outlet_default_accounts(self.outlet)
 	self.default_payable_account = self.default_payable_account or outlet.get("default_payable_account")
 	self.default_expense_account = self.default_expense_account or outlet.get("default_cost_of_goods_sold_account")
 	self.default_stock_account = self.default_stock_account or outlet.get("default_stock_account")
@@ -237,7 +237,7 @@ def add_payment(name):
 		p.submit()
 
 def submit_to_GL_entry(self):
-	from ice_control.api.accounting import submit_general_ledger_entry
+	from ice_control.api.accounting import submit_general_ledger_entry,get_account_type
 	docs = []
 	for acc in set([d.default_stock_account for d in self.purchase_products]):
 		if not acc:
@@ -251,8 +251,8 @@ def submit_to_GL_entry(self):
 			"against":self.party + " - " + self.party_name,
 			"voucher_type":"Purchase Orders",
 			"voucher_no":self.name,
-			"remark":"បញ្ជាទិញពី {0} នៅថ្ងៃទី {1}។ សរុបទឹកប្រាក់ {2}".format(
-				self.party + "-" + self.party_name ,
+			"account_type": get_account_type(acc),
+			"remark":"បញ្ជាទិញពី {0} នៅថ្ងៃទី {1}។ សរុបទឹកប្រាក់ {2}".format(self.party + "-" + self.party_name ,
 				frappe.format(self.posting_date,{"fieldtype":"Date"}),
 				frappe.format(sum([d.total_cost for d in self.purchase_products if d.default_stock_account == acc]),{"fieldtype":"Currency"})),
 			"party_type": self.party_type,
@@ -272,6 +272,7 @@ def submit_to_GL_entry(self):
 			"against":self.name,
 			"voucher_type":"Purchase Orders",
 			"voucher_no":self.name,
+				
 			"remark":"ទូទាត់ទឹកប្រាក់បញ្ជាទិញអោយ {0}, នៅថ្ងៃទី {1}, ចំនួនទឹកប្រាក់​ {2}".format(self.party + "-" + self.party_name,
 				frappe.format(self.posting_date,{"fieldtype":"Date"}),
 				frappe.format(sum([d.payment_amount for d in self.payments if d.default_account == acc]),{"fieldtype":"Currency"})
@@ -297,6 +298,7 @@ def submit_to_GL_entry(self):
 			"party_type": self.party_type,
 			"party":self.party,
 			"party_name":self.party_name,
+			"account_type": get_account_type(self.default_write_off_account),
 			"remark":"កាត់ចេញពីបញ្ជាទិញលេខ {0} នៅថ្ងៃទី {1}។ ចំនួនទឹកប្រាក់ {2}".format(self.name,
 				frappe.format(self.posting_date,{"fieldtype":"Date"}),
 				frappe.format(self.write_off or 0,{"fieldtype":"Currency"}))
@@ -318,6 +320,7 @@ def submit_to_GL_entry(self):
 			"party_type": self.party_type,
 			"party":self.party,
 			"party_name":self.party_name,
+			"account_type": get_account_type(self.default_payable_account),
 			"remark":"បញ្ជាទិញពី {0} នៅថ្ងៃទី {1}។ សរុបទឹកប្រាក់ {2}។ ជំពាក់ {3}".format(
 				self.party + "-" + self.party_name ,frappe.format(self.posting_date,{"fieldtype":"Date"}),
 				frappe.format(

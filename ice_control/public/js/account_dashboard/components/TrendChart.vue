@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 
 import { formatChartLabel, formatCompactNumber, formatMoney, toNumber } from "../dashboard_utils";
 
@@ -10,125 +10,94 @@ const props = defineProps({
 	currency: { type: String, default: "" },
 });
 
-const width = 720;
-const height = 250;
-const padding = { top: 18, right: 18, bottom: 42, left: 58 };
-const plotWidth = width - padding.left - padding.right;
-const plotHeight = height - padding.top - padding.bottom;
+const chartRoot = ref(null);
 
-const values = computed(() => props.datasets.flatMap((dataset) => dataset.values || []).map(toNumber));
-const domain = computed(() => {
-	const minimum = Math.min(0, ...values.value);
-	const maximum = Math.max(0, ...values.value);
-	const span = maximum - minimum || 1;
-	return { minimum: minimum - span * 0.08, maximum: maximum + span * 0.08 };
-});
-const step = computed(() => plotWidth / Math.max(props.labels.length, 1));
-const barDatasets = computed(() => props.datasets.filter((dataset) => dataset.type !== "line"));
-const gridValues = computed(() =>
-	Array.from({ length: 5 }, (_, index) =>
-		domain.value.minimum + ((domain.value.maximum - domain.value.minimum) * index) / 4
-	).reverse()
+let chart = null;
+let renderVersion = 0;
+
+const normalizedLabels = computed(() =>
+	props.labels.map((label) => formatChartLabel(label, props.granularity))
 );
-const labelInterval = computed(() => Math.max(1, Math.ceil(props.labels.length / 7)));
+const normalizedDatasets = computed(() =>
+	props.datasets.map((dataset) => ({
+		name: __(dataset.name),
+		values: (dataset.values || []).map(toNumber),
+		chartType: dataset.type === "line" ? "line" : "bar",
+	}))
+);
+const hasData = computed(
+	() =>
+		normalizedLabels.value.length > 0 &&
+		normalizedDatasets.value.some((dataset) => dataset.values.some((value) => value !== 0))
+);
+const chartType = computed(() => {
+	const types = new Set(normalizedDatasets.value.map((dataset) => dataset.chartType));
+	return types.size > 1 ? "axis-mixed" : [...types][0] || "bar";
+});
 
-function x(index) {
-	return padding.left + step.value * index + step.value / 2;
+function destroyChart() {
+	chart?.destroy?.();
+	chart = null;
+	chartRoot.value?.replaceChildren();
 }
 
-function y(value) {
-	return (
-		padding.top +
-		((domain.value.maximum - toNumber(value)) /
-			(domain.value.maximum - domain.value.minimum || 1)) *
-			plotHeight
-	);
+async function renderChart() {
+	const currentVersion = ++renderVersion;
+	await nextTick();
+	if (currentVersion !== renderVersion) return;
+
+	destroyChart();
+	if (!chartRoot.value || !hasData.value) return;
+
+	chart = new frappe.Chart(chartRoot.value, {
+		data: {
+			labels: normalizedLabels.value,
+			datasets: normalizedDatasets.value,
+		},
+		type: chartType.value,
+		height: 280,
+		colors: props.datasets.map((dataset) => dataset.color),
+		animate: 1,
+		truncateLegends: 0,
+		axisOptions: {
+			xIsSeries: 1,
+			xAxisMode: "tick",
+			shortenYAxisNumbers: 1,
+			numberFormatter: (value) => formatCompactNumber(value, props.currency),
+		},
+		barOptions: {
+			spaceRatio: 0.35,
+			stacked: 0,
+		},
+		lineOptions: {
+			dotSize: 4,
+			hideDots: 0,
+			regionFill: 0,
+		},
+		tooltipOptions: {
+			formatTooltipX: (label) => label,
+			formatTooltipY: (value) => formatMoney(value, props.currency),
+		},
+	});
 }
 
-function barWidth() {
-	return Math.max(3, Math.min(16, (step.value * 0.66) / Math.max(barDatasets.value.length, 1)));
-}
+watch(
+	() => [props.labels, props.datasets, props.granularity, props.currency],
+	renderChart,
+	{ deep: true, immediate: true }
+);
 
-function barX(dataset, index) {
-	const datasetIndex = barDatasets.value.indexOf(dataset);
-	const groupWidth = barWidth() * barDatasets.value.length;
-	return x(index) - groupWidth / 2 + datasetIndex * barWidth();
-}
-
-function barY(value) {
-	return Math.min(y(value), y(0));
-}
-
-function barHeight(value) {
-	return Math.max(1, Math.abs(y(value) - y(0)));
-}
-
-function linePoints(dataset) {
-	return (dataset.values || []).map((value, index) => `${x(index)},${y(value)}`).join(" ");
-}
+onBeforeUnmount(() => {
+	renderVersion += 1;
+	destroyChart();
+});
 </script>
 
 <template>
 	<div class="trend-chart">
-		<div class="trend-chart__legend">
-			<span v-for="dataset in datasets" :key="dataset.name">
-				<i :style="{ backgroundColor: dataset.color }"></i>{{ __(dataset.name) }}
-			</span>
+		<div v-show="hasData" ref="chartRoot" class="trend-chart__canvas frappe-chart-host"></div>
+		<div v-if="!hasData" class="dashboard-empty-state">
+			{{ __("No financial activity in the selected period") }}
 		</div>
-		<div v-if="labels.length" class="trend-chart__canvas">
-			<svg :viewBox="`0 0 ${width} ${height}`" role="img" :aria-label="__('Financial trend chart')">
-				<g v-for="gridValue in gridValues" :key="gridValue">
-					<line
-						:stroke="'var(--dashboard-grid)'"
-						:x1="padding.left"
-						:x2="width - padding.right"
-						:y1="y(gridValue)"
-						:y2="y(gridValue)"
-					/>
-					<text class="trend-chart__axis" :x="padding.left - 8" :y="y(gridValue) + 4" text-anchor="end">
-						{{ formatCompactNumber(gridValue, currency) }}
-					</text>
-				</g>
-
-				<template v-for="dataset in datasets" :key="dataset.name">
-					<polyline
-						v-if="dataset.type === 'line'"
-						:points="linePoints(dataset)"
-						:stroke="dataset.color"
-						fill="none"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="3"
-					/>
-					<template v-else>
-						<rect
-							v-for="(value, index) in dataset.values"
-							:key="`${dataset.name}-${index}`"
-							:x="barX(dataset, index)"
-							:y="barY(value)"
-							:width="barWidth() - 1"
-							:height="barHeight(value)"
-							:fill="dataset.color"
-							rx="2"
-						>
-							<title>{{ `${dataset.name}: ${formatMoney(value, currency)}` }}</title>
-						</rect>
-					</template>
-				</template>
-
-				<template v-for="(label, index) in labels" :key="label">
-					<text
-						v-if="index % labelInterval === 0 || index === labels.length - 1"
-						class="trend-chart__axis"
-						:x="x(index)"
-						:y="height - 12"
-						text-anchor="middle"
-					>
-						{{ formatChartLabel(label, granularity) }}
-					</text>
-				</template>
-			</svg>
-		</div>
-		<div v-else class="dashboard-empty-state">{{ __("No chart data") }}</div>
 	</div>
 </template>

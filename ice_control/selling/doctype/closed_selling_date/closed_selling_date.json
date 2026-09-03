@@ -14,7 +14,9 @@
   "outlet",
   "column_break_nyab",
   "note",
+  "i_am_confirmed_all_data_below_are_correct",
   "section_break_cawa",
+  "html_preview_close_date_data",
   "closed_selling_date_items",
   "amended_from"
  ],
@@ -78,13 +80,24 @@
    "fieldname": "closed_selling_date_items",
    "fieldtype": "Table",
    "options": "Closed Selling Date Items"
+  },
+  {
+   "fieldname": "html_preview_close_date_data",
+   "fieldtype": "HTML",
+   "label": "HTML Preview Close Date Data"
+  },
+  {
+   "default": "0",
+   "fieldname": "i_am_confirmed_all_data_below_are_correct",
+   "fieldtype": "Check",
+   "label": "I am confirmed all data below are correct"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-14 14:52:04.293465",
+ "modified": "2026-09-03 11:34:43.303264",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Closed Selling Date",

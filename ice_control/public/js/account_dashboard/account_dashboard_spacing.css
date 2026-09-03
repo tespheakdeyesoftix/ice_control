@@ -1,0 +1,305 @@
+.account-dashboard {
+	gap: 20px;
+	padding: 12px clamp(16px, 1.5vw, 24px) 36px;
+	font-family: var(--font-stack, inherit);
+	font-size: var(--text-base, 14px);
+	line-height: 1.5;
+}
+
+.account-dashboard button,
+.account-dashboard input,
+.account-dashboard select {
+	font-family: inherit;
+}
+
+.account-dashboard__intro {
+	gap: 24px;
+	padding: 4px 0 2px;
+}
+
+.account-dashboard__eyebrow {
+	margin-bottom: 4px;
+	font-size: var(--text-xs, 12px);
+}
+
+.account-dashboard__intro h1 {
+	font-size: clamp(24px, 2vw, 30px);
+}
+
+.account-dashboard__intro p:last-child {
+	margin-top: 6px;
+	font-size: var(--text-lg, 16px);
+}
+
+.cash-movement {
+	gap: 3px;
+	min-width: 210px;
+	padding: 13px 17px;
+}
+
+.cash-movement span {
+	font-size: var(--text-sm, 13px);
+}
+
+.cash-movement strong {
+	font-size: var(--text-3xl, 20px);
+}
+
+.dashboard-filters {
+	gap: 16px;
+	padding: 18px;
+}
+
+.dashboard-filter {
+	gap: 7px;
+}
+
+.dashboard-filter > span {
+	font-size: var(--text-sm, 13px);
+}
+
+.dashboard-filter select,
+.dashboard-filter input,
+.dashboard-filter__submit {
+	height: 42px;
+	font-size: var(--text-base, 14px);
+}
+
+.dashboard-filter select,
+.dashboard-filter input {
+	padding-inline: 12px;
+}
+
+.dashboard-filter__submit {
+	padding-inline: 18px;
+}
+
+.dashboard-filter__error {
+	right: 18px;
+	bottom: -24px;
+	font-size: var(--text-xs, 12px);
+}
+
+.kpi-grid,
+.compact-metric-grid,
+.dashboard-grid,
+.dashboard-skeleton {
+	gap: 16px;
+}
+
+.kpi-card {
+	grid-template-columns: 52px minmax(0, 1fr);
+	gap: 15px;
+	min-height: 132px;
+	padding: 20px;
+}
+
+.kpi-card__icon {
+	width: 52px;
+	height: 52px;
+}
+
+.kpi-card__label,
+.compact-metric__label {
+	font-size: var(--text-sm, 13px);
+}
+
+.kpi-card__value {
+	margin-top: 3px;
+	font-size: clamp(23px, 2vw, 30px);
+}
+
+.kpi-card__change {
+	margin-top: 9px;
+	font-size: var(--text-xs, 12px);
+}
+
+.compact-metric {
+	grid-template-columns: 40px minmax(0, 1fr);
+	gap: 12px;
+	min-height: 72px;
+	padding: 14px 16px;
+}
+
+.compact-metric__icon {
+	width: 40px;
+	height: 40px;
+}
+
+.compact-metric strong {
+	font-size: var(--text-2xl, 18px);
+}
+
+.dashboard-panel__header {
+	gap: 16px;
+	padding: 18px 18px 12px;
+}
+
+.dashboard-panel__header h2 {
+	font-size: var(--text-lg, 16px);
+}
+
+.dashboard-panel__header p {
+	margin-top: 4px;
+	font-size: var(--text-sm, 13px);
+}
+
+.dashboard-panel__body {
+	padding: 0 18px 18px;
+}
+
+.dashboard-text-button,
+.transaction-link {
+	font-size: var(--text-sm, 13px);
+}
+
+.trend-chart__legend {
+	gap: 16px;
+	margin: -31px 0 8px;
+	font-size: var(--text-xs, 12px);
+}
+
+.trend-chart__legend span {
+	gap: 6px;
+}
+
+.trend-chart__canvas svg {
+	min-height: 220px;
+}
+
+.trend-chart__axis {
+	font-size: 11px;
+}
+
+.aging-list,
+.attention-list,
+.payable-list {
+	gap: 10px;
+}
+
+.aging-row {
+	grid-template-columns: 56px minmax(70px, 1fr) auto;
+	gap: 10px;
+	min-height: 32px;
+	font-size: var(--text-sm, 13px);
+}
+
+.aging-row__track {
+	height: 10px;
+}
+
+.aging-row strong {
+	font-size: var(--text-sm, 13px);
+}
+
+.attention-item {
+	gap: 12px;
+	padding: 13px 14px;
+}
+
+.attention-item__dot {
+	width: 10px;
+	height: 10px;
+}
+
+.attention-item__content strong,
+.payable-row strong,
+.payable-row b {
+	font-size: var(--text-base, 14px);
+}
+
+.attention-item__content small,
+.payable-row small {
+	margin-top: 3px;
+	font-size: var(--text-xs, 12px);
+}
+
+.payable-row {
+	gap: 12px;
+	padding: 13px 14px;
+}
+
+.dashboard-empty-state {
+	font-size: var(--text-sm, 13px);
+}
+
+.transaction-table {
+	font-size: var(--text-sm, 13px);
+}
+
+.transaction-table th,
+.transaction-table td {
+	padding: 12px;
+}
+
+.transaction-table th,
+.transaction-status {
+	font-size: var(--text-xs, 12px);
+}
+
+.transaction-status {
+	padding: 3px 8px;
+}
+
+.quick-actions {
+	gap: 10px;
+	padding: 16px;
+}
+
+.quick-action {
+	grid-template-columns: 36px 1fr auto;
+	gap: 11px;
+	min-height: 50px;
+	padding: 7px 11px;
+	font-size: var(--text-sm, 13px);
+}
+
+.quick-action__icon {
+	width: 36px;
+	height: 36px;
+}
+
+.dashboard-error {
+	gap: 12px;
+	padding: 14px 16px;
+}
+
+.dashboard-error p {
+	font-size: var(--text-sm, 13px);
+}
+
+.dashboard-skeleton span {
+	height: 124px;
+}
+
+.account-dashboard__footer {
+	font-size: var(--text-xs, 12px);
+}
+
+@media (max-width: 767px) {
+	.account-dashboard {
+		gap: 16px;
+		padding: 10px 12px 28px;
+	}
+
+	.account-dashboard__intro {
+		gap: 14px;
+	}
+
+	.kpi-card {
+		min-height: 116px;
+		padding: 16px;
+	}
+}
+
+.transaction-status-cell {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.transaction-time-ago {
+	color: var(--dashboard-muted);
+	font-size: var(--text-xs, 12px);
+	font-weight: 400;
+}

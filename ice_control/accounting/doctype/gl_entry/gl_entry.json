@@ -79,9 +79,9 @@
   },
   {
    "fieldname": "against_voucher_no",
-   "fieldtype": "Link",
+   "fieldtype": "Dynamic Link",
    "label": "Against Voucher No",
-   "options": "DocType"
+   "options": "against_voucher_type"
   },
   {
    "fieldname": "against",
@@ -196,7 +196,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-03 07:12:08.619385",
+ "modified": "2026-09-03 10:36:12.663597",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "GL Entry",

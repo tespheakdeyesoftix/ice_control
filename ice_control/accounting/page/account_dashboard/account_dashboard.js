@@ -9,6 +9,7 @@ frappe.pages["account-dashboard"].on_page_load = function (wrapper) {
 	wrapper.accountDashboardMount = $("<div class='account-dashboard-mount'></div>").appendTo(
 		page.main
 	);
+	setup_account_dashboard_toolbar(wrapper);
 };
 
 frappe.pages["account-dashboard"].on_page_show = function (wrapper) {
@@ -22,7 +23,7 @@ function load_account_dashboard(wrapper) {
 	if (wrapper.accountDashboardPromise) return wrapper.accountDashboardPromise;
 
 	wrapper.accountDashboardPromise = frappe
-		.require("account_dashboard.bundle.js")
+		.require(["account_dashboard.bundle.js", "account_dashboard_styles.bundle.css"])
 		.then(() => {
 			wrapper.accountDashboard = new frappe.ui.AccountDashboard({
 				wrapper: wrapper.accountDashboardMount,
@@ -41,4 +42,32 @@ function load_account_dashboard(wrapper) {
 		});
 
 	return wrapper.accountDashboardPromise;
+}
+
+function setup_account_dashboard_toolbar(wrapper) {
+	const page = wrapper.accountDashboardPage;
+	const quick_actions = [
+		{ label: "Receive Payment", doctype: "Sale Payment" },
+		{ label: "Pay Vendor", doctype: "Purchase Order Payment" },
+		{ label: "Record Expense", doctype: "Expense" },
+		{ label: "Journal Entry", doctype: "Journal Entry" },
+	];
+
+	quick_actions.forEach((action) => {
+		page.add_inner_button(
+			__(action.label),
+			() => frappe.new_doc(action.doctype),
+			__("Quick actions"),
+			"default",
+			true
+		);
+	});
+	page.set_inner_btn_group_as_primary(__("Quick actions"));
+
+	page.add_action_icon(
+		"refresh-cw",
+		() => load_account_dashboard(wrapper),
+		"account-dashboard-refresh",
+		__("Refresh")
+	);
 }

@@ -8,7 +8,7 @@ const actions = [
 </script>
 
 <template>
-	<section class="quick-actions" aria-label="Quick actions">
+	<section class="quick-actions" :aria-label="__('Quick actions')">
 		<button
 			v-for="action in actions"
 			:key="action.doctype"

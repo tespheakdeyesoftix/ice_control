@@ -1,0 +1,29 @@
+.frappe-chart-host {
+	width: 100%;
+	min-height: 280px;
+	overflow: visible;
+	--charts-label-color: var(--dashboard-muted);
+	--charts-axis-line-color: var(--dashboard-grid);
+}
+
+.frappe-chart-host .chart-container {
+	width: 100%;
+	min-height: 280px;
+	font-family: var(--font-stack, inherit);
+}
+
+.trend-chart__canvas.frappe-chart-host svg.frappe-chart {
+	height: auto;
+	min-height: 0;
+}
+
+.frappe-chart-host .chart-label,
+.frappe-chart-host .legend-dataset-label,
+.frappe-chart-host .legend-dataset-value {
+	font-family: var(--font-stack, inherit);
+	font-size: var(--text-xs, 12px);
+}
+
+.frappe-chart-host .graph-svg-tip {
+	font-family: var(--font-stack, inherit);
+}

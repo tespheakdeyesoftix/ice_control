@@ -15,6 +15,7 @@
   "root_type",
   "is_group",
   "outlet",
+  "is_expense_item",
   "section_break_lvlt",
   "descriptions",
   "section_break_snju",
@@ -124,12 +125,19 @@
    "fieldname": "price",
    "fieldtype": "Currency",
    "label": "Price"
+  },
+  {
+   "default": "0",
+   "description": "We use this option to filter expense code in Expense doctype",
+   "fieldname": "is_expense_item",
+   "fieldtype": "Check",
+   "label": "Is Expense Item"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-02 17:33:28.008480",
+ "modified": "2026-09-03 12:15:32.189781",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Chart of Account",

@@ -12,6 +12,10 @@ function openVoucher(row) {
 		frappe.set_route("Form", row.voucher_type, row.voucher_no);
 	}
 }
+
+function getTimeAgo(timestamp) {
+	return timestamp ? frappe.datetime.comment_when(timestamp) : "";
+}
 </script>
 
 <template>
@@ -39,7 +43,16 @@ function openVoucher(row) {
 						<td>{{ row.party_name }}</td>
 						<td>{{ __(row.voucher_type) }}</td>
 						<td class="is-numeric">{{ formatMoney(row.amount, currency) }}</td>
-						<td><span class="transaction-status">{{ row.status }}</span></td>
+						<td>
+							<div class="transaction-status-cell">
+								<span class="transaction-status">{{ row.status }}</span>
+								<span
+									v-if="row.created_at"
+									class="transaction-time-ago"
+									v-html="getTimeAgo(row.created_at)"
+								></span>
+							</div>
+						</td>
 					</tr>
 				</tbody>
 			</table>

@@ -17,7 +17,7 @@ class GLEntry(Document):
 		account: DF.Link | None
 		account_type: DF.Data | None
 		against: DF.SmallText | None
-		against_voucher_no: DF.Link | None
+		against_voucher_no: DF.DynamicLink | None
 		against_voucher_type: DF.Link | None
 		amended_from: DF.Link | None
 		amount: DF.Float

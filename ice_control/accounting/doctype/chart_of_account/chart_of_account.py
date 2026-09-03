@@ -20,6 +20,7 @@ class ChartofAccount(Document):
 		account_name: DF.Data
 		account_type: DF.Literal["", "Receivable", "Payable", "Cash", "Bank", "Income", "Expense", "Equity", "Owner Withdraw", "Temporary", "Stock Asset", "Fixed Asset"]
 		descriptions: DF.SmallText | None
+		is_expense_item: DF.Check
 		is_group: DF.Check
 		lft: DF.Int
 		old_parent: DF.Link | None

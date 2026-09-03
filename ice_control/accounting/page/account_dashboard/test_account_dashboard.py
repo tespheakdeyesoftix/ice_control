@@ -74,7 +74,7 @@ class TestAccountDashboard(UnitTestCase):
 		amounts = {row["key"]: row["value"] for row in aging}
 
 		self.assertEqual(amounts["days_61_90"], 50)
-		self.assertEqual(amounts["days_over_90"], 20)
+		self.assertEqual(amounts["days_91_120"], 20)
 		self.assertEqual(overdue_customers, {"CUST-1"})
 
 	def test_aging_bucket_boundaries(self):
@@ -82,4 +82,6 @@ class TestAccountDashboard(UnitTestCase):
 		self.assertEqual(_get_aging_bucket(30), "days_1_30")
 		self.assertEqual(_get_aging_bucket(60), "days_31_60")
 		self.assertEqual(_get_aging_bucket(90), "days_61_90")
-		self.assertEqual(_get_aging_bucket(91), "days_over_90")
+		self.assertEqual(_get_aging_bucket(91), "days_91_120")
+		self.assertEqual(_get_aging_bucket(120), "days_91_120")
+		self.assertEqual(_get_aging_bucket(121), "days_over_120")

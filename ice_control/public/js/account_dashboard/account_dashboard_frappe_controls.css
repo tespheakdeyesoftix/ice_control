@@ -1,0 +1,63 @@
+.dashboard-frappe-control {
+	min-width: 0;
+}
+
+.dashboard-frappe-control .frappe-control,
+.dashboard-frappe-control .form-group {
+	width: 100%;
+	margin: 0;
+}
+
+.dashboard-frappe-control .frappe-control.input-max-width {
+	max-width: none;
+}
+
+.dashboard-frappe-control .clearfix {
+	min-height: 21px;
+}
+
+.dashboard-frappe-control .control-label {
+	margin: 0 0 7px;
+	padding: 0 !important;
+	color: var(--dashboard-muted);
+	font-size: var(--text-sm, 13px);
+	font-weight: var(--font-weight-semibold, 600);
+	line-height: 1;
+}
+
+.dashboard-frappe-control .control-input-wrapper,
+.dashboard-frappe-control .control-input,
+.dashboard-frappe-control .form-control {
+	width: 100%;
+}
+
+.dashboard-frappe-control .form-control {
+	height: 42px;
+	padding-inline: 12px;
+	border: 1px solid var(--dashboard-border);
+	border-radius: 7px;
+	background: var(--control-bg);
+	color: var(--dashboard-text);
+	font-family: var(--font-stack, inherit);
+	font-size: var(--text-base, 14px);
+}
+
+.dashboard-frappe-control .form-control:focus {
+	border-color: var(--dashboard-blue);
+	box-shadow: 0 0 0 2px rgb(37 99 235 / 12%);
+}
+
+.dashboard-frappe-control .frappe-control.is-disabled {
+	opacity: 0.7;
+}
+
+.dashboard-frappe-control .select-icon,
+.dashboard-frappe-control .link-btn {
+	height: 42px;
+	display: inline-flex;
+	align-items: center;
+}
+
+.dashboard-frappe-control .date-field .link-btn {
+	display: inline-flex;
+}

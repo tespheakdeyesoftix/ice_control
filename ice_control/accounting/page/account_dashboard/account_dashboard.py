@@ -15,7 +15,8 @@ AGING_BUCKETS = (
 	("days_1_30", "1-30"),
 	("days_31_60", "31-60"),
 	("days_61_90", "61-90"),
-	("days_over_90", "90+"),
+	("days_91_120", "91-120"),
+	("days_over_120", "120+"),
 )
 AMOUNT_TOLERANCE = 0.005
 RECENT_TRANSACTION_LIMIT = 8
@@ -414,7 +415,9 @@ def _get_aging_bucket(age: int) -> str:
 		return "days_31_60"
 	if age <= 90:
 		return "days_61_90"
-	return "days_over_90"
+	if age <= 120:
+		return "days_91_120"
+	return "days_over_120"
 
 
 def _get_top_payables(query_filters: dict) -> list[dict]:
@@ -457,6 +460,29 @@ def _get_top_payables(query_filters: dict) -> list[dict]:
 
 def _get_alerts(query_filters: dict, overdue_customers: set[str]) -> list[dict]:
 	alerts = []
+	pending_sale_count = _get_pending_sale_count(query_filters)
+	if pending_sale_count:
+		outlets = list(query_filters["outlets"])
+		alerts.append(
+			{
+				"key": "pending_sales",
+				"severity": "warning",
+				"title": _("Pending sales"),
+				"message": _("{0} sale(s) are still in Draft status and need to be closed.").format(
+					pending_sale_count
+				),
+				"route": ["List", "Sale"],
+				"route_options": {
+					"sale_status": "Draft",
+					"posting_date": [
+						"between",
+						[str(query_filters["start_date"]), str(query_filters["end_date"])],
+					],
+					"outlet": outlets[0] if len(outlets) == 1 else ["in", outlets],
+				},
+			}
+		)
+
 	unbalanced_count = _get_unbalanced_voucher_count(query_filters)
 	if unbalanced_count:
 		alerts.append(
@@ -525,6 +551,20 @@ def _get_alerts(query_filters: dict, overdue_customers: set[str]) -> list[dict]:
 		)
 
 	return alerts
+
+
+def _get_pending_sale_count(query_filters: dict) -> int:
+	return frappe.db.count(
+		"Sale",
+		filters={
+			"sale_status": "Draft",
+			"outlet": ["in", query_filters["outlets"]],
+			"posting_date": [
+				"between",
+				[query_filters["start_date"], query_filters["end_date"]],
+			],
+		},
+	)
 
 
 def _get_unbalanced_voucher_count(query_filters: dict) -> int:
@@ -628,6 +668,7 @@ def _get_recent_transactions(query_filters: dict) -> list[dict]:
 			"party_name": row.get("party_name") or _("No party"),
 			"amount": max(flt(row.get("total_debit")), flt(row.get("total_credit"))),
 			"status": _("Posted"),
+			"created_at": row.get("created_at").isoformat() if row.get("created_at") else "",
 		}
 		for row in rows
 	]

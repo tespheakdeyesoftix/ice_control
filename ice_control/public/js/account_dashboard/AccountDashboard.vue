@@ -13,7 +13,6 @@ import RecentTransactions from "./components/RecentTransactions.vue";
 import TopPayables from "./components/TopPayables.vue";
 import { useDashboardData } from "./composables/useDashboardData";
 import { formatMoney } from "./dashboard_utils";
-import "./account_dashboard.css";
 
 const props = defineProps({ initialOutlet: { type: String, default: "" } });
 const filters = reactive({
@@ -28,6 +27,11 @@ const summary = computed(() => data.value?.summary || {});
 const reportOptions = computed(() => ({
 	start_date: filters.start_date,
 	end_date: filters.end_date,
+	...(filters.outlet ? { outlet: filters.outlet } : {}),
+}));
+
+const listFilterOptions = computed(() => ({
+	posting_date: ["between", [filters.start_date, filters.end_date]],
 	...(filters.outlet ? { outlet: filters.outlet } : {}),
 }));
 
@@ -63,15 +67,16 @@ const kpiCards = computed(() => [
 ]);
 
 const compactMetrics = computed(() => [
-	{ key: "total_sales", label: "Total Sales", icon: "bar-chart-2", theme: "blue" },
-	{ key: "collections", label: "Collections", icon: "arrow-down-left", theme: "green" },
+	{ key: "total_sales", label: "Total Sales", icon: "shopping-cart", theme: "blue", route: ["List", "Sale"] },
+	{ key: "collections", label: "Collections", icon: "arrow-down-left", theme: "green", route: ["List", "Sale Payment"] },
 	{
 		key: "purchase_payments",
 		label: "Purchase Payments",
 		icon: "arrow-up-right",
 		theme: "orange",
+		route: ["List", "Purchase Order Payment"],
 	},
-	{ key: "expenses", label: "Expenses", icon: "pie-chart", theme: "violet" },
+	{ key: "expenses", label: "Expenses", icon: "chart-pie", theme: "violet", route: ["List", "Expense"] },
 ]);
 
 async function refresh(nextFilters = null) {
@@ -95,8 +100,9 @@ onMounted(refresh);
 
 <template>
 	<main class="account-dashboard">
-		<header class="account-dashboard__intro">
+		<header class="account-dashboard__intro" >
 			<div>
+
 				<p class="account-dashboard__eyebrow">{{ __("Accounting") }}</p>
 				<h1>{{ __("Financial overview and daily control") }}</h1>
 				<p>{{ __("Posted balances, cash movement, aging and exceptions in one place.") }}</p>
@@ -120,7 +126,7 @@ onMounted(refresh);
 			<button type="button" @click="refresh()">{{ __("Try Again") }}</button>
 		</div>
 
-		<div v-if="loading && !data" class="dashboard-skeleton" aria-label="Loading dashboard">
+		<div v-if="loading && !data" class="dashboard-skeleton" :aria-label="__('Loading dashboard')">
 			<span v-for="index in 12" :key="index"></span>
 		</div>
 
@@ -148,16 +154,18 @@ onMounted(refresh);
 					:currency="currency"
 					:icon="metric.icon"
 					:theme="metric.theme"
+					:route="metric.route"
+					:route-options="listFilterOptions"
 				/>
 			</section>
 
 			<section class="dashboard-grid dashboard-grid--primary">
-				<FinancialTrendPanel :data="data.financial_trend" :currency="currency" />
+				<FinancialTrendPanel :data="data.financial_trend" :currency="currency" :route-options="reportOptions" />
 				<AttentionPanel :items="data.alerts" />
 			</section>
 
 			<section class="dashboard-grid dashboard-grid--secondary">
-				<ReceivableAging :rows="data.receivable_aging" :currency="currency" />
+				<ReceivableAging :rows="data.receivable_aging" :currency="currency" :route-options="reportOptions" />
 				<CashFlowPanel :data="data.cash_flow" :currency="currency" />
 				<TopPayables :rows="data.top_payables" :currency="currency" />
 			</section>
