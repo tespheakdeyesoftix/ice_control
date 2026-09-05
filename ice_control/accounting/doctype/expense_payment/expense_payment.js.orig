@@ -1,0 +1,154 @@
+// Copyright (c) 2026, Tes Pheakdey and contributors
+// For license information, please see license.txt
+
+frappe.ui.form.on("Expense Payment", {
+	onload(frm) {
+		rememberExpensePaymentVendor(frm);
+
+		frm.set_query("expense", "expenses", (doc, cdt, cdn) => {
+			const selectedExpenses = (doc.expenses || [])
+				.filter(row => row.name !== cdn && row.expense)
+				.map(row => row.expense);
+			const filters = {
+				outlet: doc.outlet || "Not Set",
+				vendor: doc.vendor || "Not Set",
+				balance: [">", 0],
+			};
+
+			if (selectedExpenses.length) {
+				filters.name = ["not in", selectedExpenses];
+			}
+
+			return { filters };
+		});
+	},
+
+	refresh(frm) {
+		updateExchangeRateDisplay(frm);
+	},
+
+	vendor(frm) {
+		confirmExpenseClearOnVendorChange(frm);
+	},
+
+	async payment_type(frm) {
+		await updateExchangeRateFromPaymentType(frm);
+	},
+
+	exchange_rate(frm) {
+		updateExchangeRateDisplay(frm);
+	},
+});
+
+function rememberExpensePaymentVendor(frm) {
+	frm.__expense_payment_vendor = frm.doc.vendor || "";
+}
+
+function confirmExpenseClearOnVendorChange(frm) {
+	if (frm.__reverting_expense_payment_vendor) return;
+
+	const previousVendor = frm.__expense_payment_vendor || "";
+	const currentVendor = frm.doc.vendor || "";
+
+	if (previousVendor === currentVendor) {
+		getVendorExpenseBalance(frm);
+		return;
+	}
+
+	const applyVendorChange = () => {
+		frm.__expense_payment_vendor = currentVendor;
+		frm.clear_table("expenses");
+		frm.refresh_field("expenses");
+		getVendorExpenseBalance(frm);
+	};
+	const hasExpenses = (frm.doc.expenses || []).some(row => row.expense);
+
+	if (!hasExpenses) {
+		applyVendorChange();
+		return;
+	}
+
+	frappe.confirm(
+		__(
+			"Changing Vendor will clear the Expenses table. Do you want to continue?"
+		),
+		applyVendorChange,
+		() => {
+			frm.__reverting_expense_payment_vendor = true;
+			Promise.resolve(frm.set_value("vendor", previousVendor)).finally(() => {
+				frm.__reverting_expense_payment_vendor = false;
+			});
+		}
+	);
+}
+
+function getVendorExpenseBalance(frm) {
+	if (frm.doc.vendor && frm.doc.outlet && frm.doc.posting_date) {
+		frm.call("get_vendor_expense_balance");
+	} else {
+		frm.set_value("current_expense_payable_balance", 0);
+	}
+}
+
+async function updateExchangeRateFromPaymentType(frm) {
+	const paymentType = frm.doc.payment_type;
+
+	if (!paymentType) {
+		await frm.set_value({
+			currency: "",
+			exchange_rate: 0,
+		});
+		updateExchangeRateDisplay(frm);
+		return;
+	}
+
+	const paymentTypeResult = await frappe.db.get_value(
+		"Payment Type",
+		paymentType,
+		"currency"
+	);
+
+	// Ignore a response for a Payment Type that the user has already changed.
+	if (frm.doc.payment_type !== paymentType) return;
+
+	const currency = paymentTypeResult.message?.currency;
+	await frm.set_value("currency", currency || "");
+
+	if (!currency) {
+		await frm.set_value("exchange_rate", 0);
+		updateExchangeRateDisplay(frm);
+		return;
+	}
+
+	const exchangeRateResult = await frappe.call({
+		method: "ice_control.api.api.get_exchange_rate",
+		args: { currency },
+	});
+
+	// Keep a late response from overwriting the newly selected Payment Type.
+	if (frm.doc.payment_type !== paymentType) return;
+
+	await frm.set_value("exchange_rate", exchangeRateResult.message);
+	updateExchangeRateDisplay(frm);
+}
+
+function updateExchangeRateDisplay(frm) {
+	const field = frm.get_field("html_exchange_rate_display");
+	const exchangeRate = flt(frm.doc.exchange_rate);
+
+	if (!field || exchangeRate <= 0 || exchangeRate === 1) {
+		field?.$wrapper.empty().hide();
+		return;
+	}
+
+	const displayRate = 1 / exchangeRate;
+
+	field.$wrapper
+		.html(`
+			<div class="alert alert-info mb-2 d-flex justify-content-start align-items-center text-left" role="alert">
+				<strong>${__("Exchange Rate")}:</strong>
+				<span class="ml-1 text-left" style="text-align: left !important;">${frappe.format(displayRate, { fieldtype: "Currency" })}</span>
+			</div>
+		`)
+		.show();
+}

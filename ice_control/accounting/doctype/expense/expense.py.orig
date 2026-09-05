@@ -76,5 +76,6 @@ class Expense(Document):
 			as_dict=True,
 		)
 
+
 	def on_update_after_submit(self):
 		frappe.msgprint(str( self.has_value_changed("note")))

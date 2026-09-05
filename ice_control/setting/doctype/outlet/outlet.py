@@ -16,6 +16,7 @@ class Outlet(Document):
 
 		default_cost_of_goods_sold_account: DF.Link | None
 		default_income_account: DF.Link | None
+		default_nonstock_purchase_expense_account: DF.Link | None
 		default_payable_account: DF.Link | None
 		default_purchase_write_off_account: DF.Link | None
 		default_receivable_account: DF.Link | None

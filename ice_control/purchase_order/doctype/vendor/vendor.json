@@ -81,8 +81,25 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-09-01 09:13:12.765569",
+ "links": [
+  {
+   "link_doctype": "Purchase Orders",
+   "link_fieldname": "party"
+  },
+  {
+   "link_doctype": "Purchase Order Payment",
+   "link_fieldname": "party"
+  },
+  {
+   "link_doctype": "Expense",
+   "link_fieldname": "vendor"
+  },
+  {
+   "link_doctype": "Expense Payment",
+   "link_fieldname": "vendor"
+  }
+ ],
+ "modified": "2026-09-05 10:44:48.633347",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Vendor",

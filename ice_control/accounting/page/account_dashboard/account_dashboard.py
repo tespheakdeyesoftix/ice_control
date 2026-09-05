@@ -21,6 +21,7 @@ AGING_BUCKETS = (
 AMOUNT_TOLERANCE = 0.005
 RECENT_TRANSACTION_LIMIT = 8
 TOP_PAYABLE_LIMIT = 5
+TOP_RECEIVABLE_LIMIT = 5
 
 
 @frappe.whitelist(methods=["GET"])
@@ -47,6 +48,7 @@ def get_dashboard_data(
 	period_days = date_diff(filters.end_date, filters.start_date) + 1
 	previous_end_date = add_days(filters.start_date, -1)
 	previous_start_date = add_days(previous_end_date, -(period_days - 1))
+	
 
 	current_snapshot = _get_snapshot_balances(query_filters, filters.end_date)
 	previous_snapshot = _get_snapshot_balances(query_filters, previous_end_date)
@@ -64,6 +66,8 @@ def get_dashboard_data(
 		receivable_rows,
 		filters.end_date,
 	)
+	payable_rows = _get_payable_aging_rows(query_filters)
+	payable_aging = _build_payable_aging(payable_rows, filters.end_date)
 
 	return {
 		"filters": {
@@ -83,6 +87,8 @@ def get_dashboard_data(
 		"financial_trend": financial_trend,
 		"cash_flow": cash_flow,
 		"receivable_aging": receivable_aging,
+		"top_receivables": _get_top_receivables(query_filters),
+		"payable_aging": payable_aging,
 		"top_payables": _get_top_payables(query_filters),
 		"alerts": _get_alerts(query_filters, overdue_customers),
 		"recent_transactions": _get_recent_transactions(query_filters),
@@ -222,6 +228,7 @@ def _build_summary(
 	current_period: dict,
 	previous_period: dict,
 ) -> dict:
+	
 	return {
 		"cash_and_bank": _metric(current_snapshot["cash_and_bank"], previous_snapshot["cash_and_bank"]),
 		"receivable": _metric(
@@ -269,10 +276,10 @@ def _get_trend_rows(query_filters: dict) -> list[dict]:
 					then coalesce(gle.debit_amount, 0) - coalesce(gle.credit_amount, 0)
 					else 0 end), 0) as expense,
 				coalesce(sum(case when coalesce(nullif(gle.account_type, ''), coa.account_type) in ('Cash', 'Bank')
-						and coalesce(gle.transaction_type, '') != 'Transfer'
+						
 					then coalesce(gle.debit_amount, 0) else 0 end), 0) as inflow,
 				coalesce(sum(case when coalesce(nullif(gle.account_type, ''), coa.account_type) in ('Cash', 'Bank')
-						and coalesce(gle.transaction_type, '') != 'Transfer'
+						
 					then coalesce(gle.credit_amount, 0) else 0 end), 0) as outflow
 			from `tabGL Entry` gle
 			left join `tabChart of Account` coa on coa.name = gle.account
@@ -360,6 +367,31 @@ def _get_receivable_aging_rows(query_filters: dict) -> list[dict]:
 	)
 
 
+def _get_payable_aging_rows(query_filters: dict) -> list[dict]:
+	return frappe.db.sql(
+		"""
+			select
+				gle.party_type,
+				gle.party,
+				gle.posting_date,
+				sum(coalesce(gle.debit_amount, 0)) as debit_amount,
+				sum(coalesce(gle.credit_amount, 0)) as credit_amount
+			from `tabGL Entry` gle
+			left join `tabChart of Account` coa on coa.name = gle.account
+			where gle.outlet in %(outlets)s
+				and coalesce(gle.is_cancelled, 0) = 0
+				and coalesce(nullif(gle.account_type, ''), coa.account_type) = 'Payable'
+				and gle.party_type in ('Customer', 'Employee', 'Vendor')
+				and coalesce(gle.party, '') != ''
+				and gle.posting_date <= %(end_date)s
+			group by gle.party_type, gle.party, gle.posting_date
+			order by gle.party_type, gle.party, gle.posting_date
+		""",
+		query_filters,
+		as_dict=True,
+	)
+
+
 def _build_receivable_aging(rows: list[dict], end_date: date) -> tuple[list[dict], set[str]]:
 	customers: dict[str, dict] = {}
 	for row in rows:
@@ -406,6 +438,45 @@ def _build_receivable_aging(rows: list[dict], end_date: date) -> tuple[list[dict
 	)
 
 
+def _build_payable_aging(rows: list[dict], end_date: date) -> list[dict]:
+	parties: dict[tuple[str, str], dict] = {}
+	for row in rows:
+		party_key = (row.get("party_type") or "", row.get("party"))
+		party = parties.setdefault(party_key, {"credits": [], "unapplied_debit": 0.0})
+		net_amount = flt(row.get("credit_amount")) - flt(row.get("debit_amount"))
+		if net_amount > 0:
+			applied_debit = min(net_amount, party["unapplied_debit"])
+			net_amount -= applied_debit
+			party["unapplied_debit"] -= applied_debit
+			if net_amount:
+				party["credits"].append(
+					{"posting_date": getdate(row.get("posting_date")), "amount": net_amount}
+				)
+		elif net_amount < 0:
+			debit_to_apply = abs(net_amount)
+			for credit in party["credits"]:
+				if debit_to_apply <= AMOUNT_TOLERANCE:
+					break
+				applied_debit = min(credit["amount"], debit_to_apply)
+				credit["amount"] -= applied_debit
+				debit_to_apply -= applied_debit
+			party["unapplied_debit"] += debit_to_apply
+
+	totals = {fieldname: 0.0 for fieldname, _label in AGING_BUCKETS}
+	for party in parties.values():
+		for credit in party["credits"]:
+			amount = flt(credit["amount"])
+			if amount <= AMOUNT_TOLERANCE:
+				continue
+			age = date_diff(end_date, credit["posting_date"])
+			totals[_get_aging_bucket(age)] += amount
+
+	return [
+		{"key": fieldname, "label": _(label), "value": flt(totals[fieldname])}
+		for fieldname, label in AGING_BUCKETS
+	]
+
+
 def _get_aging_bucket(age: int) -> str:
 	if age <= 0:
 		return "current"
@@ -418,6 +489,45 @@ def _get_aging_bucket(age: int) -> str:
 	if age <= 120:
 		return "days_91_120"
 	return "days_over_120"
+
+
+def _get_top_receivables(query_filters: dict) -> list[dict]:
+	rows = frappe.db.sql(
+		"""
+			select
+				gle.party_type,
+				gle.party,
+				coalesce(max(nullif(gle.party_name, '')), gle.party) as party_name,
+				sum(coalesce(gle.debit_amount, 0) - coalesce(gle.credit_amount, 0)) as balance
+			from `tabGL Entry` gle
+			left join `tabChart of Account` coa on coa.name = gle.account
+			where gle.outlet in %(outlets)s
+				and coalesce(gle.is_cancelled, 0) = 0
+				and coalesce(nullif(gle.account_type, ''), coa.account_type) = 'Receivable'
+				and gle.party_type = 'Customer'
+				and coalesce(gle.party, '') != ''
+				and gle.posting_date <= %(end_date)s
+			group by gle.party_type, gle.party
+			having balance > %(amount_tolerance)s
+			order by balance desc
+			limit %(limit)s
+		""",
+		{
+			**query_filters,
+			"amount_tolerance": AMOUNT_TOLERANCE,
+			"limit": TOP_RECEIVABLE_LIMIT,
+		},
+		as_dict=True,
+	)
+	return [
+		{
+			"party_type": row.get("party_type"),
+			"party": row.get("party"),
+			"party_name": row.get("party_name") or row.get("party"),
+			"balance": flt(row.get("balance")),
+		}
+		for row in rows
+	]
 
 
 def _get_top_payables(query_filters: dict) -> list[dict]:
@@ -700,6 +810,11 @@ def _get_empty_dashboard(filters: frappe._dict, outlets: list[dict], currency: s
 		"financial_trend": financial_trend,
 		"cash_flow": cash_flow,
 		"receivable_aging": [
+			{"key": fieldname, "label": _(label), "value": 0.0}
+			for fieldname, label in AGING_BUCKETS
+		],
+		"top_receivables": [],
+		"payable_aging": [
 			{"key": fieldname, "label": _(label), "value": 0.0}
 			for fieldname, label in AGING_BUCKETS
 		],

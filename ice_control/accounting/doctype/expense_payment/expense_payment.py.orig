@@ -1,0 +1,78 @@
+# Copyright (c) 2026, Tes Pheakdey and contributors
+# For license information, please see license.txt
+
+import frappe
+from frappe.model.document import Document
+
+
+class ExpensePayment(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+		from ice_control.accounting.doctype.expense_payment_invoices.expense_payment_invoices import ExpensePaymentInvoices
+
+		account_code: DF.Link | None
+		amended_from: DF.Link | None
+		amount_to_pay: DF.Currency
+		balance: DF.Currency
+		currency: DF.Link | None
+		current_expense_payable_balance: DF.Currency
+		exchange_rate: DF.Currency
+		expenses: DF.Table[ExpensePaymentInvoices]
+		input_amount: DF.Float
+		naming_series: DF.Literal["EXPP.YYYY.-.####"]
+		note: DF.SmallText | None
+		outlet: DF.Link
+		payment_type: DF.Link
+		photo: DF.AttachImage | None
+		posting_date: DF.Date
+		reference_number: DF.Data | None
+		total_payment: DF.Currency
+		total_write_off: DF.Currency
+		vendor: DF.Link | None
+		vendor_name: DF.Data | None
+	# end: auto-generated types
+
+	_DOCTYPE_NAME = "Expense Payment"
+
+
+
+	# doctype methods
+	def update_expense_record(self):
+		update_expense_summary(self)
+		
+	def update_expense_summary(self):
+		pass
+
+
+	@frappe.whitelist(methods=["POST"])
+	def get_vendor_expense_balance(self):
+		if not self.vendor or not self.outlet or not self.posting_date:
+			self.current_expense_payable_balance = 0
+			return
+
+		self.current_expense_payable_balance = frappe.db.sql(
+			"""
+				select coalesce(
+					sum(coalesce(debit_amount, 0) - coalesce(credit_amount, 0)),
+					0
+				)
+				from `tabGL Entry`
+				where party_type = 'Vendor'
+					and party = %(vendor)s
+					and voucher_type = 'Expense'
+					and account_type = 'Payable'
+					and outlet = %(outlet)s
+					and posting_date <= %(posting_date)s
+					
+			""",
+			{
+				"vendor": self.vendor,
+				"outlet": self.outlet,
+				"posting_date": self.posting_date,
+			},
+		)[0][0]

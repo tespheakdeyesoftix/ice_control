@@ -6,6 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "details_tab",
   "naming_series",
   "posting_date",
   "reference_number",
@@ -20,12 +21,6 @@
   "phone_number",
   "employee",
   "employee_name",
-  "section_break_mpra",
-  "default_payable_account",
-  "default_expense_account",
-  "column_break_alqj",
-  "default_stock_account",
-  "default_write_off_account",
   "section_break_miox",
   "purchase_products",
   "section_break_xkae",
@@ -42,7 +37,15 @@
   "total_payment",
   "balance",
   "payment_history_tab",
-  "html_payment_history"
+  "html_payment_history",
+  "accounting_tab",
+  "section_break_mpra",
+  "default_payable_account",
+  "default_expense_account",
+  "default_nonstock_purchase_expense_account",
+  "column_break_alqj",
+  "default_stock_account",
+  "default_write_off_account"
  ],
  "fields": [
   {
@@ -300,6 +303,25 @@
    "fieldname": "html_payment_history",
    "fieldtype": "HTML",
    "label": "HTML Payment History"
+  },
+  {
+   "fetch_from": "outlet.default_nonstock_purchase_expense_account",
+   "fetch_if_empty": 1,
+   "fieldname": "default_nonstock_purchase_expense_account",
+   "fieldtype": "Link",
+   "label": "Default NonStock Purchase Expense Account",
+   "options": "Chart of Account"
+  },
+  {
+   "depends_on": "eval:frappe.session.user ==\"Administrator\"",
+   "fieldname": "details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
   }
  ],
  "grid_page_length": 50,
@@ -307,7 +329,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-03 09:36:37.462189",
+ "modified": "2026-09-05 07:13:06.955219",
  "modified_by": "Administrator",
  "module": "Purchase Order",
  "name": "Purchase Orders",

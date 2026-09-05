@@ -8,7 +8,6 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_zqxv",
-  "amended_from",
   "naming_series",
   "posting_date",
   "transaction_type",
@@ -38,16 +37,6 @@
   "html_tamplate_return_transaction"
  ],
  "fields": [
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Borrow Product",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
@@ -189,10 +178,10 @@
    "options": "reference_doctype"
   },
   {
-   "fetch_from": "customer.customer_name",
    "fieldname": "reference_doctype",
    "fieldtype": "Link",
    "label": "Reference Document Type",
+   "link_filters": "[[\"DocType\",\"name\",\"=\",\"Sale\"]]",
    "options": "DocType"
   },
   {
@@ -238,7 +227,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-18 08:39:45.380987",
+ "modified": "2026-09-04 12:21:35.456504",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Borrow Product",

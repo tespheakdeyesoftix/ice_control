@@ -27,6 +27,7 @@ class Product(Document):
 		from ice_control.stock_management.doctype.product_default_accounts.product_default_accounts import ProductDefaultAccounts
 		from ice_control.stock_management.doctype.product_materials.product_materials import ProductMaterials
 
+		allow_borrow: DF.Check
 		allow_change_price: DF.Check
 		allow_change_sale_type: DF.Check
 		allow_free: DF.Check

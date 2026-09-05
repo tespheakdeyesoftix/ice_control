@@ -30,7 +30,6 @@
    "fetch_from": "product_code.product_name",
    "fieldname": "product_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Product Name"
   },
   {
@@ -86,7 +85,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-01 09:11:54.679631",
+ "modified": "2026-09-04 08:02:16.801631",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Stock Entry Products",

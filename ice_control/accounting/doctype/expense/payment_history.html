@@ -1,0 +1,62 @@
+<div class="table-responsive">
+	<table class="table table-striped" style="margin: 0">
+		<thead>
+			<tr>
+				<th class="text-left">{{ __("Payment Number") }}</th>
+				<th class="text-left">{{ __("Payment Date") }}</th>
+				<th class="text-right">{{ __("Payment Amount") }}</th>
+				<th class="text-right">{{ __("Write Off Amount") }}</th>
+				<th class="text-left">{{ __("Created By") }}</th>
+				<th class="text-left">{{ __("Creation") }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% if data.length %}
+				{% for d in data %}
+				<tr>
+					<td>
+						<a href="/app/expense-payment/{{ d.payment_number }}">
+							{{ frappe.utils.escape_html(d.payment_number) }}
+						</a>
+					</td>
+					<td>{{ frappe.format(d.payment_date, { "fieldtype": "Date" }) }}</td>
+					<td class="text-right">
+						{{ frappe.format(d.payment_amount || 0, { "fieldtype": "Currency" }) }}
+					</td>
+					<td class="text-right">
+						{{ frappe.format(d.write_off_amount || 0, { "fieldtype": "Currency" }) }}
+					</td>
+					<td>{{ frappe.utils.escape_html(d.created_by || "") }}</td>
+					<td>{{ frappe.datetime.comment_when(d.creation) }}</td>
+				</tr>
+				{% endfor %}
+			{% else %}
+			<tr>
+				<td colspan="6" class="text-center text-muted">
+					{{ __("No payment history") }}
+				</td>
+			</tr>
+			{% endif %}
+		</tbody>
+		{% if data.length %}
+		<tfoot>
+			<tr>
+				<th colspan="2">{{ __("Total") }}</th>
+				<th class="text-right">
+					{{ frappe.format(
+						data.reduce((total, d) => total + (d.payment_amount || 0), 0),
+						{ "fieldtype": "Currency" }
+					) }}
+				</th>
+				<th class="text-right">
+					{{ frappe.format(
+						data.reduce((total, d) => total + (d.write_off_amount || 0), 0),
+						{ "fieldtype": "Currency" }
+					) }}
+				</th>
+				<th colspan="2"></th>
+			</tr>
+		</tfoot>
+		{% endif %}
+	</table>
+</div>

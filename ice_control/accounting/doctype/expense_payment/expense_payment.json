@@ -2,37 +2,238 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2026-09-02 13:43:06.140560",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "expense",
-  "total_expense"
+  "naming_series",
+  "posting_date",
+  "reference_number",
+  "outlet",
+  "column_break_izke",
+  "payment_type",
+  "currency",
+  "exchange_rate",
+  "html_exchange_rate_display",
+  "account_code",
+  "photo",
+  "payment_information_section",
+  "vendor",
+  "vendor_name",
+  "current_expense_payable_balance",
+  "column_break_xlqs",
+  "html_amount_to_pay_display",
+  "amount_to_pay",
+  "input_amount",
+  "balance",
+  "pay_on_expense_transaction_section",
+  "expenses",
+  "section_break_aksl",
+  "note",
+  "amended_from",
+  "column_break_jugs",
+  "html_payment_summary",
+  "total_payment",
+  "total_write_off"
  ],
  "fields": [
   {
-   "fieldname": "expense",
-   "fieldtype": "Link",
-   "label": "Expense",
-   "options": "Expense"
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "EXPP.YYYY.-.####"
   },
   {
-   "fetch_from": "expense.total_expense",
-   "fieldname": "total_expense",
+   "fieldname": "column_break_izke",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Payment Type",
+   "options": "Payment Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "exchange_rate",
    "fieldtype": "Currency",
-   "label": "Total Expense"
+   "hidden": 1,
+   "label": "Exchange Rate"
+  },
+  {
+   "fieldname": "html_exchange_rate_display",
+   "fieldtype": "HTML",
+   "label": "HTML Exchange Rate Display"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Posting Date",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "reference_number",
+   "fieldtype": "Data",
+   "label": "Reference Number"
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Outlet",
+   "options": "Outlet",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "payment_information_section",
+   "fieldtype": "Section Break",
+   "label": "Payment Information"
+  },
+  {
+   "fieldname": "vendor",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Vendor",
+   "options": "Vendor"
+  },
+  {
+   "fetch_from": "vendor.vendor_name",
+   "fieldname": "vendor_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Vendor Name"
+  },
+  {
+   "fieldname": "current_expense_payable_balance",
+   "fieldtype": "Currency",
+   "label": "Current Expense Payable Balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_xlqs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "html_amount_to_pay_display",
+   "fieldtype": "HTML",
+   "label": "HTML Amount to Pay Display"
+  },
+  {
+   "description": "\u179f\u17bc\u1798\u1794\u1789\u17d2\u1787\u17bc\u179b\u1791\u17b9\u1780\u1794\u17d2\u179a\u17b6\u1780\u17cb\u178f\u17d2\u179a\u17bc\u179c\u1794\u1784\u17cb\u1793\u17c5\u1791\u17b8\u1793\u17c1\u17c7",
+   "fieldname": "input_amount",
+   "fieldtype": "Float",
+   "label": "Input Amount",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount_to_pay",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Amount to Pay"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Currency",
+   "label": "Balance"
+  },
+  {
+   "fieldname": "section_break_aksl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "column_break_jugs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Expense Payment",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "fieldname": "account_code",
+   "fieldtype": "Link",
+   "label": "Payment to Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"in\",[\"Cash\",\"Bank\"]]]",
+   "options": "Chart of Account"
+  },
+  {
+   "fieldname": "html_payment_summary",
+   "fieldtype": "HTML",
+   "label": "HTML Payment Summary"
+  },
+  {
+   "fieldname": "total_payment",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Total Payment"
+  },
+  {
+   "fieldname": "total_write_off",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Total Write Off"
+  },
+  {
+   "fieldname": "pay_on_expense_transaction_section",
+   "fieldtype": "Section Break",
+   "label": "Pay on Expense Transaction"
+  },
+  {
+   "fieldname": "expenses",
+   "fieldtype": "Table",
+   "options": "Expense Payment Invoices"
   }
  ],
  "grid_page_length": 50,
+ "image_field": "photo",
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2026-09-02 13:57:21.872897",
+ "modified": "2026-09-05 10:02:50.821639",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Expense Payment",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -40,8 +241,35 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
+   "role": "Administrator",
    "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
@@ -49,5 +277,6 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "vendor_name"
 }

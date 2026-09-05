@@ -1,7 +1,7 @@
 # Copyright (c) 2026, Tes Pheakdey and contributors
 # For license information, please see license.txt
 
-# import frappe
+import frappe
 from frappe.model.document import Document
 
 from ice_control.api.inventory import get_stock_location_prouct,add_inventory_transaction
@@ -22,12 +22,13 @@ class StockEntry(Document):
 		naming_series: DF.Literal["STE.YYYY.-.####"]
 		note: DF.SmallText | None
 		outlet: DF.Link | None
-		party: DF.Link | None
-		party_name: DF.DynamicLink | None
-		posting_date: DF.Date | None
+		party: DF.DynamicLink | None
+		party_name: DF.Data | None
+		party_type: DF.Link | None
+		posting_date: DF.Date
 		reference_no: DF.Data | None
 		stock_entry_products: DF.Table[StockEntryProducts]
-		stock_entry_type: DF.Link | None
+		stock_entry_type: DF.Link
 		stock_location: DF.Link | None
 		total_cost: DF.Currency
 		total_quantity: DF.Float
@@ -35,7 +36,7 @@ class StockEntry(Document):
 
 	_DOCTYPE_NAME = "Stock Entry"
 	def validate(self):
-		super().validate()
+	 
 		self.validate_stock_entry_products()
 		self.validate_stock_entry()
 
@@ -45,8 +46,9 @@ class StockEntry(Document):
 			# get product_cost
 
 			slp = get_stock_location_prouct(d.product_code, d.default_stock_location or self.stock_location)
+			 
 			if slp:
-				d.cost = slp.cost
+				d.cost = slp.get("cost")
 			d.total_cost = d.cost * d.quantity
 
 	def validate_stock_entry(self):

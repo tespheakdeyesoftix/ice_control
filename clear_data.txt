@@ -1,0 +1,20 @@
+delete from `tabSale`;
+delete from `tabSale Products`;
+delete from `tabSale Payment`;
+delete from `tabSale Payment Invoices`;
+delete from `tabPOS Sale Payment`;
+delete from `tabPurchase Orders`;
+delete from `tabPurchase Order Products`;
+delete from `tabJournal Entry`;
+delete from `tabJournal Entry Account`;
+delete from `tabClosed Selling Date`;
+delete from `tabPurchase Order Payment Child`;
+delete from `tabPurchase Order Payment`;
+delete from `tabExpense`;
+delete from `tabExpense Items`;
+delete from `tabExpense Payment`;
+delete from `tabClosed Selling Date`;
+delete from `tabClosed Selling Date Items`;
+
+
+

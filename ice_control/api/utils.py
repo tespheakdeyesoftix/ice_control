@@ -24,8 +24,11 @@ def replace_format(string):
     month = datetime.now().strftime("%m")
     return string.replace('.', '').replace('YYYY', year).replace('yyyy', year).replace('YY', short_year).replace('yy', short_year).replace('MM', month).replace('#', '')
 
+
+ 
 @frappe.whitelist()
 def reset_sale_transaction(password):
+
     if password == "eposadmin@855855" and frappe.session.user == "Administrator":
 
         frappe.db.sql("delete from `tabSale`")

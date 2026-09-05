@@ -3,11 +3,9 @@
 
 // main table event
 frappe.ui.form.on("Expense", {
-
+   
     refresh(frm){
         renderSummary(frm);
-        renderExpenseIndicators(frm);
-        renderExpensePaymentHistory(frm);
         addExpensePaymentButton(frm);
     }
 
@@ -41,34 +39,6 @@ frappe.ui.form.on("Expense Items", {
 	
 });
 
-function renderExpenseIndicators(frm) {
-    frm.dashboard.clear_headline();
-
-    if (frm.doc.docstatus !== 1) {
-        return;
-    }
-
-    const formatCurrency = (value) =>
-        frappe.format(flt(value), { fieldtype: "Currency" });
-
-    frm.dashboard.add_indicator(
-        __("Expense Amount: {0}", [formatCurrency(frm.doc.total_expense)]),
-        "blue"
-    );
-    frm.dashboard.add_indicator(
-        __("Paid: {0}", [formatCurrency(frm.doc.total_payment)]),
-        "green"
-    );
-    frm.dashboard.add_indicator(
-        __("Write Off: {0}", [formatCurrency(frm.doc.total_write_off)]),
-        "red"
-    );
-    frm.dashboard.add_indicator(
-        __("Balance: {0}", [formatCurrency(frm.doc.balance)]),
-        flt(frm.doc.balance) > 0 ? "orange" : "green"
-    );
-}
-
 function addExpensePaymentButton(frm) {
     if (frm.doc.docstatus !== 1 || flt(frm.doc.balance) <= 0) {
         return;
@@ -95,28 +65,6 @@ function addExpensePaymentButton(frm) {
         },
         __("Actions")
     );
-}
-
-function renderExpensePaymentHistory(frm) {
-    const field = frm.get_field("html_payment_history");
-    if (!field) {
-        return;
-    }
-
-    if (frm.is_new()) {
-        field.$wrapper.html(
-            frappe.render_template("payment_history", { data: [] })
-        );
-        return;
-    }
-
-    frm.call("get_payment_history").then((result) => {
-        field.$wrapper.html(
-            frappe.render_template("payment_history", {
-                data: result.message || [],
-            })
-        );
-    });
 }
 
 function renderSummary(frm){

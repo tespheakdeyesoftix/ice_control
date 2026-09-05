@@ -8,6 +8,7 @@ const props = defineProps({
 	data: { type: Object, default: () => ({ labels: [], inflow: [], outflow: [] }) },
 	currency: { type: String, default: "" },
 });
+const emit = defineEmits(["view-report"]);
 
 const datasets = computed(() => [
 	{ name: "Inflow", values: props.data.inflow || [], color: "#10b981", type: "bar" },
@@ -17,6 +18,11 @@ const datasets = computed(() => [
 
 <template>
 	<PanelShell title="Cash Flow" subtitle="Operating cash inflow and outflow">
+		<template #action>
+			<button class="dashboard-text-button" type="button" @click="emit('view-report')">
+				{{ __("View Report") }}
+			</button>
+		</template>
 		<TrendChart
 			:labels="data.labels || []"
 			:datasets="datasets"

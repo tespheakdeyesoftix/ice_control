@@ -14,7 +14,6 @@ class BorrowProduct(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		amended_from: DF.Link | None
 		balance: DF.Float
 		borrow_account: DF.Link | None
 		borrow_reference_name: DF.Link | None

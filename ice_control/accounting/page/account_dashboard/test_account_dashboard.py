@@ -4,6 +4,7 @@ import frappe
 from frappe.tests import UnitTestCase
 
 from ice_control.accounting.page.account_dashboard.account_dashboard import (
+	_build_payable_aging,
 	_build_receivable_aging,
 	_build_summary,
 	_build_trends,
@@ -76,6 +77,37 @@ class TestAccountDashboard(UnitTestCase):
 		self.assertEqual(amounts["days_61_90"], 50)
 		self.assertEqual(amounts["days_91_120"], 20)
 		self.assertEqual(overdue_customers, {"CUST-1"})
+
+	def test_payable_aging_applies_debits_fifo(self):
+		rows = [
+			frappe._dict(
+				party_type="Vendor",
+				party="VENDOR-1",
+				posting_date=date(2026, 1, 1),
+				debit_amount=0,
+				credit_amount=100,
+			),
+			frappe._dict(
+				party_type="Vendor",
+				party="VENDOR-1",
+				posting_date=date(2026, 1, 20),
+				debit_amount=0,
+				credit_amount=50,
+			),
+			frappe._dict(
+				party_type="Vendor",
+				party="VENDOR-1",
+				posting_date=date(2026, 2, 5),
+				debit_amount=80,
+				credit_amount=0,
+			),
+		]
+
+		aging = _build_payable_aging(rows, date(2026, 4, 15))
+		amounts = {row["key"]: row["value"] for row in aging}
+
+		self.assertEqual(amounts["days_61_90"], 50)
+		self.assertEqual(amounts["days_91_120"], 20)
 
 	def test_aging_bucket_boundaries(self):
 		self.assertEqual(_get_aging_bucket(0), "current")

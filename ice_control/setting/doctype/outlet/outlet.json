@@ -19,7 +19,8 @@
   "column_break_jnmi",
   "default_cost_of_goods_sold_account",
   "default_stock_adjustment_account",
-  "default_stock_account"
+  "default_stock_account",
+  "default_nonstock_purchase_expense_account"
  ],
  "fields": [
   {
@@ -102,12 +103,18 @@
    "fieldtype": "Link",
    "label": "Default Purchase Write Off Account",
    "options": "Chart of Account"
+  },
+  {
+   "fieldname": "default_nonstock_purchase_expense_account",
+   "fieldtype": "Link",
+   "label": "Default NonStock Purchase Expense Account",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-02 10:22:50.084435",
+ "modified": "2026-09-04 13:49:54.463903",
  "modified_by": "Administrator",
  "module": "Setting",
  "name": "Outlet",

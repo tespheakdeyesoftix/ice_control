@@ -265,8 +265,11 @@ class Sale(Document):
 				# frappe.enqueue("ice_control.selling.doctype.sale.sale.add_pos_payment_to_sale_payment",queue="short",self=self)
 
 			# update to borrow product
-			frappe.enqueue("ice_control.selling.doctype.sale.sale.update_borrow_product",queue="short",old_doc=self.get_doc_before_save() ,new_doc=self)
-			# update_borrow_product(self.get_doc_before_save() ,self)
+			if frappe.conf.get("developer_mode"):
+				update_borrow_product(old_doc = self.get_doc_before_save() ,new_doc = self)
+			else:
+				frappe.enqueue("ice_control.selling.doctype.sale.sale.update_borrow_product",queue="short",old_doc=self.get_doc_before_save() ,new_doc=self)
+			
 
 			# add sale data to gl entry
 			submit_to_gl_entry(self)
@@ -704,6 +707,7 @@ def delete_bill(sale_doc:dict = None, doc_name:str = None,note:str = None,statio
 		audit_trails.append(log)
 		frappe.enqueue("ice_control.api.utils.add_audit_trail_log",queue="short",data=audit_trails)
 		if doc.parent_bill_number:
+			 
 			update_split_quantity_to_parent_bill(doc.parent_bill_number)
 		return doc.as_dict()
 	frappe.throw("មិនមានបុងសម្រាប់លុប")
@@ -982,14 +986,19 @@ def change_driver(sale,data):
 	return frappe.get_doc("Sale",sale)
 
 @frappe.whitelist()
-def update_borrow_product(old_doc,new_doc):
+def update_borrow_product(
+    old_doc: Sale | None = None,
+    new_doc: Sale | None = None,
+):
 	change_data = get_sale_product_changed(
 		[d for d in old_doc.sale_products if d.sale_transaction_type == "Borrow"] if old_doc else [],
 		[d for d in new_doc.sale_products if d.sale_transaction_type == "Borrow"],
 		"name"
 		)
 	# add new product
+ 
 	for p in change_data.get("added_products"):
+	 
 		doc = frappe.get_doc({
 				"doctype":"Borrow Product",
 				"posting_date":new_doc.posting_date,
@@ -1004,7 +1013,8 @@ def update_borrow_product(old_doc,new_doc):
 				"note":f"ខ្ចីចេញពីបុងលេខ: {new_doc.name}, ចំនួន៖ {p.get('quantity')}"
 			})
 		doc.insert(ignore_permissions=True)
-		doc.submit()
+		 
+		
 	# change quantity
 	for p in change_data.get("quantity_changes"):
 		borrow_id = frappe.db.exists("Borrow Product",{"sale_product_id":p.get("name")})
@@ -1025,9 +1035,7 @@ def update_borrow_product(old_doc,new_doc):
 	for p in change_data.get("removed_products"):
 		borrow_id = frappe.db.exists("Borrow Product",{"sale_product_id":p.get("name")})
 		if borrow_id:
-			borrow_doc = frappe.get_doc("Borrow Product",borrow_id)
-			borrow_doc.flags.ignore_permissions = True
-			borrow_doc.cancel()
+			frappe.db.sql("delete from `tabBorrow Product` where name = %(name)s",{"name":borrow_id})
 
 	frappe.db.sql("update `tabBorrow Product` set posting_date = %(posting_date)s, customer=%(customer)s,customer_name=%(customer_name)s where reference_doctype ='Sale' and reference_name=%(name)s",{
 		"posting_date":new_doc.posting_date,

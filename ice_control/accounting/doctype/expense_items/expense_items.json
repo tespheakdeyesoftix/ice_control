@@ -20,7 +20,9 @@
    "fieldname": "price",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Price"
+   "label": "Price",
+   "non_negative": 1,
+   "reqd": 1
   },
   {
    "fieldname": "expense_code",
@@ -29,6 +31,7 @@
    "label": "Expense Code",
    "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"root_type\",\"=\",\"Expenses\"],[\"Chart of Account\",\"is_expense_item\",\"=\",1]]",
    "options": "Chart of Account",
+   "reqd": 1,
    "search_index": 1
   },
   {
@@ -44,6 +47,7 @@
    "in_list_view": 1,
    "label": "Quantity",
    "min_value": 0.01,
+   "non_negative": 1,
    "precision": "2"
   },
   {
@@ -51,6 +55,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Total Amount",
+   "non_negative": 1,
    "read_only": 1
   }
  ],
@@ -58,7 +63,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-03 16:19:34.031273",
+ "modified": "2026-09-05 10:46:55.405835",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Expense Items",

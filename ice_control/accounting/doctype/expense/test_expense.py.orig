@@ -76,28 +76,3 @@ class IntegrationTestExpense(IntegrationTestCase):
 		self.assertEqual(entries_by_account["TEST-AP"]["credit_amount"], 120)
 		self.assertEqual(entries_by_account["TEST-AP"]["party_type"], "Vendor")
 		self.assertEqual(entries_by_account["TEST-AP"]["party"], "TEST-VENDOR")
-
-	@patch("ice_control.accounting.doctype.expense.expense.frappe.db.sql")
-	def test_get_payment_history_returns_submitted_expense_payments(self, db_sql):
-		expected = [
-			frappe._dict(
-				payment_number="TEST-EXP-PAY-1",
-				payment_amount=100,
-				write_off_amount=5,
-			)
-		]
-		db_sql.return_value = expected
-
-		result = Expense.get_payment_history(
-			frappe._dict(name="TEST-EXPENSE-1")
-		)
-
-		self.assertEqual(result, expected)
-		db_sql.assert_called_once()
-		query, values = db_sql.call_args.args
-		self.assertIn("`tabExpense Payment Invoices`", query)
-		self.assertIn("`tabExpense Payment`", query)
-		self.assertIn("invoice.docstatus = 1", query)
-		self.assertIn("payment.docstatus = 1", query)
-		self.assertEqual(values, {"expense": "TEST-EXPENSE-1"})
-		self.assertTrue(db_sql.call_args.kwargs["as_dict"])

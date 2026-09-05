@@ -27,3 +27,11 @@
 .frappe-chart-host .graph-svg-tip {
 	font-family: var(--font-stack, inherit);
 }
+
+.trend-chart__canvas .dataset-line .line-graph-path {
+	stroke-width: 3px !important;
+}
+
+.trend-chart__canvas .dataset-line circle {
+	stroke-width: 2px;
+}

@@ -8,17 +8,21 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_qg4h",
-  "amended_from",
   "naming_series",
+  "stock_entry_type",
+  "multiplier",
   "posting_date",
   "reference_no",
-  "multiplier",
   "column_break_lpfq",
-  "party",
-  "party_name",
-  "stock_location",
-  "stock_entry_type",
   "outlet",
+  "stock_location",
+  "amended_from",
+  "party_information_section",
+  "party_type",
+  "column_break_elkb",
+  "party",
+  "column_break_tqor",
+  "party_name",
   "section_break_fmeh",
   "stock_entry_products",
   "section_break_gopu",
@@ -50,11 +54,14 @@
    "options": "STE.YYYY.-.####"
   },
   {
+   "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "allow_on_submit": 1,
@@ -69,17 +76,16 @@
   },
   {
    "fieldname": "party",
-   "fieldtype": "Link",
-   "label": "Party",
-   "options": "DocType"
-  },
-  {
-   "fieldname": "party_name",
    "fieldtype": "Dynamic Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Party Name",
-   "options": "party"
+   "label": "Party",
+   "options": "party_type"
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "label": "Party Name"
   },
   {
    "fieldname": "stock_location",
@@ -123,7 +129,7 @@
   {
    "fieldname": "total_cost",
    "fieldtype": "Currency",
-   "in_standard_filter": 1,
+   "in_list_view": 1,
    "label": "Total Cost",
    "read_only": 1
   },
@@ -137,27 +143,52 @@
    "fieldname": "stock_entry_type",
    "fieldtype": "Link",
    "label": "Stock Entry Type",
-   "options": "Stock Entry Type"
+   "options": "Stock Entry Type",
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "default": "1",
    "fetch_from": "stock_entry_type.multiplier",
    "fieldname": "multiplier",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Multiplier"
   },
   {
    "fieldname": "outlet",
    "fieldtype": "Link",
    "label": "Outlet",
-   "options": "Outlet"
+   "options": "Outlet",
+   "search_index": 1
+  },
+  {
+   "fieldname": "party_type",
+   "fieldtype": "Link",
+   "label": "Party Type",
+   "link_filters": "[[\"DocType\",\"name\",\"in\",[\"Vendor\",\"Customer\",\"Employee\"]]]",
+   "options": "DocType",
+   "search_index": 1
+  },
+  {
+   "fieldname": "party_information_section",
+   "fieldtype": "Section Break",
+   "label": "Party Information"
+  },
+  {
+   "fieldname": "column_break_elkb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_tqor",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-01 09:24:05.321314",
+ "modified": "2026-09-04 08:05:46.354575",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Stock Entry",

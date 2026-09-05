@@ -104,7 +104,11 @@ def get_outlet_products(doctype:str, txt:str, searchfield:str, start:int, page_l
         b.product_name
         from `tabProduct Outlet` a
         inner join `tabProduct` b on b.name = a.parent
-        where coalesce(b.is_inventory_product) = 1 and coalesce(b.enabled,0) = 1 {0} and a.outlet = %(outlet)s group by b.name,b.product_name""".format(extra_filters),{"outlet":outlet,"allow_purchase":allow_purchase})
+        where   coalesce(b.enabled,0) = 1 {0} and a.outlet = %(outlet)s  AND (
+                b.name LIKE %(txt)s
+                OR b.product_name LIKE %(txt)s
+            )
+        group by b.name,b.product_name LIMIT %(start)s, %(page_len)s""".format(extra_filters),{"outlet":outlet,"allow_purchase":allow_purchase,"txt":f"%{txt}%", "start": start, "page_len": page_len})
         return data
     else:
         data = frappe.db.sql("""
@@ -112,7 +116,11 @@ def get_outlet_products(doctype:str, txt:str, searchfield:str, start:int, page_l
         name,
         product_name
         from `tabProduct`
-        where coalesce(is_inventory_product) = 1 and coalesce(enabled,0) = 1 {0} group by name,product_name""".format(extra_filters),{"allow_purchase":allow_purchase})
+        where  coalesce(enabled,0) = 1 {0}  AND (
+                name LIKE %(txt)s
+                OR product_name LIKE %(txt)s
+            )
+        group by name,product_name LIMIT %(start)s, %(page_len)s""".format(extra_filters),{"allow_purchase":allow_purchase,"txt":f"%{txt}%", "start": start, "page_len": page_len})
         return data
 
 @frappe.whitelist()

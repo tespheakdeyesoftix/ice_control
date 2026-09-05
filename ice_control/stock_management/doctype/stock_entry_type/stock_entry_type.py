@@ -17,7 +17,6 @@ class StockEntryType(Document):
 		allow_change_cost: DF.Check
 		multiplier: DF.Int
 		stock_entry_type: DF.Data | None
-		title: DF.Data | None
 	# end: auto-generated types
 
 	_DOCTYPE_NAME = "Stock Entry Type"

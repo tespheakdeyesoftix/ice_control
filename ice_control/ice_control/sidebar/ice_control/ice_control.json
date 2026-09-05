@@ -30,7 +30,7 @@
    "icon": "shopping-cart",
    "indent": 1,
    "is_default_module": 1,
-   "keep_closed": 0,
+   "keep_closed": 1,
    "label": "\u1795\u17d2\u1793\u17c2\u1780\u179b\u1780\u17cb",
    "link_type": "DocType",
    "open_in_new_tab": 1,
@@ -665,7 +665,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-03 09:02:33.782124",
+ "modified": "2026-09-04 11:44:58.706851",
  "modified_by": "Administrator",
  "module": "ice_control",
  "name": "ice_control",

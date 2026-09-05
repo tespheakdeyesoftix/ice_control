@@ -13,12 +13,12 @@ function openParty(row) {
 }
 
 function openReport() {
-	navigate(["query-report", "Account Payable"], props.routeOptions);
+	navigate(["query-report", "Account Receivable"], props.routeOptions);
 }
 </script>
 
 <template>
-	<PanelShell title="Top Payables" subtitle="Largest outstanding party balances">
+	<PanelShell title="Top Receivable Parties" subtitle="Largest outstanding customer balances">
 		<template #action>
 			<button class="dashboard-text-button" type="button" @click="openReport">
 				{{ __("View All") }}
@@ -39,6 +39,6 @@ function openReport() {
 				<b>{{ formatMoney(row.balance, currency) }}</b>
 			</button>
 		</div>
-		<div v-else class="dashboard-empty-state">{{ __("No outstanding payables") }}</div>
+		<div v-else class="dashboard-empty-state">{{ __("No outstanding receivables") }}</div>
 	</PanelShell>
 </template>

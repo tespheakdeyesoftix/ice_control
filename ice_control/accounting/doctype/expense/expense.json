@@ -9,21 +9,29 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
-  "reference_number",
   "posting_date",
+  "reference_number",
   "outlet",
   "column_break_gbbx",
   "vendor",
   "expense_by_employee",
+  "status",
   "photo",
   "section_break_rheq",
   "expense_items",
   "section_break_vgyq",
-  "html",
-  "description",
+  "note",
   "column_break_qcae",
+  "html_expense_summary",
   "total_expense",
-  "amended_from"
+  "total_payment",
+  "total_write_off",
+  "balance",
+  "amended_from",
+  "payment_history_tab",
+  "html_payment_history",
+  "accounting_tab",
+  "default_payable_account"
  ],
  "fields": [
   {
@@ -57,7 +65,8 @@
    "in_standard_filter": 1,
    "label": "Vendor",
    "options": "Vendor",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "expense_by_employee",
@@ -73,6 +82,7 @@
   {
    "fieldname": "total_expense",
    "fieldtype": "Currency",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Total Expense",
    "read_only": 1
@@ -100,6 +110,7 @@
    "search_index": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "reference_number",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -123,13 +134,65 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "html",
-   "fieldtype": "HTML"
+   "fieldname": "html_expense_summary",
+   "fieldtype": "HTML",
+   "label": "Summary"
   },
   {
-   "fieldname": "description",
+   "fieldname": "total_payment",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Total Payment"
+  },
+  {
+   "fieldname": "total_write_off",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Total Write Off",
+   "read_only": 1
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Balance",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Unpaid\nPartially Paid\nPaid"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "note",
    "fieldtype": "Small Text",
-   "label": "Description"
+   "label": "Note"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_payable_account",
+   "fieldtype": "Link",
+   "label": "Default Payable Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"=\",\"Payable\"]]",
+   "options": "Chart of Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "payment_history_tab",
+   "fieldtype": "Tab Break",
+   "label": "Payment History"
+  },
+  {
+   "fieldname": "html_payment_history",
+   "fieldtype": "HTML",
+   "label": "HTML Payment History"
   }
  ],
  "grid_page_length": 50,
@@ -138,7 +201,7 @@
  "is_submittable": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-09-03 16:12:15.074040",
+ "modified": "2026-09-05 10:13:00.103918",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Expense",
@@ -146,32 +209,8 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "cancel": 1,
    "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Accounts User",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
    "email": 1,
    "export": 1,
    "print": 1,
@@ -179,6 +218,33 @@
    "report": 1,
    "role": "Administrator",
    "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

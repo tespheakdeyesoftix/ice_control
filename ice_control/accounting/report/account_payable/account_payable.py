@@ -248,25 +248,25 @@ def get_report_summary(totals: dict) -> list[dict]:
 			"value": totals["opening_balance"],
 			"datatype": "Currency",
 		},
-		{"type": "separator", "value": "+"},
+	 
 		{
 			"label": _("Credit"),
 			"value": totals["credit_amount"],
 			"datatype": "Currency",
 		},
-		{"type": "separator", "value": "-"},
+		 
 		{
 			"label": _("Debit"),
 			"value": totals["debit_amount"],
 			"datatype": "Currency",
 		},
-		{"type": "separator", "value": "-"},
+		 
 		{
 			"label": _("Write Off"),
 			"value": totals["write_off_amount"],
 			"datatype": "Currency",
 		},
-		{"type": "separator", "value": "=", "color": "blue"},
+		 
 		{
 			"label": _("Balance"),
 			"value": balance,

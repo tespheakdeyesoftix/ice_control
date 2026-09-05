@@ -20,6 +20,7 @@ class PurchaseOrders(Document):
 		amended_from: DF.Link | None
 		balance: DF.Currency
 		default_expense_account: DF.Link | None
+		default_nonstock_purchase_expense_account: DF.Link | None
 		default_payable_account: DF.Link | None
 		default_stock_account: DF.Link | None
 		default_write_off_account: DF.Link | None

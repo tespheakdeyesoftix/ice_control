@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref, watch } from "vue";
+import { computed, reactive, watch } from "vue";
 
 import FrappeControl from "./FrappeControl.vue";
 
@@ -11,7 +11,6 @@ const props = defineProps({
 const emit = defineEmits(["apply"]);
 
 const draft = reactive({ outlet: "", start_date: "", end_date: "" });
-const validationMessage = ref("");
 const outletOptions = computed(() => [
 	{ label: __("All Outlets"), value: "" },
 	...props.outlets.map((outlet) => ({
@@ -26,18 +25,17 @@ watch(
 	{ immediate: true, deep: true }
 );
 
-watch(draft, () => {
-	validationMessage.value = "";
-});
+function showWarning(message) {
+	frappe.show_alert({ message, indicator: "orange" });
+}
 
 function apply() {
-	validationMessage.value = "";
 	if (!draft.start_date || !draft.end_date) {
-		validationMessage.value = __("Start Date and End Date are required.");
+		showWarning(__("Start Date and End Date are required."));
 		return;
 	}
 	if (draft.start_date > draft.end_date) {
-		validationMessage.value = __("Start Date cannot be after End Date.");
+		showWarning(__("Start Date cannot be after End Date."));
 		return;
 	}
 	if (!props.loading) emit("apply", { ...draft });
@@ -84,9 +82,5 @@ function apply() {
 			></span>
 			{{ loading ? __("Loading") : __("Refresh") }}
 		</button>
-
-		<p v-if="validationMessage" class="dashboard-filter__error" role="alert">
-			{{ validationMessage }}
-		</p>
 	</form>
 </template>

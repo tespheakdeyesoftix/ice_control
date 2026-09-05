@@ -73,13 +73,13 @@ class PurchaseOrderPayment(Document):
 
 	def on_submit(self):
 		if self.from_purchase_orders == 0:
-			update_purchase_order(self.name)
+			update_purchase_order(self)
 			submit_to_gl_entry(self)
 
 	def on_cancel(self):
 		self.flags.ignore_links = True
 		delete_gl_entries(self)
-		update_purchase_order(self.name)
+		update_purchase_order(self)
 
 	def validate_purchase_order_payment_invoices(self):
 		if (self.from_purchase_orders or 0) == 0:
@@ -181,37 +181,71 @@ def update_totals(self):
 	self.balance = self.amount_to_pay - (self.payment_amount + self.total_write_off_amount)
 	self.payment_amount_in_word = money_to_word(int(self.payment_amount or 0))
 
-def update_purchase_order(name):
-	frappe.db.sql(
-		"""
-			with a as (
-				select 
-					p.purchase_order,	
-					COALESCE(SUM(p.payment_amount), 0) AS total_payment,
-					COALESCE(SUM(p.write_off_amount), 0) AS write_off_amount 
+def update_purchase_order(self):
+    po_numbers = [
+        x.purchase_order
+        for x in self.purchase_orders
+        if x.purchase_order
+    ]
 
-			)
-			update `tabPurchase Order` 
-		""",
-		{"payment_name": name},
-	)
-	update_status(name)
+    if not po_numbers:
+        return
 
-def update_status(name):
-	doc = frappe.get_doc("Purchase Orders", name)
-	status = ""
-	if doc.docstatus == 0:
-		status = "Draft"
-	elif doc.docstatus == 1:
-		if doc.balance == 0:
-			status = "Paid"
-		elif doc.balance > 0 and doc.balance < doc.total_cost:
-			status = "Partially Paid"
-		else:
-			status = "Unpaid"
-	elif doc.docstatus == 2:
-		status = "Cancelled"
-	frappe.db.set_value("Purchase Orders", name, "status", status, update_modified=False)
+    frappe.db.sql(
+        """
+        UPDATE `tabPurchase Orders` po
+
+        LEFT JOIN (
+            SELECT
+                pi.purchase_order,
+                SUM(pi.payment_amount) AS total_payment,
+                SUM(pi.write_off_amount) AS write_off
+            FROM `tabPurchase Order Payment Invoices` pi
+            WHERE pi.parent = %(purchase_order_payment)s
+              AND pi.docstatus = 1
+            GROUP BY pi.purchase_order
+        ) x ON x.purchase_order = po.name
+
+        SET
+            po.total_payment = COALESCE(x.total_payment, 0),
+
+            po.write_off = COALESCE(x.write_off, 0),
+
+            po.balance =
+                po.total_cost
+                - COALESCE(x.total_payment, 0)
+                - COALESCE(x.write_off, 0),
+
+            po.status = CASE
+                WHEN po.docstatus = 0
+                    THEN 'Draft'
+
+                WHEN po.docstatus = 2
+                    THEN 'Cancelled'
+
+                WHEN (
+                    COALESCE(x.total_payment, 0)
+                    + COALESCE(x.write_off, 0)
+                ) >= po.total_cost
+                    THEN 'Paid'
+
+                WHEN (
+                    COALESCE(x.total_payment, 0)
+                    + COALESCE(x.write_off, 0)
+                ) > 0
+                    THEN 'Partially Paid'
+
+                ELSE 'Unpaid'
+            END
+
+        WHERE po.name IN %(purchase_orders)s
+        """,
+        {
+            "purchase_order_payment": self.name,
+            "purchase_orders": tuple(po_numbers),
+        },
+    )
+
 
 def validate_payment_amount(self):
 	if self.balance<0:

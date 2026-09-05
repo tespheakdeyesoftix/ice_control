@@ -8,9 +8,11 @@ import DashboardFilters from "./components/DashboardFilters.vue";
 import FinancialTrendPanel from "./components/FinancialTrendPanel.vue";
 import KpiCard from "./components/KpiCard.vue";
 import QuickActions from "./components/QuickActions.vue";
+import PayableAging from "./components/PayableAging.vue";
 import ReceivableAging from "./components/ReceivableAging.vue";
 import RecentTransactions from "./components/RecentTransactions.vue";
 import TopPayables from "./components/TopPayables.vue";
+import TopReceivables from "./components/TopReceivables.vue";
 import { useDashboardData } from "./composables/useDashboardData";
 import { formatMoney } from "./dashboard_utils";
 
@@ -90,7 +92,11 @@ async function refresh(nextFilters = null) {
 }
 
 function openCashFlow() {
-	frappe.route_options = reportOptions.value;
+	frappe.route_options = {
+		outlet: filters.outlet || "",
+		start_date: filters.start_date,
+		end_date: filters.end_date,
+	};
 	frappe.set_route("query-report", "Cash Flow");
 }
 
@@ -166,8 +172,20 @@ onMounted(refresh);
 
 			<section class="dashboard-grid dashboard-grid--secondary">
 				<ReceivableAging :rows="data.receivable_aging" :currency="currency" :route-options="reportOptions" />
-				<CashFlowPanel :data="data.cash_flow" :currency="currency" />
-				<TopPayables :rows="data.top_payables" :currency="currency" />
+				<TopReceivables :rows="data.top_receivables" :currency="currency" :route-options="reportOptions" />
+			</section>
+
+			<section class="dashboard-grid dashboard-grid--secondary">
+				<PayableAging :rows="data.payable_aging" :currency="currency" :route-options="reportOptions" />
+				<TopPayables :rows="data.top_payables" :currency="currency" :route-options="reportOptions" />
+			</section>
+
+			<section class="dashboard-grid dashboard-grid--cash-flow">
+				<CashFlowPanel
+					:data="data.cash_flow"
+					:currency="currency"
+					@view-report="openCashFlow"
+				/>
 			</section>
 
 			<section class="dashboard-grid dashboard-grid--bottom">

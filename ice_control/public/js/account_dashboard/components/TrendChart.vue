@@ -13,6 +13,7 @@ const props = defineProps({
 const chartRoot = ref(null);
 
 let chart = null;
+let activeChartType = "";
 let renderVersion = 0;
 
 const normalizedLabels = computed(() =>
@@ -35,9 +36,17 @@ const chartType = computed(() => {
 	return types.size > 1 ? "axis-mixed" : [...types][0] || "bar";
 });
 
+function getChartData() {
+	return {
+		labels: normalizedLabels.value,
+		datasets: normalizedDatasets.value,
+	};
+}
+
 function destroyChart() {
 	chart?.destroy?.();
 	chart = null;
+	activeChartType = "";
 	chartRoot.value?.replaceChildren();
 }
 
@@ -46,18 +55,25 @@ async function renderChart() {
 	await nextTick();
 	if (currentVersion !== renderVersion) return;
 
-	destroyChart();
-	if (!chartRoot.value || !hasData.value) return;
+	if (!chartRoot.value || !hasData.value) {
+		destroyChart();
+		return;
+	}
 
+	const nextChartData = getChartData();
+	if (chart && activeChartType === chartType.value) {
+		chart.update(nextChartData);
+		return;
+	}
+
+	destroyChart();
+	activeChartType = chartType.value;
 	chart = new frappe.Chart(chartRoot.value, {
-		data: {
-			labels: normalizedLabels.value,
-			datasets: normalizedDatasets.value,
-		},
-		type: chartType.value,
+		data: nextChartData,
+		type: activeChartType,
 		height: 280,
 		colors: props.datasets.map((dataset) => dataset.color),
-		animate: 1,
+		animate: 0,
 		truncateLegends: 0,
 		axisOptions: {
 			xIsSeries: 1,
@@ -70,8 +86,8 @@ async function renderChart() {
 			stacked: 0,
 		},
 		lineOptions: {
-			dotSize: 4,
-			hideDots: 0,
+			dotSize: 5,
+			showDots: 1,
 			regionFill: 0,
 		},
 		tooltipOptions: {
@@ -79,6 +95,10 @@ async function renderChart() {
 			formatTooltipY: (value) => formatMoney(value, props.currency),
 		},
 	});
+
+	// Frappe Charts starts with zeroed data before its delayed first draw.
+	// Updating immediately keeps every mixed-series layer visible from the start.
+	chart.update(nextChartData);
 }
 
 watch(

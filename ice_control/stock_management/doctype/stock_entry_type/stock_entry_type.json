@@ -9,7 +9,6 @@
  "field_order": [
   "stock_entry_type",
   "multiplier",
-  "title",
   "allow_change_cost",
   "column_break_vimz"
  ],
@@ -27,11 +26,6 @@
    "options": "1"
   },
   {
-   "fieldname": "title",
-   "fieldtype": "Data",
-   "label": "Title"
-  },
-  {
    "default": "0",
    "fieldname": "allow_change_cost",
    "fieldtype": "Check",
@@ -45,7 +39,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-01 09:01:46.012805",
+ "modified": "2026-09-04 08:08:43.570393",
  "modified_by": "Administrator",
  "module": "Stock Management",
  "name": "Stock Entry Type",

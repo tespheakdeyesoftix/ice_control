@@ -111,6 +111,7 @@ def get_product_default_account(product_code:str,outlet:str):
     if not outlet:
         frappe.throw("Please select outlet first")
     category = frappe.db.get_value("Product", product_code, "product_category")
+    is_inventory_product = frappe.db.get_value("Product", product_code, "is_inventory_product")
     default_income_account = frappe.db.get_value("Product Default Accounts", {"parent":product_code,"outlet":outlet}, "default_income_account")
     if not default_income_account:
         default_income_account = frappe.db.get_value("Product Category Default Accounts", {"parent":category,"outlet":outlet}, "default_income_account")
@@ -130,7 +131,10 @@ def get_product_default_account(product_code:str,outlet:str):
     if not default_stock_account:
         default_stock_account = frappe.db.get_value("Product Category Default Accounts", {"parent":category,"outlet":outlet}, "default_stock_account")
     if not default_stock_account:
-        default_stock_account = frappe.db.get_value("Outlet", outlet, "default_stock_account")
+        if is_inventory_product:
+            default_stock_account = frappe.db.get_value("Outlet", outlet, "default_stock_account")
+        else:
+            default_stock_account = frappe.db.get_value("Outlet", outlet, "default_nonstock_purchase_expense_account")
     return {
         "default_income_account":default_income_account,
         "default_expense_account":default_expense_account,
