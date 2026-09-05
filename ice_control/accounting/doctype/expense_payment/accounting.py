@@ -30,17 +30,10 @@ def submit_to_gl_entry(self):
 	if payment_amount <= 0 and write_off_amount <= 0:
 		return
 
-	outlet = frappe.get_cached_doc("Outlet", self.outlet)
-	payable_account = outlet.default_payable_account
+	
+	payable_account = self.payable_account
 	payment_account = self.account_code
-	write_off_account = outlet.default_purchase_write_off_account
-
-	if not payable_account:
-		frappe.throw(_("Default Payable Account is required for Outlet {0}.").format(self.outlet))
-	if payment_amount > 0 and not payment_account:
-		frappe.throw(_("Payment From Account is required."))
-	if write_off_amount > 0 and not write_off_account:
-		frappe.throw(_("Default Write Off Account is required for Outlet {0}.").format(self.outlet))
+	write_off_account = self.write_off_account
 
 	expense_rows = [
 		row
@@ -56,8 +49,7 @@ def submit_to_gl_entry(self):
 		"voucher_no": self.name,
 		"reference_doctype": VOUCHER_TYPE,
 		"reference_docname": self.name,
-		"remark": self.note
-		or _("Payment to {0}. Expenses: {1}").format(
+		"remark": _("ទូទាត់ទៅ {0}. លេខចំណាយ: {1}").format(
 			self.vendor_name or self.vendor,
 			expense_names,
 		),
@@ -72,7 +64,7 @@ def submit_to_gl_entry(self):
 					"transaction_type": "Payment",
 					"account": payable_account,
 					"account_type": get_account_type(payable_account),
-					"debit_amount": payment_amount,
+					"amount": payment_amount,
 					"against": payment_account,
 					"party_type": "Vendor",
 					"party": self.vendor,
@@ -83,7 +75,7 @@ def submit_to_gl_entry(self):
 					"transaction_type": "Payment",
 					"account": payment_account,
 					"account_type": get_account_type(payment_account),
-					"credit_amount": payment_amount,
+					"amount": payment_amount,
 					"against": payable_account,
 				},
 			]
@@ -91,7 +83,7 @@ def submit_to_gl_entry(self):
 
 	if write_off_amount > 0:
 		write_off_rows = [row for row in expense_rows if flt(row.write_off_amount) > 0]
-		write_off_remark = _("Write off Expenses: {0}").format(
+		write_off_remark = _("កាត់ចោលចំណាយ: {0}").format(
 			", ".join(
 				f"{row.expense}: "
 				f"{frappe.format(flt(row.write_off_amount), {'fieldtype': 'Currency'})}"
@@ -100,27 +92,16 @@ def submit_to_gl_entry(self):
 		)
 		entries.extend(
 			[
-				{
-					**base_entry,
-					"transaction_type": "Write Off",
-					"account": payable_account,
-					"account_type": get_account_type(payable_account),
-					"debit_amount": write_off_amount,
-					"against": write_off_account,
-					"party_type": "Vendor",
-					"party": self.vendor,
-					"party_name": self.vendor_name,
-					"remark": write_off_remark,
-				},
+				
 				{
 					**base_entry,
 					"transaction_type": "Write Off",
 					"account": write_off_account,
 					"account_type": get_account_type(write_off_account),
-					"credit_amount": write_off_amount,
+					"amount": write_off_amount,
 					"against": payable_account,
 					"remark": write_off_remark,
-				},
+				}
 			]
 		)
 

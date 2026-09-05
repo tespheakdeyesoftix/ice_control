@@ -3,7 +3,7 @@
  "allow_bulk_edit": 1,
  "allow_rename": 1,
  "autoname": "naming_series:",
- "creation": "2026-09-02 13:43:06.140560",
+ "creation": "2026-09-05 14:38:28.411178",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -16,7 +16,6 @@
   "currency",
   "exchange_rate",
   "html_exchange_rate_display",
-  "account_code",
   "photo",
   "payment_information_section",
   "vendor",
@@ -29,13 +28,18 @@
   "balance",
   "pay_on_expense_transaction_section",
   "expenses",
+  "expense",
   "section_break_aksl",
   "note",
   "amended_from",
   "column_break_jugs",
   "html_payment_summary",
   "total_payment",
-  "total_write_off"
+  "total_write_off",
+  "accounting_tab",
+  "account_code",
+  "payable_account",
+  "write_off_account"
  ],
  "fields": [
   {
@@ -60,6 +64,7 @@
   {
    "fieldname": "currency",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Currency",
    "options": "Currency",
    "read_only": 1
@@ -111,7 +116,9 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Vendor",
-   "options": "Vendor"
+   "options": "Vendor",
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "vendor.vendor_name",
@@ -139,7 +146,7 @@
    "description": "\u179f\u17bc\u1798\u1794\u1789\u17d2\u1787\u17bc\u179b\u1791\u17b9\u1780\u1794\u17d2\u179a\u17b6\u1780\u17cb\u178f\u17d2\u179a\u17bc\u179c\u1794\u1784\u17cb\u1793\u17c5\u1791\u17b8\u1793\u17c1\u17c7",
    "fieldname": "input_amount",
    "fieldtype": "Float",
-   "label": "Input Amount",
+   "label": "Payment Amount",
    "reqd": 1
   },
   {
@@ -186,7 +193,7 @@
   {
    "fieldname": "account_code",
    "fieldtype": "Link",
-   "label": "Payment to Account",
+   "label": "Payment from Account",
    "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"in\",[\"Cash\",\"Bank\"]]]",
    "options": "Chart of Account"
   },
@@ -218,6 +225,32 @@
    "fieldname": "expenses",
    "fieldtype": "Table",
    "options": "Expense Payment Invoices"
+  },
+  {
+   "fieldname": "expense",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Expense",
+   "options": "Expense"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "payable_account",
+   "fieldtype": "Link",
+   "label": "Payable Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"=\",\"Payable\"]]",
+   "options": "Chart of Account"
+  },
+  {
+   "fieldname": "write_off_account",
+   "fieldtype": "Link",
+   "label": "Write Off Account",
+   "link_filters": "[[\"Chart of Account\",\"is_group\",\"=\",0],[\"Chart of Account\",\"account_type\",\"in\",[\"Income\",\"Expense\"]]]",
+   "options": "Chart of Account"
   }
  ],
  "grid_page_length": 50,
@@ -225,7 +258,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-05 10:02:50.821639",
+ "modified": "2026-09-05 15:42:57.754255",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Expense Payment",

@@ -587,6 +587,22 @@
   },
   {
    "added": 0,
+   "child": 1,
+   "collapsible": 1,
+   "hidden": 0,
+   "icon": "chevron-right",
+   "indent": 0,
+   "is_default_module": 1,
+   "keep_closed": 0,
+   "label": "\u1782\u17d2\u179a\u1794\u17cb\u1782\u17d2\u179a\u1784\u1792\u17bb\u1784",
+   "link_to": "tung-management",
+   "link_type": "Page",
+   "open_in_new_tab": 1,
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "added": 0,
    "child": 0,
    "collapsible": 1,
    "hidden": 0,
@@ -665,7 +681,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-04 11:44:58.706851",
+ "modified": "2026-09-05 14:40:27.491066",
  "modified_by": "Administrator",
  "module": "ice_control",
  "name": "ice_control",

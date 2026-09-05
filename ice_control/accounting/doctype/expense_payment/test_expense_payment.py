@@ -7,7 +7,10 @@ import frappe
 from frappe.tests import IntegrationTestCase
 
 from ice_control.accounting.doctype.expense_payment.accounting import submit_to_gl_entry
-from ice_control.accounting.doctype.expense_payment.expense_payment import update_expenses
+from ice_control.accounting.doctype.expense_payment.expense_payment import (
+	update_expenses,
+	validate_payment_amount,
+)
 
 
 EXTRA_TEST_RECORD_DEPENDENCIES = []
@@ -45,6 +48,29 @@ class IntegrationTestExpensePayment(IntegrationTestCase):
 		self.assertEqual(payment.total_payment, 120)
 		self.assertEqual(payment.total_write_off, 10)
 		self.assertEqual(payment.balance, 20)
+
+	def test_allocate_payment_amount_keeps_overpayment_as_negative_balance(self):
+		payment = frappe.new_doc("Expense Payment")
+		payment.input_amount = 1_000_000
+		payment.exchange_rate = 1
+		payment.append(
+			"expenses",
+			{
+				"expense": "TEST-EXPENSE-1",
+				"expense_balance": 950_000,
+			},
+		)
+
+		payment.allocate_payment_amount()
+
+		self.assertEqual(payment.expenses[0].payment_amount, 950_000)
+		self.assertEqual(payment.expenses[0].balance, 0)
+		self.assertEqual(payment.balance, -50_000)
+		with self.assertRaisesRegex(
+			frappe.ValidationError,
+			"Payment amount cannot exceed the amount to pay",
+		):
+			validate_payment_amount(payment)
 
 	def test_update_expense_record_recalculates_rows_and_summary(self):
 		payment = frappe.new_doc("Expense Payment")

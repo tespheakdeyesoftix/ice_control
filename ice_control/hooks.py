@@ -6,7 +6,7 @@ app_email = "pheakdey.micronet@gmail.com"
 app_license = "mit"
 app_logo_url = "/assets/ice_control/logo.png"
 develop_version = "1.0.0-develop"
-app_home = "/desk/selling"
+app_home = "/desk/home-page"
 
 
 # Send non-GET requests for this app's endpoints as native `application/json`
@@ -19,15 +19,15 @@ use_json_request_body = True
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-add_to_apps_screen = [
-    {
-        "name": "ice_control",
-        "logo": "/assets/ice_control/logo.png",
-        "title": "Hello",
-        "route": "/desk/home-page",
-        "sequence_id": 10,
-    }
-]
+# add_to_apps_screen = [
+#     {
+#         "name": "ice_control",
+#         "logo": "/assets/ice_control/logo.png",
+#         "title": "Hello",
+#         "route": "/desk/home-page",
+#         "sequence_id": 10,
+#     }
+# ]
 
 # Companion apps that extend a host app (instead of taking their own apps-screen icon) can pin
 # their workspaces into the host app's workspace dock (rail) with this hook. Declaring it keeps

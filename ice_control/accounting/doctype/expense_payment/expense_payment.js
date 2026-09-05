@@ -43,6 +43,10 @@ frappe.ui.form.on("Expense Payment", {
 				openExpenseDialog(frm);
 			});
 		}
+
+		if (frm.doc.docstatus === 1) {
+			addExpensePaymentViewButtons(frm);
+		}
 	},
 
 	vendor(frm) {
@@ -50,13 +54,12 @@ frappe.ui.form.on("Expense Payment", {
 	},
 
 	outlet(frm) {
-		getPaymentTypeDefaultAccount(frm);
+	
 		confirmExpenseClearOnContextChange(frm, "outlet");
 	},
 
 	async payment_type(frm) {
 		await Promise.all([
-			getPaymentTypeDefaultAccount(frm),
 			updateExchangeRateFromPaymentType(frm),
 		]);
 	},
@@ -81,6 +84,32 @@ frappe.ui.form.on("Expense Payment", {
 		await callAllocatePaymentAmount(frm);
 	},
 });
+
+function addExpensePaymentViewButtons(frm) {
+	const viewGroup = __("Views");
+	const vendorName = frm.doc.vendor_name || frm.doc.vendor;
+
+	if (frm.doc.vendor) {
+		frm.add_custom_button(
+			__("View Vendor {0}", [vendorName]),
+			() => frappe.set_route("Form", "Vendor", frm.doc.vendor),
+			viewGroup
+		);
+	}
+
+	const expenses = (frm.doc.expenses || []).filter(row => row.expense);
+	if (frm.doc.vendor && expenses.length) {
+		frm.page.add_divider_to_button_group(viewGroup);
+	}
+
+	expenses.forEach(row => {
+		frm.add_custom_button(
+			__("View Expense {0}", [row.expense]),
+			() => frappe.set_route("Form", "Expense", row.expense),
+			viewGroup
+		);
+	});
+}
 
 function rememberExpensePaymentContextValues(frm) {
 	frm.__expense_payment_context_values = {
@@ -194,15 +223,24 @@ function confirmExpenseRemovalOnPostingDateChange(frm) {
 async function addExpenseFromRoute(frm) {
 	if (!frm.is_new()) return;
 
-	const query = frappe.utils.get_query_params();
+	const queryExpense = new URLSearchParams(window.location.search).get("expense");
 	const routeOptions = {
 		...(frappe.route_options || {}),
-		...query,
 	};
-	const expenseName = routeOptions.expense;
+	const expenseName = queryExpense || routeOptions.expense || frm.doc.expense;
 
 	if (!expenseName || frm.__expense_route_prefill_started === expenseName) return;
 	frm.__expense_route_prefill_started = expenseName;
+
+	// Frappe copies URL query parameters to a new document before replacing the
+	// generic /new route with its generated local route. Consume the hidden
+	// carrier here so it is never saved on Expense Payment itself.
+	if (frm.doc.expense) {
+		frm.doc.expense = null;
+	}
+	if (frappe.route_options?.expense) {
+		delete frappe.route_options.expense;
+	}
 
 	try {
 		const alreadyAdded = (frm.doc.expenses || []).some(
@@ -459,8 +497,14 @@ function calculateExpenseTotals(frm) {
 		(total, row) => total + flt(row.write_off_amount),
 		0
 	);
+	const exchangeRate = flt(frm.doc.exchange_rate) || 1;
+	const enteredPaymentAmount = Math.max(flt(frm.doc.input_amount) / exchangeRate, 0);
+	const effectivePaymentAmount = Math.max(
+		frm.doc.total_payment,
+		enteredPaymentAmount
+	);
 	frm.doc.balance = frm.doc.amount_to_pay
-		- frm.doc.total_payment
+		- effectivePaymentAmount
 		- frm.doc.total_write_off;
 	frm.refresh_field("amount_to_pay");
 	frm.refresh_field("total_payment");
@@ -473,7 +517,7 @@ function renderExpensePaymentSummary(frm) {
 	const field = frm.get_field("html_payment_summary");
 	if (field) {
 		const expenseCount = (frm.doc.expenses || []).filter(row => row.expense).length;
-		field.$wrapper.html(frappe.render_template("expense_summary", {
+		field.$wrapper.html(frappe.render_template("expense_payment_summary", {
 			doc: frm.doc,
 			expense_count: expenseCount,
 		}));
@@ -801,20 +845,4 @@ function updateExpenseWriteOffPaymentLock(gridRow) {
 		gridRow.toggle_editable("payment_amount", !hasWriteOff);
 	}
 }
-
-async function getPaymentTypeDefaultAccount(frm) {
-	const paymentType = frm.doc.payment_type;
-	const outlet = frm.doc.outlet;
-	if (!paymentType || !outlet) {
-		await frm.set_value("account_code", "");
-		return;
-	}
-
-	const result = await frappe.call({
-		method: "ice_control.api.api.get_payment_type_default_account",
-		args: { payment_type: paymentType, outlet },
-	});
-	if (frm.doc.payment_type === paymentType && frm.doc.outlet === outlet) {
-		await frm.set_value("account_code", result.message?.default_account || "");
-	}
-}
+ 

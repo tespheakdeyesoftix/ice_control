@@ -157,7 +157,7 @@ def get_outlet_default_accounts(outlet:str):
 
 
 @frappe.whitelist()
-def get_payment_type_default_account(payment_type:str,outlet:str):
+def get_payment_type_default_account(payment_type:str,outlet:str,fieldname:str='default_sale_payment_account'):
     if not outlet:
         frappe.throw("Please select outlet first")
     default_account = frappe.db.get_value("Has Default Account", {"outlet":outlet,"parent":payment_type}, "default_sale_payment_account")

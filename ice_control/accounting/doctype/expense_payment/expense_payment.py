@@ -30,19 +30,22 @@ class ExpensePayment(Document):
 		currency: DF.Link | None
 		current_expense_payable_balance: DF.Currency
 		exchange_rate: DF.Currency
+		expense: DF.Link | None
 		expenses: DF.Table[ExpensePaymentInvoices]
 		input_amount: DF.Float
 		naming_series: DF.Literal["EXPP.YYYY.-.####"]
 		note: DF.SmallText | None
 		outlet: DF.Link
+		payable_account: DF.Link | None
 		payment_type: DF.Link
 		photo: DF.AttachImage | None
 		posting_date: DF.Date
 		reference_number: DF.Data | None
 		total_payment: DF.Currency
 		total_write_off: DF.Currency
-		vendor: DF.Link | None
+		vendor: DF.Link
 		vendor_name: DF.Data | None
+		write_off_account: DF.Link | None
 	# end: auto-generated types
 
 	_DOCTYPE_NAME = "Expense Payment"
@@ -51,10 +54,12 @@ class ExpensePayment(Document):
 		self.validate_expense_payment_invoices()
 		update_expense_summary(self)
 		validate_payment_amount(self)
-		validate_accounts(self)
+		
 		validate_close_date(self.posting_date, self.creation, self.outlet)
 
 	def before_submit(self):
+		validate_accounts(self)
+		
 		self.expenses = [
 			expense
 			for expense in self.expenses
@@ -189,7 +194,7 @@ class ExpensePayment(Document):
 				from `tabGL Entry`
 				where party_type = 'Vendor'
 					and party = %(vendor)s
-					and voucher_type = 'Expense'
+					and voucher_type in ('Expense','Expense Payment')
 					and account_type = 'Payable'
 					and outlet = %(outlet)s
 					and posting_date <= %(posting_date)s
@@ -208,7 +213,10 @@ def update_expense_summary(self):
 	self.amount_to_pay = sum(flt(expense.expense_balance) for expense in expenses)
 	self.total_payment = sum(flt(expense.payment_amount) for expense in expenses)
 	self.total_write_off = sum(flt(expense.write_off_amount) for expense in expenses)
-	self.balance = self.amount_to_pay - self.total_payment - self.total_write_off
+	exchange_rate = flt(self.exchange_rate) or 1
+	entered_payment_amount = max(flt(self.input_amount) / exchange_rate, 0)
+	effective_payment_amount = max(self.total_payment, entered_payment_amount)
+	self.balance = self.amount_to_pay - effective_payment_amount - self.total_write_off
 
 
 def update_expenses(self):
@@ -262,24 +270,24 @@ def validate_payment_amount(self):
 def validate_accounts(self):
 	from ice_control.api.api import (
 		get_outlet_default_accounts,
-		get_payment_type_default_account,
 	)
 
-	payment_type = get_payment_type_default_account(self.payment_type, self.outlet)
-	outlet = get_outlet_default_accounts(self.outlet)
-	self.account_code = self.account_code or payment_type.get("default_account")
-	payable_account = outlet.get("default_payable_account")
-	write_off_account = outlet.get("default_purchase_write_off_account")
+	if not self.account_code:
+		self.account_code = frappe.get_cached_value("Has Default Account", {"outlet":self.outlet,"parent":self.payment_type}, "default_purchase_payment_account")
 
 	if not self.account_code:
-		frappe.throw(_("Payment From Account is required."))
-	if not payable_account:
-		frappe.throw(_("Default Payable Account is required for Outlet {0}.").format(self.outlet))
-	if flt(self.total_write_off) > 0 and not write_off_account:
-		frappe.throw(_("Default Write Off Account is required for Outlet {0}.").format(self.outlet))
+		frappe.throw("សូមជ្រើសរើសលេខកូដគណនីសាច់ប្រាក់យកទៅបង់ចំណាយ")
 
-	accounts = [self.account_code, payable_account]
-	if flt(self.total_write_off) > 0:
-		accounts.append(write_off_account)
-	if len(accounts) != len(set(accounts)):
-		frappe.throw(_("Payment, Payable, and Write Off accounts must be different."))
+
+	outlet = get_outlet_default_accounts(self.outlet)
+	if not self.payable_account:
+		self.payable_account = outlet.get("default_payable_account")
+		
+
+	if not self.write_off_account:
+		self.write_off_account = outlet.get("default_purchase_write_off_account")
+
+	if not self.payable_account:
+		frappe.throw(_("សូមជ្រើសរើសគណនីបំណុលសម្រាប់ទីតាំង {0}.").format(self.outlet))
+	if flt(self.total_write_off) > 0 and not self.write_off_account:
+		frappe.throw(_("សូមជ្រើសរើសគណនីបញ្ចុះតម្លៃ ឬចំណូលសម្រាប់ទីតាំង Outlet {0}.").format(self.outlet))

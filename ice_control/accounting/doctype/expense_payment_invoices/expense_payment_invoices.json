@@ -23,8 +23,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Expense",
-   "options": "Expense",
-   "reqd": 1
+   "options": "Expense"
   },
   {
    "fetch_from": "expense.posting_date",
@@ -62,15 +61,13 @@
    "fieldname": "payment_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Payment Amount",
-   "non_negative": 1
+   "label": "Payment Amount"
   },
   {
    "fieldname": "write_off_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Write Off Amount",
-   "non_negative": 1
+   "label": "Write Off Amount"
   },
   {
    "fieldname": "balance",
@@ -89,7 +86,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-05 08:34:03.512992",
+ "modified": "2026-09-05 15:23:18.309669",
  "modified_by": "Administrator",
  "module": "Accounting",
  "name": "Expense Payment Invoices",
